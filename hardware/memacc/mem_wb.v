@@ -103,8 +103,8 @@ reg [31:0] mem2wb_pc_ffout;
 always @(posedge clk)
 begin
    if (cpurst)
-     mem2wb_pc_ffout = 0;
+     mem2wb_pc_ffout <= 0;
    else
-     mem2wb_pc_ffout = mem2wb_pc;  
+     mem2wb_pc_ffout <= mem2wb_pc;  
 end     
 endmodule

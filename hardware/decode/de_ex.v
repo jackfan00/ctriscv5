@@ -193,7 +193,7 @@ reg [31:0] de2ex_pc_ffout;
 always @(posedge clk)
 begin
    if (cpurst)
-     de2ex_pc_ffout = 0;
+     de2ex_pc_ffout <= 0;
    else
      de2ex_pc_ffout <= de2ex_pc;
 end     

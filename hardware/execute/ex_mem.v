@@ -168,9 +168,9 @@ reg [31:0] ex2mem_pc_ffout;
 always @(posedge clk)
 begin
    if (cpurst)
-     ex2mem_pc_ffout = 0;
+     ex2mem_pc_ffout <= 0;
    else
-     ex2mem_pc_ffout = ex2mem_pc;
+     ex2mem_pc_ffout <= ex2mem_pc;
 end     
 
 endmodule
