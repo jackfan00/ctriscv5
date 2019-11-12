@@ -1,0 +1,22 @@
+#! /usr/bin/vvp
+:ivl_version "0.9.7 " "(v0_9_7)";
+:vpi_time_precision + 0;
+:vpi_module "system";
+:vpi_module "v2005_math";
+:vpi_module "va_math";
+S_0x12c3ce0 .scope module, "inst_wb" "inst_wb" 2 6;
+ .timescale 0 0;
+L_0x12f49b0 .functor BUFZ 5, C4<zzzzz>, C4<00000>, C4<00000>, C4<00000>;
+L_0x12f4a60 .functor BUFZ 1, C4<z>, C4<0>, C4<0>, C4<0>;
+L_0x12f4b20 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>;
+v0x12c3a80_0 .net "mem2wb_wr_reg_ffout", 0 0, C4<z>; 0 drivers
+v0x12f4640_0 .net "mem2wb_wr_regindex_ffout", 4 0, C4<zzzzz>; 0 drivers
+v0x12f46e0_0 .net "mem2wb_wr_wdata_ffout", 31 0, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; 0 drivers
+v0x12f4780_0 .net "wb2regfile_wr_reg", 0 0, L_0x12f4a60; 1 drivers
+v0x12f4830_0 .net "wb2regfile_wr_regindex", 4 0, L_0x12f49b0; 1 drivers
+v0x12f48d0_0 .net "wb2regfile_wr_wdata", 31 0, L_0x12f4b20; 1 drivers
+# The file index is used to find the file name in the following table.
+:file_names 3;
+    "N/A";
+    "<interactive>";
+    "inst_wb.v";

@@ -1,0 +1,6 @@
+`include "../hardware/fetch/fetch.v"
+`include "../hardware/fetch/ft_de.v"
+`include "../hardware/fetch/genpc.v"
+`include "../hardware/fetch/genrv32.v"
+`include "../hardware/fetch/mini_decode.v"
+`include "../hardware/fetch/rv16torv32.v"

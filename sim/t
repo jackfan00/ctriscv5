@@ -1,0 +1,542 @@
+lmutil - Copyright (c) 1989-2011 Flexera Software, Inc. All Rights Reserved.
+Flexible License Manager status on Sat 1/12/2019 18:07
+
+License server status: 5280@lic01
+    License file(s) on lic01: /home/user/license/license_cadence.dat:
+
+     lic01: license server UP (MASTER) v11.10
+
+Vendor daemon status (on lic01):
+
+    cdslmd: UP v11.10
+Feature usage info:
+
+Users of 111:  (Total of 17 licenses issued;  Total of 0 licenses in use)
+
+Users of 21400:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of 32150:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of 32760:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of 3DEM:  (Total of 2 licenses issued;  Total of 0 licenses in use)
+
+Users of 3DEMENG:  (Total of 2 licenses issued;  Total of 0 licenses in use)
+
+Users of 940:  (Total of 11 licenses issued;  Total of 0 licenses in use)
+
+Users of 945:  (Total of 11 licenses issued;  Total of 0 licenses in use)
+
+Users of ACCEL_MEM_VIP:  (Total of 128 licenses issued;  Total of 0 licenses in use)
+
+Users of AMS_Designer_Advanced_Digital:  (Total of 20 licenses issued;  Total of 0 licenses in use)
+
+Users of AMS_Option_to_Incisive:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Affirma_sim_analysis_env:  (Total of 130 licenses issued;  Total of 0 licenses in use)
+
+Users of Analog_Design_Environment_L:  (Total of 4 licenses issued;  Total of 0 licenses in use)
+
+Users of BroadbandSPICE:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Conformal_Asic:  (Total of 7 licenses issued;  Total of 0 licenses in use)
+
+Users of Conformal_Cnstrnt_Dsgnr_XL_LXL:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Conformal_ECO_GXL:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Conformal_Low_Power_GXL:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Conformal_Ultra:  (Total of 7 licenses issued;  Total of 0 licenses in use)
+
+Users of DFM_Core_Technology:  (Total of 2 licenses issued;  Total of 0 licenses in use)
+
+Users of DPAPXP_RC_PowerEstimation:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of DPAPXP_SimVision:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of DPAPXP_TCAExport:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of DPAPXP_ToggleCountAnalysis:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of DPAPXP_ToggleCountFormat:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Encounter_C:  (Error: 5 licenses, unsupported by licensed server)
+
+Users of Encounter_Power_System_XL:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Encounter_Timing_System_XL:  (Total of 2 licenses issued;  Total of 0 licenses in use)
+
+Users of Incisive_Desktop_Manager:  (Total of 15 licenses issued;  Total of 0 licenses in use)
+
+Users of Incisive_Enterprise_Manager:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of Incisive_Enterprise_Planner:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of Incisive_Enterprise_Simulator:  (Total of 15 licenses issued;  Total of 0 licenses in use)
+
+Users of Incisive_HDL_Simulator:  (Total of 73 licenses issued;  Total of 0 licenses in use)
+
+Users of Incisive_P2C_Methodology:  (Total of 15 licenses issued;  Total of 0 licenses in use)
+
+Users of Incisive_Specman_interactive:  (Total of 15 licenses issued;  Total of 0 licenses in use)
+
+Users of Incisive_Verif_Environ:  (Total of 15 licenses issued;  Total of 0 licenses in use)
+
+Users of Innovus_20nm_Opt:  (Error: 5 licenses, unsupported by licensed server)
+
+Users of Innovus_C:  (Error: 5 licenses, unsupported by licensed server)
+
+Users of Innovus_CPU_Opt:  (Error: 5 licenses, unsupported by licensed server)
+
+Users of Innovus_Impl_System:  (Error: 5 licenses, unsupported by licensed server)
+
+Users of LEAPFROG-CV:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of OrbitIO_Sys_PlanC:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Palladium_XPII_Domain_GXL:  (Total of 16 licenses issued;  Total of 0 licenses in use)
+
+Users of Palladium_XP_HDL_Checking:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Palladium_Z1_Compile:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Palladium_Z1_Domain:  (Total of 48 licenses issued;  Total of 0 licenses in use)
+
+Users of PowerSI:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of RouteMVIA_ALL:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of SLNK:  (Total of 5 licenses issued;  Total of 0 licenses in use)
+
+Users of SPECCTRAQuest:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of SPECCTRAQuest_SI_expert:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of SPECCTRAQuest_signal_expert:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of SPECCTRA_expert:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Spectre_Burst_AllegroSI:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of T2B:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Tempus_Timing_Signoff_XL:  (Total of 2 licenses issued;  Total of 0 licenses in use)
+
+Users of Tempus_Timing_Signoff_XX:  (Total of 2 licenses issued;  Total of 0 licenses in use)
+
+Users of VERILOG-XL:  (Total of 88 licenses issued;  Total of 0 licenses in use)
+
+Users of Virtuoso_APS_MMSIM_Lk:  (Total of 84 licenses issued;  Total of 0 licenses in use)
+
+Users of Virtuoso_Layout_Suite_L:  (Total of 2 licenses issued;  Total of 0 licenses in use)
+
+Users of Virtuoso_Multi_mode_Simulation:  (Total of 84 licenses issued;  Total of 0 licenses in use)
+
+Users of Virtuoso_Schematic_Editor_L:  (Total of 11 licenses issued;  Total of 0 licenses in use)
+
+Users of Virtuoso_Spectre:  (Total of 2 licenses issued;  Total of 0 licenses in use)
+
+Users of Virtuoso_Spectre_GXL_MMSIM_Lk:  (Total of 84 licenses issued;  Total of 0 licenses in use)
+
+Users of Virtuoso_XPS_MMSIM_Lk:  (Total of 84 licenses issued;  Total of 0 licenses in use)
+
+Users of Voltus_Power_Integrity_MP:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Voltus_Power_Integrity_XL:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of XtractIM:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of plotVersa:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of vip_portfolio:  (Total of 10 licenses issued;  Total of 0 licenses in use)
+
+   sigrity: UP v11.5
+Feature usage info:
+
+Users of SpdXPSTE_MST1:  (Total of 2 licenses issued;  Total of 0 licenses in use)
+
+Users of SpdXPSTE_MST1_Note:  (Total of 1024 licenses issued;  Total of 0 licenses in use)
+
+Users of SpdXPSTE_MST1_Status:  (Total of 1024 licenses issued;  Total of 0 licenses in use)
+
+Users of MST1_PowerSI:  (Total of 2 licenses issued;  Total of 0 licenses in use)
+
+Users of MST1_PowerSISPT:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of MST1_PowerSISPT_IA64:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of MST1_PSISpatial:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of MST1_PSISpatialSPT:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of MST1_PSISpatial_IA64:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of MST1_PSI3DFEMSPT:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of MST1_PSI3DFEMSPT_IA64:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of MST1_3DFEMENG:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of MST1_3DFEMENGSPT:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of MST1_3DFEMENGSPT_IA64:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of SPDLINKS:  (Total of 8 licenses issued;  Total of 0 licenses in use)
+
+Users of SPDLINKSSPT:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of SLNK_BRDSPT:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of SLNK_ODBSPT:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of SLNK_PADSPT:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of SLNK_BDSSPT:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of SLNK_CADSPT:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of SLNK_CR5SPT:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of SLNK_DSNSPT:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of SLNK_HFSSSPT:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of SLNK_NDDSPT:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of SLNK_RIFSPT:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+   verplex: UP v11.7
+Feature usage info:
+
+Users of conformal_datapath:  (Total of 7 licenses issued;  Total of 0 licenses in use)
+
+Users of conformal_ldd:  (Total of 7 licenses issued;  Total of 0 licenses in use)
+
+Users of conformal_lec:  (Total of 7 licenses issued;  Total of 0 licenses in use)
+
+Users of conformal_lvr:  (Total of 7 licenses issued;  Total of 0 licenses in use)
+
+Users of conformal_vhd:  (Total of 7 licenses issued;  Total of 0 licenses in use)
+
+Users of conformal_vlg:  (Total of 7 licenses issued;  Total of 0 licenses in use)
+
+
+
+----------------------------------------------------------------------------
+License server status: 5353@lic01
+    License file(s) on lic01: /home/user/license/license_matlab.dat:
+
+     lic01: license server UP (MASTER) v11.10
+
+Vendor daemon status (on lic01):
+
+       MLM: UP v11.9
+Feature usage info:
+
+Users of MATLAB:  (Total of 13 licenses issued;  Total of 0 licenses in use)
+
+Users of SIMULINK:  (Total of 5 licenses issued;  Total of 0 licenses in use)
+
+Users of Communication_Toolbox:  (Total of 7 licenses issued;  Total of 0 licenses in use)
+
+Users of Video_and_Image_Blockset:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Control_Toolbox:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Signal_Blocks:  (Total of 7 licenses issued;  Total of 0 licenses in use)
+
+Users of Fixed_Point_Toolbox:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Image_Toolbox:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Compiler:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of RF_Toolbox:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Signal_Toolbox:  (Total of 7 licenses issued;  Total of 0 licenses in use)
+
+Users of Simulink_Control_Design:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Fixed-Point_Blocks:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Communication_Blocks:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of Filter_Design_Toolbox:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+
+
+----------------------------------------------------------------------------
+License server status: 27000@lic04
+    License file(s) on lic04: /home/user/license/license_synopsys.dat:
+
+     lic04: license server UP (MASTER) v11.10
+
+Vendor daemon status (on lic04):
+
+   snpslmd: UP v11.14
+Feature usage info:
+
+Users of SSS:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of ACS:  (Total of 36 licenses issued;  Total of 0 licenses in use)
+
+Users of BOA-BRT:  (Total of 36 licenses issued;  Total of 0 licenses in use)
+
+Users of CTV-Interface:  (Total of 11 licenses issued;  Total of 0 licenses in use)
+
+Users of DC-Expert:  (Total of 36 licenses issued;  Total of 0 licenses in use)
+
+Users of DC-Extension:  (Total of 18 licenses issued;  Total of 0 licenses in use)
+
+Users of DC-SDF-Interface:  (Total of 36 licenses issued;  Total of 0 licenses in use)
+
+Users of DC-Ultra-Features:  (Total of 36 licenses issued;  Total of 0 licenses in use)
+
+Users of DC-Ultra-Opt:  (Total of 36 licenses issued;  Total of 0 licenses in use)
+
+Users of Design-Budgeting:  (Total of 36 licenses issued;  Total of 0 licenses in use)
+
+Users of Design-Compiler:  (Total of 36 licenses issued;  Total of 0 licenses in use)
+
+Users of Design-Vision:  (Total of 10 licenses issued;  Total of 0 licenses in use)
+
+Users of DesignWare:  (Total of 35 licenses issued;  Total of 0 licenses in use)
+
+Users of DesignWare-LP:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of DesignWare-Regression:  (Total of 48 licenses issued;  Total of 0 licenses in use)
+
+Users of DesignWare-VERA:  (Total of 35 licenses issued;  Total of 0 licenses in use)
+
+Users of Designware-Basic:  (Total of 36 licenses issued;  Total of 0 licenses in use)
+
+Users of Formality:  (Total of 4 licenses issued;  Total of 0 licenses in use)
+
+Users of Formality-E1:  (Total of 4 licenses issued;  Total of 0 licenses in use)
+
+Users of Galaxy-AdvCTS:  (Total of 23 licenses issued;  Total of 0 licenses in use)
+
+Users of Galaxy-AdvTech:  (Total of 23 licenses issued;  Total of 0 licenses in use)
+
+Users of Galaxy-Common:  (Total of 151 licenses issued;  Total of 0 licenses in use)
+
+Users of Galaxy-DFT:  (Total of 23 licenses issued;  Total of 0 licenses in use)
+
+Users of Galaxy-DFY:  (Total of 23 licenses issued;  Total of 0 licenses in use)
+
+Users of Galaxy-FP:  (Total of 23 licenses issued;  Total of 0 licenses in use)
+
+Users of Galaxy-ICC:  (Total of 115 licenses issued;  Total of 0 licenses in use)
+
+Users of Galaxy-IU:  (Total of 23 licenses issued;  Total of 0 licenses in use)
+
+Users of Galaxy-MV:  (Total of 23 licenses issued;  Total of 0 licenses in use)
+
+Users of Galaxy-PNR:  (Total of 23 licenses issued;  Total of 0 licenses in use)
+
+Users of Galaxy-PSYN:  (Total of 23 licenses issued;  Total of 0 licenses in use)
+
+Users of Galaxy-Power:  (Total of 23 licenses issued;  Total of 0 licenses in use)
+
+Users of Galaxy-Prototype:  (Total of 23 licenses issued;  Total of 0 licenses in use)
+
+Users of GalaxyConstraint:  (Total of 107 licenses issued;  Total of 0 licenses in use)
+
+Users of HAPS-70-AMBA-XTOR-MASTER:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of HAPS-70-AMBA-XTOR-SLAVE:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of HAPS-80-AMBA-XTOR-MASTER:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of HAPS-80-AMBA-XTOR-SLAVE:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of HAPS-DX-AMBA-XTOR-MASTER:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of HAPS-DX-AMBA-XTOR-SLAVE:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of HDL:  (Total of 41 licenses issued;  Total of 0 licenses in use)
+
+Users of HDL-Compiler:  (Total of 36 licenses issued;  Total of 0 licenses in use)
+
+Users of ICCompilerII-8:  (Total of 35 licenses issued;  Total of 0 licenses in use)
+
+Users of ICCompilerII-8-AdvGeo:  (Total of 10 licenses issued;  Total of 0 licenses in use)
+
+Users of ICCompilerII-NX:  (Total of 35 licenses issued;  Total of 0 licenses in use)
+
+Users of ICCompilerII-NX-AdvGeo:  (Total of 10 licenses issued;  Total of 0 licenses in use)
+
+Users of ICValidator2-CompareEngine:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of ICValidator2-GeometryEngine:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of ICValidator2-Manager:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Laker_AdvancedNode:  (Total of 28 licenses issued;  Total of 0 licenses in use)
+
+Users of Laker_L3:  (Total of 30 licenses issued;  Total of 0 licenses in use)
+
+Users of Laker_OA:  (Total of 50 licenses issued;  Total of 0 licenses in use)
+
+Users of Laker_Viewer:  (Total of 20 licenses issued;  Total of 0 licenses in use)
+
+Users of Library-Compiler:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of MCE-Base:  (Total of 36 licenses issued;  Total of 0 licenses in use)
+
+Users of MDataPrep:  (Total of 17 licenses issued;  Total of 0 licenses in use)
+
+Users of MDynLink:  (Total of 17 licenses issued;  Total of 0 licenses in use)
+
+Users of Milkyway:  (Total of 18 licenses issued;  Total of 0 licenses in use)
+
+Users of Milkyway-Interface:  (Total of 293 licenses issued;  Total of 0 licenses in use)
+
+Users of Power-Optimization:  (Total of 36 licenses issued;  Total of 0 licenses in use)
+
+Users of PrimeTime:  (Total of 102 licenses issued;  Total of 0 licenses in use)
+
+Users of PrimeTime-PX:  (Total of 10 licenses issued;  Total of 0 licenses in use)
+
+Users of PrimeTime-SI:  (Total of 107 licenses issued;  Total of 0 licenses in use)
+
+Users of ProtoCompiler:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of ProtoCompiler-RT:  (Total of 72 licenses issued;  Total of 0 licenses in use)
+
+Users of ProtoCompilerMP:  (Total of 12 licenses issued;  Total of 0 licenses in use)
+
+Users of RTL-Power-Analysis:  (Total of 36 licenses issued;  Total of 0 licenses in use)
+
+Users of STAR-RC2-NETLIST:  (Total of 17 licenses issued;  Total of 0 licenses in use)
+
+Users of STAR-RC2-PROBER:  (Total of 17 licenses issued;  Total of 0 licenses in use)
+
+Users of STAR-RC2-TCAD:  (Total of 17 licenses issued;  Total of 0 licenses in use)
+
+Users of STAR-RC2_MANAGER:  (Total of 17 licenses issued;  Total of 0 licenses in use)
+
+Users of SynLib-Eval:  (Total of 77 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-ATPG-Max:  (Total of 20 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-Analysis:  (Total of 20 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-CTL-Model:  (Total of 49 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-Compile:  (Total of 20 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-Compile-Share:  (Total of 20 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-Compiler:  (Total of 49 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-Compression-ATPG:  (Total of 11 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-Compression-Synthesis:  (Total of 11 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-CompressionP3-ATPG:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Test-CompressionP3-Syn:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of Test-Core-Integration:  (Total of 11 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-Core-Wrapper:  (Total of 49 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-DFTC-TMAX:  (Total of 49 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-Delay:  (Total of 12 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-Diagnosis:  (Total of 20 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-Fault-Max:  (Total of 12 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-Faultsim:  (Total of 20 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-IEEE-Std-1149-1:  (Total of 11 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-LBIST-Synthesis:  (Total of 49 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-MBIST-Integration:  (Total of 49 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-Map:  (Total of 20 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-Physical:  (Total of 20 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-Power:  (Total of 12 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-RTL-Check:  (Total of 49 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-RTL-Tristate:  (Total of 49 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-SDD-Timing:  (Total of 12 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-STDVR:  (Total of 49 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-ScanRoute:  (Total of 49 licenses issued;  Total of 0 licenses in use)
+
+Users of Test-Validate:  (Total of 69 licenses issued;  Total of 0 licenses in use)
+
+Users of VC-DEBUG-RUNTIME-BASE:  (Total of 10 licenses issued;  Total of 0 licenses in use)
+
+Users of VCSCompiler_Net:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of VHDL-Compiler:  (Total of 5 licenses issued;  Total of 0 licenses in use)
+
+Users of VHDL-Elaborator:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of VIP-AMBA-AHB-SVT:  (Total of 70 licenses issued;  Total of 0 licenses in use)
+
+Users of VIP-AMBA-APB-SVT:  (Total of 70 licenses issued;  Total of 0 licenses in use)
+
+Users of VIP-AMBA-AXI-SVT:  (Total of 70 licenses issued;  Total of 0 licenses in use)
+
+Users of VIP-LIBRARY-SVT:  (Total of 48 licenses issued;  Total of 0 licenses in use)
+
+Users of VT_Assertions:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of VT_Coverage:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of VT_CoverageURG:  (Total of 83 licenses issued;  Total of 0 licenses in use)
+
+Users of VT_Testbench:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of VT_VCS_Xprop:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of Verdi:  (Total of 99 licenses issued;  Total of 0 licenses in use)
+
+Users of VerdiCoverage:  (Total of 99 licenses issued;  Total of 0 licenses in use)
+
+Users of VerdiSimDB:  (Total of 99 licenses issued;  Total of 0 licenses in use)
+
+Users of VerdiTransactionDebugUltra:  (Total of 99 licenses issued;  Total of 0 licenses in use)
+
+Users of cmpro_scemi:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of identdebugger_pr:  (Total of 4 licenses issued;  Total of 0 licenses in use)
+
+Users of identifyinstrumentor_encrypt:  (Total of 4 licenses issued;  Total of 0 licenses in use)
+
+Users of identinstrumentor_pr:  (Total of 4 licenses issued;  Total of 0 licenses in use)
+
+Users of mvdbgen:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of nECO:  (Total of 1 license issued;  Total of 0 licenses in use)
+
+Users of nLint:  (Total of 10 licenses issued;  Total of 0 licenses in use)
+
+Users of nLint_mixed:  (Total of 10 licenses issued;  Total of 0 licenses in use)
+
+Users of nlcc:  (Total of 10 licenses issued;  Total of 0 licenses in use)
+
+Users of npi:  (Total of 10 licenses issued;  Total of 0 licenses in use)
+
+Users of synplifypremier:  (Total of 4 licenses issued;  Total of 0 licenses in use)
+
+Users of zs_Compil:  (Total of 3 licenses issued;  Total of 0 licenses in use)
+
+Users of SSST:  (Error: 1 licenses, unsupported by licensed server)
+
+Users of Galaxy-AdvRules:  (Error: 1 licenses, unsupported by licensed server)
+
+

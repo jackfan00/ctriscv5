@@ -1,0 +1,275 @@
+#! /usr/bin/vvp
+:ivl_version "0.9.7 " "(v0_9_7)";
+:vpi_time_precision + 0;
+:vpi_module "system";
+:vpi_module "v2005_math";
+:vpi_module "va_math";
+S_0x16186c0 .scope module, "inst_execute" "inst_execute" 2 5;
+ .timescale 0 0;
+L_0x1633b70 .functor BUFZ 1, C4<z>, C4<0>, C4<0>, C4<0>;
+L_0x1634c20 .functor BUFZ 5, C4<zzzzz>, C4<00000>, C4<00000>, C4<00000>;
+L_0x1634fe0 .functor BUFZ 32, v0x15f7730_0, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>;
+L_0x1635140 .functor BUFZ 1, C4<z>, C4<0>, C4<0>, C4<0>;
+L_0x1635200 .functor BUFZ 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>;
+L_0x16353e0 .functor BUFZ 1, C4<z>, C4<0>, C4<0>, C4<0>;
+L_0x16354a0 .functor BUFZ 1, C4<z>, C4<0>, C4<0>, C4<0>;
+L_0x1635550 .functor BUFZ 1, C4<z>, C4<0>, C4<0>, C4<0>;
+L_0x1635760 .functor BUFZ 1, C4<z>, C4<0>, C4<0>, C4<0>;
+v0x15f7730_0 .var "alu_out", 31 0;
+v0x1633550_0 .var "alu_out_t64", 63 0;
+v0x16335f0_0 .var "amt", 4 0;
+v0x1633690_0 .net "de2ex_MD_OP_ffout", 0 0, C4<z>; 0 drivers
+v0x1633740_0 .net "de2ex_aluop_ffout", 2 0, C4<zzz>; 0 drivers
+v0x16337e0_0 .net "de2ex_aluop_sub_ffout", 6 0, C4<zzzzzzz>; 0 drivers
+v0x16338c0_0 .net "de2ex_csrop_ffout", 2 0, C4<zzz>; 0 drivers
+v0x1633960_0 .net "de2ex_inst_valid_ffout", 0 0, C4<z>; 0 drivers
+v0x1633a50_0 .net "de2ex_load_ffout", 0 0, C4<z>; 0 drivers
+v0x1633af0_0 .net "de2ex_mem_en_ffout", 0 0, C4<z>; 0 drivers
+v0x1633bf0_0 .net "de2ex_mem_op_ffout", 0 0, C4<z>; 0 drivers
+v0x1633c90_0 .net "de2ex_rd_csrreg_ffout", 0 0, C4<z>; 0 drivers
+v0x1633da0_0 .net "de2ex_rd_oprand1_ffout", 31 0, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; 0 drivers
+v0x1633e40_0 .net "de2ex_rd_oprand2_ffout", 31 0, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; 0 drivers
+v0x1633f60_0 .net "de2ex_wr_csrreg_ffout", 0 0, C4<z>; 0 drivers
+v0x1634000_0 .net "de2ex_wr_mem_ffout", 0 0, C4<z>; 0 drivers
+v0x1633ec0_0 .net "de2ex_wr_memwdata_ffout", 31 0, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; 0 drivers
+v0x1634150_0 .net "de2ex_wr_reg_ffout", 0 0, C4<z>; 0 drivers
+v0x1634270_0 .net "de2ex_wr_regindex_ffout", 4 0, C4<zzzzz>; 0 drivers
+v0x16342f0_0 .net "ex2mem_load", 0 0, L_0x1635550; 1 drivers
+v0x16341d0_0 .net "ex2mem_mem_en", 0 0, L_0x16353e0; 1 drivers
+v0x1634420_0 .net "ex2mem_mem_op", 0 0, L_0x16352c0; 1 drivers
+v0x1634370_0 .net "ex2mem_memaddr", 31 0, L_0x1635070; 1 drivers
+v0x1634560_0 .net "ex2mem_wr_mem", 0 0, L_0x1635140; 1 drivers
+v0x16344c0_0 .net "ex2mem_wr_memwdata", 31 0, L_0x1635200; 1 drivers
+v0x16346b0_0 .net "ex2mem_wr_reg", 0 0, L_0x1633b70; 1 drivers
+v0x1634600_0 .net "ex2mem_wr_regindex", 4 0, L_0x1634c20; 1 drivers
+v0x1634810_0 .net "ex2mem_wr_wdata", 31 0, L_0x1634fe0; 1 drivers
+v0x1634750_0 .net "ex2readram_addr", 31 0, L_0x1635630; 1 drivers
+v0x1634980_0 .net "ex2readram_mem_en", 0 0, L_0x16354a0; 1 drivers
+v0x1634890_0 .net "ex2readram_opmode", 0 0, L_0x1635760; 1 drivers
+v0x1634b00_0 .net "mem2ex_mem_op", 0 0, C4<z>; 0 drivers
+v0x1634a00_0 .net "mem2ex_memadr", 31 0, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>; 0 drivers
+v0x1634c90_0 .net "mem_misaligned_exxeption", 0 0, C4<z>; 0 drivers
+v0x1634b80_0 .var "rop2", 31 0;
+v0x1634e30_0 .var "topr1", 31 0;
+v0x1634d10_0 .var "topr2", 31 0;
+E_0x15f66e0/0 .event edge, v0x1633960_0, v0x1633740_0, v0x16337e0_0, v0x1633e40_0;
+E_0x15f66e0/1 .event edge, v0x1633da0_0, v0x1634b80_0, v0x1634e30_0, v0x1634d10_0;
+E_0x15f66e0/2 .event edge, v0x16335f0_0, v0x1633550_0;
+E_0x15f66e0 .event/or E_0x15f66e0/0, E_0x15f66e0/1, E_0x15f66e0/2;
+L_0x1635070 .functor MUXZ 32, v0x15f7730_0, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>, C4<z>, C4<>;
+L_0x16352c0 .functor MUXZ 1, C4<z>, C4<z>, C4<z>, C4<>;
+L_0x1635630 .arith/sum 32, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>, C4<zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz>;
+    .scope S_0x16186c0;
+T_0 ;
+    %wait E_0x15f66e0;
+    %set/v v0x15f7730_0, 0, 32;
+    %load/v 8, v0x1633960_0, 1;
+    %jmp/0xz  T_0.0, 8;
+    %load/v 8, v0x1633740_0, 3;
+    %cmpi/u 8, 0, 3;
+    %jmp/1 T_0.2, 6;
+    %cmpi/u 8, 1, 3;
+    %jmp/1 T_0.3, 6;
+    %cmpi/u 8, 2, 3;
+    %jmp/1 T_0.4, 6;
+    %cmpi/u 8, 3, 3;
+    %jmp/1 T_0.5, 6;
+    %cmpi/u 8, 4, 3;
+    %jmp/1 T_0.6, 6;
+    %cmpi/u 8, 5, 3;
+    %jmp/1 T_0.7, 6;
+    %cmpi/u 8, 6, 3;
+    %jmp/1 T_0.8, 6;
+    %cmpi/u 8, 7, 3;
+    %jmp/1 T_0.9, 6;
+    %jmp T_0.10;
+T_0.2 ;
+    %load/v 8, v0x16337e0_0, 7;
+    %cmpi/u 8, 32, 7;
+    %mov 8, 4, 1;
+    %jmp/0  T_0.11, 8;
+    %load/v 9, v0x1633e40_0, 32;
+    %inv 9, 32;
+    %addi 9, 1, 32;
+    %jmp/1  T_0.13, 8;
+T_0.11 ; End of true expr.
+    %load/v 41, v0x1633e40_0, 32;
+    %jmp/0  T_0.12, 8;
+ ; End of false expr.
+    %blend  9, 41, 32; Condition unknown.
+    %jmp  T_0.13;
+T_0.12 ;
+    %mov 9, 41, 32; Return false value
+T_0.13 ;
+    %set/v v0x1634b80_0, 9, 32;
+    %load/v 8, v0x1633da0_0, 32;
+    %load/v 40, v0x1634b80_0, 32;
+    %add 8, 40, 32;
+    %set/v v0x15f7730_0, 8, 32;
+    %jmp T_0.10;
+T_0.3 ;
+    %load/v 8, v0x1633da0_0, 32;
+    %load/v 40, v0x1633e40_0, 5; Only need 5 of 32 bits
+; Save base=40 wid=5 in lookaside.
+    %ix/get 0, 40, 5;
+    %shiftl/i0  8, 32;
+    %set/v v0x15f7730_0, 8, 32;
+    %jmp T_0.10;
+T_0.4 ;
+    %load/v 40, v0x1633da0_0, 32;
+    %load/v 72, v0x1633e40_0, 32;
+    %cmp/u 40, 72, 32;
+    %mov 40, 5, 1;
+    %mov 8, 40, 1;
+    %mov 9, 0, 31;
+    %set/v v0x15f7730_0, 8, 32;
+    %jmp T_0.10;
+T_0.5 ;
+    %ix/load 1, 31, 0;
+    %mov 4, 0, 1;
+    %jmp/1 T_0.17, 4;
+    %load/x1p 8, v0x1633da0_0, 1;
+    %jmp T_0.18;
+T_0.17 ;
+    %mov 8, 2, 1;
+T_0.18 ;
+; Save base=8 wid=1 in lookaside.
+    %jmp/0  T_0.14, 8;
+    %load/v 9, v0x1633da0_0, 32;
+    %inv 9, 32;
+    %addi 9, 1, 32;
+    %jmp/1  T_0.16, 8;
+T_0.14 ; End of true expr.
+    %load/v 41, v0x1633da0_0, 32;
+    %jmp/0  T_0.15, 8;
+ ; End of false expr.
+    %blend  9, 41, 32; Condition unknown.
+    %jmp  T_0.16;
+T_0.15 ;
+    %mov 9, 41, 32; Return false value
+T_0.16 ;
+    %set/v v0x1634e30_0, 9, 32;
+    %ix/load 1, 31, 0;
+    %mov 4, 0, 1;
+    %jmp/1 T_0.22, 4;
+    %load/x1p 8, v0x1633e40_0, 1;
+    %jmp T_0.23;
+T_0.22 ;
+    %mov 8, 2, 1;
+T_0.23 ;
+; Save base=8 wid=1 in lookaside.
+    %jmp/0  T_0.19, 8;
+    %load/v 9, v0x1633e40_0, 32;
+    %inv 9, 32;
+    %addi 9, 1, 32;
+    %jmp/1  T_0.21, 8;
+T_0.19 ; End of true expr.
+    %load/v 41, v0x1633e40_0, 32;
+    %jmp/0  T_0.20, 8;
+ ; End of false expr.
+    %blend  9, 41, 32; Condition unknown.
+    %jmp  T_0.21;
+T_0.20 ;
+    %mov 9, 41, 32; Return false value
+T_0.21 ;
+    %set/v v0x1634d10_0, 9, 32;
+    %load/v 40, v0x1634e30_0, 32;
+    %load/v 72, v0x1634d10_0, 32;
+    %cmp/u 40, 72, 32;
+    %mov 40, 5, 1;
+    %mov 8, 40, 1;
+    %mov 9, 0, 31;
+    %set/v v0x15f7730_0, 8, 32;
+    %jmp T_0.10;
+T_0.6 ;
+    %load/v 8, v0x1633da0_0, 32;
+    %load/v 40, v0x1633e40_0, 32;
+    %xor 8, 40, 32;
+    %set/v v0x15f7730_0, 8, 32;
+    %jmp T_0.10;
+T_0.7 ;
+    %load/v 8, v0x1633e40_0, 5; Only need 5 of 32 bits
+; Save base=8 wid=5 in lookaside.
+    %set/v v0x16335f0_0, 8, 5;
+    %load/v 8, v0x16337e0_0, 7;
+    %cmpi/u 8, 32, 7;
+    %jmp/0xz  T_0.24, 4;
+    %load/v 8, v0x1633da0_0, 32;
+    %ix/load 1, 31, 0;
+    %mov 4, 0, 1;
+    %jmp/1 T_0.26, 4;
+    %load/x1p 104, v0x1633da0_0, 1;
+    %jmp T_0.27;
+T_0.26 ;
+    %mov 104, 2, 1;
+T_0.27 ;
+    %mov 72, 104, 1; Move signal select into place
+    %mov 103, 72, 1; Repetition 32
+    %mov 102, 72, 1; Repetition 31
+    %mov 101, 72, 1; Repetition 30
+    %mov 100, 72, 1; Repetition 29
+    %mov 99, 72, 1; Repetition 28
+    %mov 98, 72, 1; Repetition 27
+    %mov 97, 72, 1; Repetition 26
+    %mov 96, 72, 1; Repetition 25
+    %mov 95, 72, 1; Repetition 24
+    %mov 94, 72, 1; Repetition 23
+    %mov 93, 72, 1; Repetition 22
+    %mov 92, 72, 1; Repetition 21
+    %mov 91, 72, 1; Repetition 20
+    %mov 90, 72, 1; Repetition 19
+    %mov 89, 72, 1; Repetition 18
+    %mov 88, 72, 1; Repetition 17
+    %mov 87, 72, 1; Repetition 16
+    %mov 86, 72, 1; Repetition 15
+    %mov 85, 72, 1; Repetition 14
+    %mov 84, 72, 1; Repetition 13
+    %mov 83, 72, 1; Repetition 12
+    %mov 82, 72, 1; Repetition 11
+    %mov 81, 72, 1; Repetition 10
+    %mov 80, 72, 1; Repetition 9
+    %mov 79, 72, 1; Repetition 8
+    %mov 78, 72, 1; Repetition 7
+    %mov 77, 72, 1; Repetition 6
+    %mov 76, 72, 1; Repetition 5
+    %mov 75, 72, 1; Repetition 4
+    %mov 74, 72, 1; Repetition 3
+    %mov 73, 72, 1; Repetition 2
+    %mov 40, 72, 32;
+    %load/v 72, v0x16335f0_0, 5;
+    %ix/get 0, 72, 5;
+    %shiftr/i0  8, 64;
+    %set/v v0x1633550_0, 8, 64;
+    %load/v 8, v0x1633550_0, 32; Only need 32 of 64 bits
+; Save base=8 wid=32 in lookaside.
+    %set/v v0x15f7730_0, 8, 32;
+    %jmp T_0.25;
+T_0.24 ;
+    %load/v 8, v0x1633da0_0, 32;
+    %load/v 40, v0x16335f0_0, 5;
+    %ix/get 0, 40, 5;
+    %shiftr/i0  8, 32;
+    %set/v v0x15f7730_0, 8, 32;
+T_0.25 ;
+    %jmp T_0.10;
+T_0.8 ;
+    %load/v 8, v0x1633da0_0, 32;
+    %load/v 40, v0x1633e40_0, 32;
+    %or 8, 40, 32;
+    %set/v v0x15f7730_0, 8, 32;
+    %jmp T_0.10;
+T_0.9 ;
+    %load/v 8, v0x1633da0_0, 32;
+    %load/v 40, v0x1633e40_0, 32;
+    %and 8, 40, 32;
+    %set/v v0x15f7730_0, 8, 32;
+    %jmp T_0.10;
+T_0.10 ;
+T_0.0 ;
+    %jmp T_0;
+    .thread T_0, $push;
+# The file index is used to find the file name in the following table.
+:file_names 3;
+    "N/A";
+    "<interactive>";
+    "inst_execute.v";

@@ -1,0 +1,12 @@
+../hardware/testbench/test_top.v
+
+
+../hardware/define/opcode_define.v
+../hardware/decode/decode_include.v
+../hardware/execute/execute_include.v
+../hardware/fetch/fetch_include.v
+../hardware/memacc/memacc_include.v
+../hardware/sram/sram_include.v
+../hardware/wrback/wrback_include.v
+../hardware/top/top_include.v
+

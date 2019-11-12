@@ -1,0 +1,70 @@
+# depslib dependency file v1.0
+1542205740 source:/home/jack/riscv/simulator/main.c
+	<stdio.h>
+	<stdlib.h>
+	"regfile.h"
+	"globalsig.h"
+	"memory.h"
+
+1543136182 source:/home/jack/riscv/simulator/ffout.c
+	"globalsig.h"
+	"regfile.h"
+	"memory.h"
+
+1543136501 /home/jack/riscv/simulator/globalsig.h
+
+1541603583 /home/jack/riscv/simulator/regfile.h
+
+1542122145 source:/home/jack/riscv/simulator/init_rom.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<strings.h>
+	"memory.h"
+	"opcode_define.h"
+
+1543136640 source:/home/jack/riscv/simulator/inst_decode.c
+	"globalsig.h"
+	"opcode_define.h"
+	"regfile.h"
+
+1543115707 /home/jack/riscv/simulator/opcode_define.h
+
+1543135135 source:/home/jack/riscv/simulator/inst_execute.c
+	"globalsig.h"
+	"opcode_define.h"
+	<math.h>
+
+1541816367 source:/home/jack/riscv/simulator/inst_fetch.c
+	"globalsig.h"
+	"regfile.h"
+	"memory.h"
+	"opcode_define.h"
+
+1541859469 /home/jack/riscv/simulator/memory.h
+
+1543135658 source:/home/jack/riscv/simulator/inst_memacc.c
+	"globalsig.h"
+	"memory.h"
+	"opcode_define.h"
+
+1542076205 source:/home/jack/riscv/simulator/inst_wb.c
+	"globalsig.h"
+	"regfile.h"
+	"opcode_define.h"
+	"memory.h"
+
+1541681096 source:/home/jack/riscv/simulator/watchpoint.c
+	<stdio.h>
+	"regfile.h"
+
+1542202301 source:/home/jack/riscv/simulator/read_regfile.c
+	"regfile.h"
+	"globalsig.h"
+
+1542117328 source:/home/jack/riscv/simulator/readram.c
+	"globalsig.h"
+	"regfile.h"
+	"opcode_define.h"
+	"memory.h"
+
