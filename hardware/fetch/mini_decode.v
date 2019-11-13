@@ -34,7 +34,8 @@ wire [12:1] bxx_imm = {rv32_instr[31],rv32_instr[7],rv32_instr[30:25],rv32_instr
 assign isjal = (opcode == `OPCODE_JAL); 
 assign isjalr = (opcode == `OPCODE_JALR); 
 assign isbxx = (opcode == `OPCODE_BRANCH); 
-assign ismret = (opcode == `OPCODE_SYSTEM) && (rv32_instr[31:25]==7'h18); 
+//assign ismret = (opcode == `OPCODE_SYSTEM) && (rv32_instr[31:25]==7'h18); 
+assign ismret = (opcode == 32'h30200073); 
 assign predict_bxxtaken = rv32_instr[31];
 assign jaloffset = {{11{jal_imm[20]}},jal_imm[20:1],1'b0};
 assign bxxoffset = {{19{bxx_imm[12]}},bxx_imm[12:1],1'b0};

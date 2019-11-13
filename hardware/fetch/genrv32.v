@@ -15,8 +15,9 @@ reg fetch_misalign_ff;
 wire [31:0] eff_instr = pc[2:1]==2'b00 ? instr[31:0]  :
                    pc[2:1]==2'b01 ? instr[47:16] :
                    pc[2:1]==2'b10 ? instr[63:32] :
-                   fetch_misalign_ff && (pc[2:1]==2'b11) ? {instr[15:0],pre_instr_h[15:0]} : 
-                   {instr[63:48],instr[63:48]};
+                   {instr[15:0],pre_instr_h[15:0]} ;   //fetch cross boundry
+//                   fetch_misalign_ff && (pc[2:1]==2'b11) ? {instr[15:0],pre_instr_h[15:0]} : 
+//                   {instr[63:48],instr[63:48]};
 
 assign isrv16 = eff_instr[1:0]!=2'b11;
 
