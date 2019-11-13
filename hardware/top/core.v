@@ -522,6 +522,8 @@ wire [31:0] mem2wb_pc_ffout;
 wire [11:0] mem2wb_wr_csrindex_ffout;
 wire [31:0] mem2wb_wr_csrwdata_ffout;
 
+wire [31:0] mem2wb_wr_csrwdata = ex2mem_wr_csrwdata_ffout;
+
 mem_wb mem_wb_u(
 .clk                     (clk                     ), 
 .cpurst                  (cpurst                  ),
@@ -630,9 +632,18 @@ csrfile csrfile_u(
 .wb2csrfile_int         (interrupt              ),
 .wb2csrfile_mret        (mem2wb_mret_ffout        ),
 .csr_r_index            (de2ex_csr_index        ),
+.ex2mem_wr_csrindex     (ex2mem_wr_csrindex     ), 
+.ex2mem_wr_csrindex_ffout(ex2mem_wr_csrindex_ffout), 
+.mem2wb_wr_csrindex_ffout(mem2wb_wr_csrindex_ffout),
 .wb2csrfile_wr_reg      (wb2csrfile_wr_reg      ),
+.ex2mem_wr_csrreg       (ex2mem_wr_csrreg       ), 
+.mem2wb_wr_csrreg       (mem2wb_wr_csrreg       ), 
+.mem2wb_wr_csrreg_ffout (mem2wb_wr_csrreg_ffout ),
 .wb2csrfile_wr_regindex (wb2csrfile_wr_regindex ),
 .wb2csrfile_wr_wdata    (wb2csrfile_wr_wdata    ),
+.ex2mem_wr_csrwdata     (ex2mem_wr_csrwdata     ), 
+.mem2wb_wr_csrwdata     (mem2wb_wr_csrwdata     ), 
+.mem2wb_wr_csrwdata_ffout(mem2wb_wr_csrwdata_ffout),
 .wb2csrfile_i_ms        (wb2csrfile_i_ms        ),
 .wb2csrfile_i_mt        (wb2csrfile_i_mt        ),
 .wb2csrfile_i_me        (wb2csrfile_i_me        ),

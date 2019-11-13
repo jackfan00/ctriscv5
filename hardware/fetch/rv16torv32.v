@@ -48,7 +48,7 @@ wire CBEQZ = (rv16[1:0]==2'b1) && (rv16[15:13]==3'b110) ;
 wire CBNEZ = (rv16[1:0]==2'b1) && (rv16[15:13]==3'b111) ;
 
 wire [31:0] c1_instr = ({32{CNOP}} & 32'h13) |
-                  ({32{CADDI}} & {6'b0,c1_nzimm[5:0],c1_rs1,3'b0,c1_rd,7'h13}) |  // addi rd, rd, nzimm[5:0]
+                  ({32{CADDI}} & {{6{c1_nzimm[5]}},c1_nzimm[5:0],c1_rs1,3'b0,c1_rd,7'h13}) |  // addi rd, rd, nzimm[5:0]
                   ({32{CJAL}} & {c1_jalimm[11],c1_jalimm[10:1],c1_jalimm[11],8'b0,5'h1,7'h6f}) |  //JAL x1, offset[11:1]
                   ({32{CLI}} & {{6{c1_imm[5]}},c1_imm[5:0],5'h0,3'b0,c1_rd,7'h13}) |   //addi rd, x0, imm[5:0]
                   ({32{CADDI16SP}} & {2'b0,c1_addi16sp_nzimm[9:4],4'b0,5'h2,3'b0,5'h2,7'h13}) |  //addi x2, x2, nzimm[9:4]

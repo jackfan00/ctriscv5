@@ -27,7 +27,8 @@ begin
     pre_instr_h <= instr[63:48];
 end
 
-assign fetch_misalign = jb_ff & (~isrv16) & (pc[2:1]==2'b11);
+//assign fetch_misalign = jb_ff & (~isrv16) & (pc[2:1]==2'b11);
+assign fetch_misalign = jb_ff &  (pc[2:1]==2'b11);
 
 always @(posedge clk)
 begin

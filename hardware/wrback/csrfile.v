@@ -16,9 +16,9 @@ wb2csrfile_exp         ,
 wb2csrfile_int         ,
 wb2csrfile_mret        ,
 wb2csrfile_wr_reg      ,
-wb2csrfile_wr_regindex ,
-csr_r_index   ,
-wb2csrfile_wr_wdata    ,
+wb2csrfile_wr_regindex , ex2mem_wr_csrreg, mem2wb_wr_csrreg, mem2wb_wr_csrreg_ffout,
+csr_r_index   , ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, mem2wb_wr_csrindex_ffout,
+wb2csrfile_wr_wdata    , ex2mem_wr_csrwdata, mem2wb_wr_csrwdata, mem2wb_wr_csrwdata_ffout,
 wb2csrfile_i_ms        ,
 wb2csrfile_i_mt        ,
 wb2csrfile_i_me        ,
@@ -46,10 +46,10 @@ input clk, cpurst      ;
 input wb2csrfile_exp   ;
 input wb2csrfile_int   ;
 input wb2csrfile_mret  ;
-input wb2csrfile_wr_reg;
+input wb2csrfile_wr_reg, ex2mem_wr_csrreg, mem2wb_wr_csrreg, mem2wb_wr_csrreg_ffout;
 input [11:0] wb2csrfile_wr_regindex;
-input [11:0] csr_r_index;
-input [31:0] wb2csrfile_wr_wdata   ;
+input [11:0] csr_r_index, ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, mem2wb_wr_csrindex_ffout;
+input [31:0] wb2csrfile_wr_wdata, ex2mem_wr_csrwdata, mem2wb_wr_csrwdata, mem2wb_wr_csrwdata_ffout ;
 input wb2csrfile_i_ms  ;
 input wb2csrfile_i_mt  ;
 input wb2csrfile_i_me  ;
@@ -213,31 +213,43 @@ reg [31:0] csr_rdat;
 always @*
 begin
   csr_rdat =0;
-  case(csr_r_index[11:0])
-    12'h300:
-      csr_rdat = mstatus[31:0];
-    12'h304:
-      csr_rdat = mie[31:0];
-    12'h305:
-      csr_rdat = mtvec[31:0];
-    12'h341:
-      csr_rdat = mepc[31:0];
-    12'h342:
-      csr_rdat = mcause[31:0];
-    12'h343:
-      csr_rdat = mtval[31:0];
-    12'h344:
-      csr_rdat = mip[31:0];
-/**
-    12'hb00:
-      csr_rdat = mcycle[31:0];
-    12'hb80:
-      csr_rdat = mcycleh[31:0];
-    12'hb02:
-      csr_rdat = minstret[31:0];
-    12'hb82:
-      csr_rdat = minstreth[31:0];      
-*/
-  endcase
+  /**< priority is important, otherwise function error in case (repeat r15 = r15 - r1) */
+  if (ex2mem_wr_csrindex == csr_r_index && ex2mem_wr_csrreg )  /**< ex/de data dependence , 1st priority*/
+      csr_rdat = ex2mem_wr_csrwdata;
+  
+  else if (ex2mem_wr_csrindex_ffout == csr_r_index && mem2wb_wr_csrreg)  /**< mem/de data dependence, 2nd priority */
+      csr_rdat = mem2wb_wr_csrwdata;
+  
+  else if (mem2wb_wr_csrindex_ffout == csr_r_index && mem2wb_wr_csrreg_ffout)  /**< wb/de data dependence, 3rd priority */
+      csr_rdat = mem2wb_wr_csrwdata_ffout;
+  else    
+    begin
+      case(csr_r_index[11:0])
+        12'h300:
+          csr_rdat = mstatus[31:0];
+        12'h304:
+          csr_rdat = mie[31:0];
+        12'h305:
+          csr_rdat = mtvec[31:0];
+        12'h341:
+          csr_rdat = mepc[31:0];
+        12'h342:
+          csr_rdat = mcause[31:0];
+        12'h343:
+          csr_rdat = mtval[31:0];
+        12'h344:
+          csr_rdat = mip[31:0];
+    /**
+        12'hb00:
+          csr_rdat = mcycle[31:0];
+        12'hb80:
+          csr_rdat = mcycleh[31:0];
+        12'hb02:
+          csr_rdat = minstret[31:0];
+        12'hb82:
+          csr_rdat = minstreth[31:0];      
+    */
+      endcase
+    end
 end
 endmodule

@@ -56,7 +56,7 @@ initial begin
   clk=1'b0;
 #100;
   cpurst=1'b0;
-#10000;
+#1000000;
   $finish;
 end
 
@@ -68,6 +68,6 @@ top top_u(
 .clk      (clk      ), 
 .cpurst   (cpurst   ), 
 .interrupt(interrupt),
-.boot_addr(32'b0)
+.boot_addr(32'h0000_0000)
 );
 endmodule
