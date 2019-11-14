@@ -125,7 +125,8 @@ reg ex2mem_e_bk_ffout;
 always @(posedge clk)
 begin
    if (cpurst ||
-          (mult_stall || (exe_store_load_conflict & mem_stall==0) ) || (mem2wb_exp_ffout || interrupt) ) /**< insert dummy NOP command to flush pipeline */
+          (mult_stall || (exe_store_load_conflict & mem_stall==0) ) || 
+           (mem2wb_exp_ffout || interrupt) ) /**< insert dummy NOP command to flush pipeline */
 //////////////////          (mult_stall && mem_stall==0 && readram_stall==0 && exe_store_load_conflict==0) || (mem2wb_exp_ffout || interrupt) ) /**< insert dummy NOP command to flush pipeline */
      begin
        //ex2mem_pc_ffout = ex2mem_pc;
@@ -153,7 +154,7 @@ begin
        ex2mem_e_bk_ffout   <= 0;
      end
 /////////////   else  if ( mem_stall==0 && readram_stall==0 && exe_store_load_conflict==0 )
-   else  if ( mem_stall==0 && readram_stall==0  )
+   else  if ( mem_stall==0 && readram_stall==0 )
      begin
        //ex2mem_pc_ffout = ex2mem_pc;
        ex2mem_wr_reg_ffout <= ex2mem_wr_reg;

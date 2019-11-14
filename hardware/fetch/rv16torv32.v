@@ -52,7 +52,7 @@ wire [31:0] c1_instr = ({32{CNOP}} & 32'h13) |
                   ({32{CJAL}} & {c1_jalimm[11],c1_jalimm[10:1],c1_jalimm[11],{8{c1_jalimm[11]}},5'h1,7'h6f}) |  //JAL x1, offset[11:1]
                   ({32{CLI}} & {{6{c1_imm[5]}},c1_imm[5:0],5'h0,3'b0,c1_rd,7'h13}) |   //addi rd, x0, imm[5:0]
                   ({32{CADDI16SP}} & {2'b0,c1_addi16sp_nzimm[9:4],4'b0,5'h2,3'b0,5'h2,7'h13}) |  //addi x2, x2, nzimm[9:4]
-                  ({32{CLUI}} & {14'b0,c1_lui_nzuimm[17:12],c1_rd,7'h37}) |  //lui rd,  nzuimm[17:12]
+                  ({32{CLUI}} & {{14{c1_lui_nzuimm[17]}},c1_lui_nzuimm[17:12],c1_rd,7'h37}) |  //lui rd,  nzuimm[17:12]
                   ({32{CSRLI}} & {7'h00,c1_shamt[5:0],2'b1,c1_rdprime,3'b101,2'b1,c1_rdprime,7'h13}) |  //srli rd', rd',  shamt[5:0]
                   ({32{CSRAI}} & {7'h20,c1_shamt[5:0],2'b1,c1_rdprime,3'b101,2'b1,c1_rdprime,7'h13}) |  //srai rd', rd',  shamt[5:0]
                   ({32{CANDI}} & {{6{c1_imm[5]}},c1_imm[5:0],2'b1,c1_rdprime,3'b111,2'b1,c1_rdprime,7'h13}) |  //andi rd', rd',  imm[5:0]

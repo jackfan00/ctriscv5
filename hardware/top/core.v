@@ -98,11 +98,13 @@ fetch fetch_u(
 .fetch_rs3n          (rs3_addr),
 .predict_bxxtaken    (predict_bxxtaken),
 .fe2de_rv16          (fe2de_rv16),
-.fet_flush           (fet_flush)
+.fet_flush           (fet_flush),
+.cross_bd_ff         (cross_bd_ff)
 
 );
 
 //
+wire de_store_load_conflict;
 wire [31:0] fe2de_pc_ffout, fe2de_ir_ffout;
 ft_de ft_de_u(
 .clk                          (clk), 
@@ -122,6 +124,9 @@ ft_de ft_de_u(
 .mem2wb_exp_ffout             (mem2wb_exp_ffout             ),
 .interrupt                    (interrupt                    ),
 .branch_predict_err           (branch_predict_err),
+.cross_bd_ff                  (cross_bd_ff               ),
+.de_store_load_conflict       (de_store_load_conflict),
+
 // output port                
 .fe2de_pc_ffout               (fe2de_pc_ffout), 
 .fe2de_instr_ffout            (fe2de_ir_ffout),
@@ -147,8 +152,11 @@ wire [31:0] de2ex_pc;
 wire [4:0] rs1_addr, rs2_addr;
 wire [2:0] de2ex_mem_op;
 wire [31:0] csr_rdat;
+wire de2ex_mem_en_ffout ;
 
 inst_decode inst_decode_u(
+.de2ex_store_ffout            (de2ex_store_ffout            ), 
+.de2ex_mem_en_ffout           (de2ex_mem_en_ffout           ),
 .fe2de_pc_ffout               (fe2de_pc_ffout),
 .fe2de_ir_ffout               (fe2de_ir_ffout),
 .fe2de_predict_bxxtaken_ffout (fe2de_predict_bxxtaken_ffout),
@@ -189,7 +197,8 @@ inst_decode inst_decode_u(
 .de2ex_csr_index              (de2ex_csr_index              ),
 .de2ex_wr_csrwdata            (de2ex_wr_csrwdata),
 .de2ex_e_ecfm            (de2ex_e_ecfm      ), 
-.de2ex_e_bk              (de2ex_e_bk        )
+.de2ex_e_bk              (de2ex_e_bk        ),
+.de_store_load_conflict  (de_store_load_conflict)
 
 );
 
@@ -198,7 +207,6 @@ wire [31:0] de2ex_pc_ffout;
 wire de2ex_wr_mem_ffout ;
 wire [2:0] de2ex_mem_op_ffout ;
 //wire [31:0] de2ex_wr_memwdata_ffout ;
-wire de2ex_mem_en_ffout ;
 //wire de2ex_load_ffout ;
 wire de2ex_rd_csrreg_ffout ;
 wire de2ex_wr_csrreg_ffout ;

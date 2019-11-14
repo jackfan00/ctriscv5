@@ -1,6 +1,9 @@
 module test_top;
 `define ITCM top_u.isram_u
 `define ITCM_SIZE 16384
+`define PC_WRITE_TOHOST       32'h00000086
+
+
 reg[8*300:1] testcase;
 initial begin
   $display("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");  
@@ -59,10 +62,89 @@ initial begin
 #1000000;
   $finish;
 end
+//
+//
+reg [31:0] valid_ir_cycle;
+reg [31:0] cycle_count;
+always @(posedge clk)
+begin 
+  if(cpurst) begin
+      cycle_count <= 32'b0;
+  end
+  else begin
+      cycle_count <= cycle_count + 1'b1;
+  end
+end
+wire de2ex_inst_valid = top_u.core_u.de2ex_inst_valid;
+always @(posedge clk)
+begin 
+  if(cpurst) begin
+      valid_ir_cycle <= 32'b0;
+  end
+  else if (de2ex_inst_valid) 
+   begin
+      valid_ir_cycle <= valid_ir_cycle + 1'b1;
+  end
+end
+
+
+wire [31:0] fe2de_pc_ffout = top_u.core_u.fe2de_pc_ffout;
+reg [31:0] pc_write_to_host_cnt;
+always @(posedge clk)
+  begin
+    if (cpurst)
+      pc_write_to_host_cnt <=0;
+    else if ((fe2de_pc_ffout == `PC_WRITE_TOHOST) & de2ex_inst_valid)
+      pc_write_to_host_cnt <= pc_write_to_host_cnt+1'b1;
+  end
+
+wire [31:0] x3 = top_u.core_u.regfile_u.regfile_xx[3];
+initial begin
+#10000;
+@(pc_write_to_host_cnt == 32'd8);
+//
+        $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~~~~~ Test Result Summary ~~~~~~~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        $display("~TESTCASE: %s ~~~~~~~~~~~~~", testcase);
+        $display("~~~~~~~~~~~~~~Total cycle_count value: %d ~~~~~~~~~~~~~", cycle_count);
+        $display("~~~~~~~~~~The valid Instruction Count: %d ~~~~~~~~~~~~~", valid_ir_cycle);
+//        $display("~~~~~The test ending reached at cycle: %d ~~~~~~~~~~~~~", pc_write_to_host_cycle);
+        $display("~~~~~~~~~~~~~~~The final x3 Reg value: %d ~~~~~~~~~~~~~", x3);
+        $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    if (x3 == 1) begin
+        $display("~~~~~~~~~~~~~~~~ TEST_PASS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~ #####     ##     ####    #### ~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~ #    #   #  #   #       #     ~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~ #    #  #    #   ####    #### ~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~ #####   ######       #       #~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~ #       #    #  #    #  #    #~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~ #       #    #   ####    #### ~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    end
+    else begin
+        $display("~~~~~~~~~~~~~~~~ TEST_FAIL ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~~######    ##       #    #     ~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~~#        #  #      #    #     ~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~~#####   #    #     #    #     ~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~~#       ######     #    #     ~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~~#       #    #     #    #     ~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~~#       #    #     #    ######~~~~~~~~~~~~~~~~");
+        $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+    end
+    #10
+     $finish;
+end
 
 always #10 clk = ~clk;
 
 wire interrupt = 1'b0;
+
+
 
 top top_u(
 .clk      (clk      ), 

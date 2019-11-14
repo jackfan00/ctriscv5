@@ -21,7 +21,8 @@ fet_is_x1, fet_is_xn,
 fetch_rs3n,
 predict_bxxtaken,
 fe2de_rv16,
-fet_flush
+fet_flush,
+cross_bd_ff
 );
 input clk,cpurst;
 input fet_stall;
@@ -51,6 +52,7 @@ output [4:0] fetch_rs3n;
 output predict_bxxtaken;
 output fe2de_rv16;
 output fet_flush;
+output cross_bd_ff;
 
 wire isrv16;
 assign fe2de_rv16 = isrv16;
@@ -108,7 +110,9 @@ genpc genpc_u(
 .isram_cs_ff(sram_cs_ff),
 .fetch_rs3n(fetch_rs3n),
 .predict_bxxtaken(predict_bxxtaken),
-.fet_flush(fet_flush)
+.fet_flush(fet_flush),
+.holdpc(holdpc),
+.cross_bd_ff(cross_bd_ff)
 );
 
 genrv32 genrv32_u( 
@@ -118,6 +122,7 @@ genrv32 genrv32_u(
 .sram_cs_ff(sram_cs_ff), 
 .pc(fetch_pc), 
 .instr(instr_fromsram), 
+.fet_stall(fet_stall),
 // output port
 .rv32_instr(rv32_instr_todec), 
 .isrv16(isrv16),

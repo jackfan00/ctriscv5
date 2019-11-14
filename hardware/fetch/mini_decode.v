@@ -8,7 +8,7 @@ isjal, isjalr, isbxx, predict_bxxtaken,
 jaloffset, jalroffset, bxxoffset, 
 fet_is_x1, fet_is_xn,
 jalr_dep,
-fetch_rs3n, ismret,
+fetch_rs3n, ismret, isecall,
 jalr_xn,
 if_csr_r_index
 );
@@ -25,7 +25,7 @@ output [31:0] jaloffset,jalroffset,bxxoffset;
 output fet_is_x1, fet_is_xn;
 output jalr_dep;
 output [4:0] fetch_rs3n;
-output ismret;
+output ismret, isecall;
 output [31:0] jalr_xn;
 output [11:0] if_csr_r_index;
 
@@ -38,7 +38,8 @@ assign isjal = (opcode == `OPCODE_JAL);
 assign isjalr = (opcode == `OPCODE_JALR); 
 assign isbxx = (opcode == `OPCODE_BRANCH); 
 //assign ismret = (opcode == `OPCODE_SYSTEM) && (rv32_instr[31:25]==7'h18); 
-assign ismret = (rv32_instr[31:0] == 32'h30200073); 
+assign ismret = (rv32_instr[31:0]  == 32'h30200073); 
+assign isecall = (rv32_instr[31:0] == 32'h00000073); 
 assign predict_bxxtaken = rv32_instr[31];
 assign jaloffset = {{11{jal_imm[20]}},jal_imm[20:1],1'b0};
 assign bxxoffset = {{19{bxx_imm[12]}},bxx_imm[12:1],1'b0};

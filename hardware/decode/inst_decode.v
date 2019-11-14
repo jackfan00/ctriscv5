@@ -3,6 +3,7 @@
 //#include "regfile.h"
 
 module inst_decode(
+de2ex_store_ffout, de2ex_mem_en_ffout,
 fe2de_pc_ffout,
 fe2de_ir_ffout,
 fe2de_predict_bxxtaken_ffout,
@@ -37,9 +38,10 @@ de2ex_rd_is_x1, de2ex_rd_is_xn,
 de2ex_exp, de2ex_mret,
 de2ex_csr_index,
 de2ex_wr_csrwdata,
-de2ex_e_ecfm, de2ex_e_bk
+de2ex_e_ecfm, de2ex_e_bk,
+de_store_load_conflict
 );
-
+input de2ex_store_ffout, de2ex_mem_en_ffout;
 input [31:0] fe2de_pc_ffout,fe2de_ir_ffout;
 input fe2de_predict_bxxtaken_ffout;
 input fe2de_rv16_ffout;
@@ -76,6 +78,7 @@ output de2ex_exp, de2ex_mret;
 output [11:0] de2ex_csr_index;
 output [31:0] de2ex_wr_csrwdata;
 output de2ex_e_ecfm, de2ex_e_bk;
+output de_store_load_conflict;
 //
     wire [6:0] opcode = fe2de_ir_ffout[6:0] ;
     wire [2:0] func3 = fe2de_ir_ffout[14:12] ;
@@ -280,13 +283,20 @@ begin
                 de2fe_branch_offset =  Bimm;
             end
         `BRANCH_BLT:
-            if (rs1v<rs2v)
+            //if (rs1v<rs2v)
+            if ( (rs1v[31]&(!rs2v[31])) | 
+                 (rs1v[30:0]<rs2v[30:0] && rs1v[31]==1'b0 && rs2v[31]==1'b0) |
+                 (rs1v[30:0]<rs2v[30:0] && rs1v[31]==1'b1 && rs2v[31]==1'b1)                  
+               )
             begin
                 de2fe_branch =1;
                 de2fe_branch_offset =  Bimm;
             end
         `BRANCH_BGE:
-            if (rs1v>=rs2v)
+            if ( (!rs1v[31]&rs2v[31]) | 
+                 (rs1v[30:0]>rs2v[30:0] && rs1v[31]==1'b0 && rs2v[31]==1'b0) |
+                 (rs1v[30:0]>rs2v[30:0] && rs1v[31]==1'b1 && rs2v[31]==1'b1)                  
+               )
             begin
                 de2fe_branch =1;
                 de2fe_branch_offset =  Bimm;
@@ -487,5 +497,6 @@ begin
   endcase
 end
 //
+assign de_store_load_conflict = de2ex_load & de2ex_mem_en & de2ex_store_ffout & de2ex_mem_en_ffout;
 
 endmodule

@@ -1,4 +1,6 @@
-module genrv32( clk, jalr_dep, jb_ff, sram_cs_ff, pc, instr, rv32_instr, isrv16,
+module genrv32( clk, jalr_dep, jb_ff, sram_cs_ff, pc, instr, fet_stall,
+
+rv32_instr, isrv16,
 fetch_misalign
 );
 
@@ -6,6 +8,8 @@ input clk, jalr_dep;
 input jb_ff, sram_cs_ff;
 input [31:0] pc;
 input [63:0] instr;
+input fet_stall;
+
 output [31:0] rv32_instr;
 output isrv16;
 output fetch_misalign;
@@ -23,12 +27,12 @@ assign isrv16 = eff_instr[1:0]!=2'b11;
 
 always @(posedge clk)
 begin
-  if (sram_cs_ff)
+//  if (sram_cs_ff & (!fet_stall) )
     pre_instr_h <= instr[63:48];
 end
 
 //assign fetch_misalign = jb_ff & (~isrv16) & (pc[2:1]==2'b11);
-assign fetch_misalign = jb_ff &  (pc[2:1]==2'b11);
+assign fetch_misalign = 0; //jb_ff &  (pc[2:1]==2'b11);
 
 always @(posedge clk)
 begin
