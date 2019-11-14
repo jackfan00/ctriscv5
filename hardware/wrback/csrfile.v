@@ -187,7 +187,8 @@ begin
     end
   else if (wb2csrfile_exp)
     begin
-      mtval <= (wb2csrfile_e_ii | wb2csrfile_e_bk | wb2csrfile_e_ecfm) ? mem2wb_instr_ffout : mem2wb_pc_ffout;
+     // mtval <= (wb2csrfile_e_ii | wb2csrfile_e_bk | wb2csrfile_e_ecfm) ? mem2wb_instr_ffout : mem2wb_pc_ffout;
+      mtval <= (wb2csrfile_e_ii ) ? mem2wb_instr_ffout : mem2wb_pc_ffout;
     end
 end
 //

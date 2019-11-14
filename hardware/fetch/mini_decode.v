@@ -9,7 +9,8 @@ jaloffset, jalroffset, bxxoffset,
 fet_is_x1, fet_is_xn,
 jalr_dep,
 fetch_rs3n, ismret,
-jalr_xn
+jalr_xn,
+if_csr_r_index
 );
 
 input [31:0] rv32_instr, r_x1, rs3v;
@@ -26,16 +27,18 @@ output jalr_dep;
 output [4:0] fetch_rs3n;
 output ismret;
 output [31:0] jalr_xn;
+output [11:0] if_csr_r_index;
 
 wire [6:0] opcode = rv32_instr[6:0];
 wire [20:1] jal_imm = {rv32_instr[31],rv32_instr[19:12],rv32_instr[20],rv32_instr[30:21]};
 wire [11:0] jalr_imm = rv32_instr[31:20];
+assign if_csr_r_index = rv32_instr[31:20];
 wire [12:1] bxx_imm = {rv32_instr[31],rv32_instr[7],rv32_instr[30:25],rv32_instr[11:8]};
 assign isjal = (opcode == `OPCODE_JAL); 
 assign isjalr = (opcode == `OPCODE_JALR); 
 assign isbxx = (opcode == `OPCODE_BRANCH); 
 //assign ismret = (opcode == `OPCODE_SYSTEM) && (rv32_instr[31:25]==7'h18); 
-assign ismret = (opcode == 32'h30200073); 
+assign ismret = (rv32_instr[31:0] == 32'h30200073); 
 assign predict_bxxtaken = rv32_instr[31];
 assign jaloffset = {{11{jal_imm[20]}},jal_imm[20:1],1'b0};
 assign bxxoffset = {{19{bxx_imm[12]}},bxx_imm[12:1],1'b0};

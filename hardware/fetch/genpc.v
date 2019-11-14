@@ -14,6 +14,9 @@ wb2csrfile_exp_ffout,
 mtvec,
 mepc,
 mcause,
+de2ex_wr_csrreg, ex2mem_wr_csrreg, mem2wb_wr_csrreg, mem2wb_wr_csrreg_ffout,
+de2ex_wr_csrindex, ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, mem2wb_wr_csrindex_ffout,
+de2ex_wr_csrwdata, ex2mem_wr_csrwdata, mem2wb_wr_csrwdata, mem2wb_wr_csrwdata_ffout,
 
 isram_adr, 
 pc, 
@@ -44,6 +47,9 @@ input wb2csrfile_exp_ffout;
 input [31:0] mtvec;
 input [31:0] mepc;
 input [4:0] mcause;
+input de2ex_wr_csrreg, ex2mem_wr_csrreg, mem2wb_wr_csrreg, mem2wb_wr_csrreg_ffout;
+input [11:0] de2ex_wr_csrindex, ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, mem2wb_wr_csrindex_ffout;
+input [31:0] de2ex_wr_csrwdata, ex2mem_wr_csrwdata, mem2wb_wr_csrwdata, mem2wb_wr_csrwdata_ffout;
 
 output [31:3] isram_adr;
 output [31:0] pc;
@@ -57,6 +63,7 @@ output predict_bxxtaken;
 output fet_flush;
 
 wire [31:0] jaloffset, jalroffset, bxxoffset, jalr_xn;
+wire [11:0] if_csr_r_index;
 mini_decode mini_decode_u (
    .rv32_instr(rv32_instr), 
    .r_x1(r_x1), 
@@ -86,7 +93,8 @@ mini_decode mini_decode_u (
    .jalr_dep(jalr_dep),
    .fetch_rs3n(fetch_rs3n),
    .ismret(ismret),
-   .jalr_xn(jalr_xn)
+   .jalr_xn(jalr_xn),
+   .if_csr_r_index(if_csr_r_index)
 );
 
 reg [31:0] nxtpcoffset;
@@ -113,11 +121,13 @@ begin
 end
 
 //32 bits adder
+reg [31:0] bypass_mepc;
 wire [31:0] pcop1 = isjalr ? jalr_xn : pc;
 wire [31:0] nxtpc = 
        wb2csrfile_int_ffout ? {mtvec[31:2],2'b0} + {mcause[4:0],2'b0} :
        wb2csrfile_exp_ffout ? {mtvec[31:2],2'b0} :
-       ismret ? mepc :
+       //ismret ? mepc :
+       ismret ? bypass_mepc :
        branch_predict_err ? de2fe_branch_target :
        
        fet_stall | fetch_misalign | jalr_dep ? pc : pcop1 + nxtpcoffset;
@@ -151,4 +161,23 @@ begin
     isram_cs_ff <= isram_cs;
 end
 
+//
+// data dependence mepc ctrl
+wire [11:0] mepc_index = 12'h341;
+always @*
+  begin
+    if (de2ex_wr_csrindex == mepc_index && de2ex_wr_csrreg )  /**< ex/de data dependence , 1st priority*/
+        bypass_mepc = de2ex_wr_csrwdata;
+
+    else if (ex2mem_wr_csrindex == mepc_index && ex2mem_wr_csrreg )  /**< ex/de data dependence , 1st priority*/
+        bypass_mepc = ex2mem_wr_csrwdata;
+    
+    else if (ex2mem_wr_csrindex_ffout == mepc_index && mem2wb_wr_csrreg)  /**< mem/de data dependence, 2nd priority */
+        bypass_mepc = mem2wb_wr_csrwdata;
+    
+    else if (mem2wb_wr_csrindex_ffout == mepc_index && mem2wb_wr_csrreg_ffout)  /**< wb/de data dependence, 3rd priority */
+        bypass_mepc = mem2wb_wr_csrwdata_ffout;
+    else    
+        bypass_mepc = mepc;
+  end
 endmodule

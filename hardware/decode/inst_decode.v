@@ -35,7 +35,9 @@ de_stall,
 rs1_addr, rs2_addr,
 de2ex_rd_is_x1, de2ex_rd_is_xn,
 de2ex_exp, de2ex_mret,
-de2ex_csr_index
+de2ex_csr_index,
+de2ex_wr_csrwdata,
+de2ex_e_ecfm, de2ex_e_bk
 );
 
 input [31:0] fe2de_pc_ffout,fe2de_ir_ffout;
@@ -72,6 +74,8 @@ output [4:0] rs1_addr, rs2_addr;
 output de2ex_rd_is_x1, de2ex_rd_is_xn;
 output de2ex_exp, de2ex_mret;
 output [11:0] de2ex_csr_index;
+output [31:0] de2ex_wr_csrwdata;
+output de2ex_e_ecfm, de2ex_e_bk;
 //
     wire [6:0] opcode = fe2de_ir_ffout[6:0] ;
     wire [2:0] func3 = fe2de_ir_ffout[14:12] ;
@@ -119,12 +123,14 @@ reg [6:0] de2ex_aluop_sub ;
 reg de2ex_wr_reg ;
 reg [4:0] de2ex_wr_regindex ;
 reg de2ex_inst_valid ;
-
+reg de2ex_e_ecfm, de2ex_e_bk;
 reg [2:0] de2ex_csrop;
 reg de2ex_exp, de2ex_mret;
     //
 always @*
 begin
+    de2ex_e_ecfm =0;
+    de2ex_e_bk =0;
     de_r_rs1 =0;
     de_r_rs2 =0;
 //
@@ -306,6 +312,10 @@ begin
         de2ex_wr_regindex =rd;
         de2ex_inst_valid =1;
         //
+        //mcause
+        de2ex_e_ecfm = (fe2de_ir_ffout[31:7]==25'b0);
+        de2ex_e_bk = (fe2de_ir_ffout[31:7]==25'b1);
+        //
         case(func3)
         
         //`SYSTEM_ECALL, `SYSTEM_MRET
@@ -462,4 +472,20 @@ end
 
 assign de2ex_rd_is_x1 = (de2ex_wr_regindex==5'h1);
 assign de2ex_rd_is_xn = (de2ex_wr_regindex!=5'h0) & (!de2ex_rd_is_x1);
+//
+reg [31:0] de2ex_wr_csrwdata;
+always @*
+begin
+  de2ex_wr_csrwdata =0;
+  case(de2ex_csrop)
+    `CSR_WR:
+       de2ex_wr_csrwdata = de2ex_rd_oprand1;
+    `CSR_SET:
+       de2ex_wr_csrwdata = de2ex_rd_oprand1 | de2ex_rd_oprand2;
+    `CSR_CLR:
+       de2ex_wr_csrwdata = (~de2ex_rd_oprand1) & de2ex_rd_oprand2;
+  endcase
+end
+//
+
 endmodule

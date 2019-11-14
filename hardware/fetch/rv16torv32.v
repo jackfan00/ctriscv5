@@ -49,7 +49,7 @@ wire CBNEZ = (rv16[1:0]==2'b1) && (rv16[15:13]==3'b111) ;
 
 wire [31:0] c1_instr = ({32{CNOP}} & 32'h13) |
                   ({32{CADDI}} & {{6{c1_nzimm[5]}},c1_nzimm[5:0],c1_rs1,3'b0,c1_rd,7'h13}) |  // addi rd, rd, nzimm[5:0]
-                  ({32{CJAL}} & {c1_jalimm[11],c1_jalimm[10:1],c1_jalimm[11],8'b0,5'h1,7'h6f}) |  //JAL x1, offset[11:1]
+                  ({32{CJAL}} & {c1_jalimm[11],c1_jalimm[10:1],c1_jalimm[11],{8{c1_jalimm[11]}},5'h1,7'h6f}) |  //JAL x1, offset[11:1]
                   ({32{CLI}} & {{6{c1_imm[5]}},c1_imm[5:0],5'h0,3'b0,c1_rd,7'h13}) |   //addi rd, x0, imm[5:0]
                   ({32{CADDI16SP}} & {2'b0,c1_addi16sp_nzimm[9:4],4'b0,5'h2,3'b0,5'h2,7'h13}) |  //addi x2, x2, nzimm[9:4]
                   ({32{CLUI}} & {14'b0,c1_lui_nzuimm[17:12],c1_rd,7'h37}) |  //lui rd,  nzuimm[17:12]
@@ -60,7 +60,7 @@ wire [31:0] c1_instr = ({32{CNOP}} & 32'h13) |
                   ({32{CXOR}} & {7'h00,2'b1,c1_rs2prime,2'b1,c1_rdprime,3'b100,2'b1,c1_rdprime,7'h33}) |  //xor rd', rd', rs2' 
                   ({32{COR}} & {7'h00,2'b1,c1_rs2prime,2'b1,c1_rdprime,3'b110,2'b1,c1_rdprime,7'h33}) |  //or rd', rd', rs2' 
                   ({32{CAND}} & {7'h00,2'b1,c1_rs2prime,2'b1,c1_rdprime,3'b111,2'b1,c1_rdprime,7'h33}) |  //and rd', rd', rs2' 
-                  ({32{CJ}} & {c1_jalimm[11],c1_jalimm[10:1],c1_jalimm[11],8'b0,5'h0,7'h6f}) |  //JAL x0, offset[11:1]
+                  ({32{CJ}} & {c1_jalimm[11],c1_jalimm[10:1],c1_jalimm[11],{8{c1_jalimm[11]}},5'h0,7'h6f}) |  //JAL x0, offset[11:1]
                   ({32{CBEQZ}} & {{3{c1_bxx_offset[8]}},c1_bxx_offset[8:5],5'b0,2'b1,c1_rs1prime,3'b0,c1_bxx_offset[4:1],c1_bxx_offset[8],7'h63}) |  //beq rs1', x0, offset[8:1] 
                   ({32{CBNEZ}} & {{3{c1_bxx_offset[8]}},c1_bxx_offset[8:5],5'b0,2'b1,c1_rs1prime,3'b001,c1_bxx_offset[4:1],c1_bxx_offset[8],7'h63}) ;  //bne rs1', x0, offset[8:1] 
 

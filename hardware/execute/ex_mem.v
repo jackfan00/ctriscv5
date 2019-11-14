@@ -22,6 +22,8 @@ ex2mem_wr_csrindex ,
 ex2mem_wr_csrwdata ,
 mem2wb_exp_ffout,
 ex2mem_mret,
+ex2mem_e_ecfm,
+ex2mem_e_bk,
 
 ex2mem_wr_reg_ffout,
 ex2mem_wr_regindex_ffout,
@@ -42,7 +44,10 @@ ex2mem_pc_ffout ,
 ex2mem_wr_csrreg_ffout   ,
 ex2mem_wr_csrindex_ffout ,
 ex2mem_wr_csrwdata_ffout ,
-ex2mem_mret_ffout
+ex2mem_mret_ffout,
+ex2mem_e_ecfm_ffout,
+ex2mem_e_bk_ffout
+
 
 
 );
@@ -69,6 +74,9 @@ input [11:0] ex2mem_wr_csrindex ;
 input [31:0] ex2mem_wr_csrwdata ;
 input mem2wb_exp_ffout;
 input ex2mem_mret;
+input ex2mem_e_ecfm;
+input ex2mem_e_bk;
+
 
 output ex2mem_wr_reg_ffout;
 output [4:0] ex2mem_wr_regindex_ffout;
@@ -89,6 +97,9 @@ output ex2mem_wr_csrreg_ffout   ;
 output [11:0] ex2mem_wr_csrindex_ffout ;
 output [31:0] ex2mem_wr_csrwdata_ffout ;
 output ex2mem_mret_ffout;
+output ex2mem_e_ecfm_ffout;
+output ex2mem_e_bk_ffout;
+
 
 reg ex2mem_wr_reg_ffout;
 reg [4:0] ex2mem_wr_regindex_ffout;
@@ -108,6 +119,8 @@ reg ex2mem_wr_csrreg_ffout   ;
 reg [11:0] ex2mem_wr_csrindex_ffout ;
 reg [31:0] ex2mem_wr_csrwdata_ffout ;
 reg ex2mem_mret_ffout;
+reg ex2mem_e_ecfm_ffout;
+reg ex2mem_e_bk_ffout;
 
 always @(posedge clk)
 begin
@@ -136,6 +149,8 @@ begin
        ex2mem_wr_csrindex_ffout <= 0;
        ex2mem_wr_csrwdata_ffout <= 0;
        ex2mem_mret_ffout <= 0;
+       ex2mem_e_ecfm_ffout <= 0;
+       ex2mem_e_bk_ffout   <= 0;
      end
 /////////////   else  if ( mem_stall==0 && readram_stall==0 && exe_store_load_conflict==0 )
    else  if ( mem_stall==0 && readram_stall==0  )
@@ -161,6 +176,8 @@ begin
        ex2mem_wr_csrindex_ffout <= ex2mem_wr_csrindex;
        ex2mem_wr_csrwdata_ffout <= ex2mem_wr_csrwdata;
        ex2mem_mret_ffout <= ex2mem_mret;
+       ex2mem_e_ecfm_ffout <= ex2mem_e_ecfm;
+       ex2mem_e_bk_ffout   <= ex2mem_e_bk;
      end
 end
 

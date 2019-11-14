@@ -36,6 +36,17 @@ wire [31:0] de2fe_branch_target;
 wire [31:0] mtvec, mepc;
 wire [31:0] mcause;
 wire mem2wb_exp_ffout;
+wire mem2wb_wr_csrreg;
+wire [11:0] ex2mem_wr_csrindex;
+wire [31:0] ex2mem_wr_csrwdata;
+wire [11:0] mem2wb_wr_csrindex_ffout;
+wire [31:0] mem2wb_wr_csrwdata_ffout;
+wire [11:0] de2ex_csr_index, de2ex_csr_index_ffout;
+wire [11:0] de2ex_wr_csrindex = de2ex_csr_index;
+wire [31:0] de2ex_wr_csrwdata;
+wire [11:0] ex2mem_wr_csrindex_ffout;
+wire [31:0] ex2mem_wr_csrwdata_ffout;
+wire [31:0] mem2wb_wr_csrwdata;
 
 fetch fetch_u( 
 .clk                 (clk),
@@ -64,6 +75,18 @@ fetch fetch_u(
 .mtvec               (mtvec                  ),
 .mepc                (mepc                   ),
 .mcause              (mcause[4:0]            ),
+.de2ex_wr_csrreg         (de2ex_wr_csrreg         ), 
+.ex2mem_wr_csrreg        (ex2mem_wr_csrreg        ), 
+.mem2wb_wr_csrreg        (mem2wb_wr_csrreg        ), 
+.mem2wb_wr_csrreg_ffout  (mem2wb_wr_csrreg_ffout  ),
+.de2ex_wr_csrindex       (de2ex_wr_csrindex       ), 
+.ex2mem_wr_csrindex      (ex2mem_wr_csrindex      ), 
+.ex2mem_wr_csrindex_ffout(ex2mem_wr_csrindex_ffout), 
+.mem2wb_wr_csrindex_ffout(mem2wb_wr_csrindex_ffout),
+.de2ex_wr_csrwdata       (de2ex_wr_csrwdata       ), 
+.ex2mem_wr_csrwdata      (ex2mem_wr_csrwdata      ), 
+.mem2wb_wr_csrwdata      (mem2wb_wr_csrwdata      ), 
+.mem2wb_wr_csrwdata_ffout(mem2wb_wr_csrwdata_ffout),
 
 // output port
 .isram_cs            (isram_cs), 
@@ -123,7 +146,6 @@ wire [2:0] de2ex_csrop;
 wire [31:0] de2ex_pc;
 wire [4:0] rs1_addr, rs2_addr;
 wire [2:0] de2ex_mem_op;
-wire [11:0] de2ex_csr_index, de2ex_csr_index_ffout;
 wire [31:0] csr_rdat;
 
 inst_decode inst_decode_u(
@@ -164,7 +186,11 @@ inst_decode inst_decode_u(
 .de2ex_rd_is_xn               (de2ex_rd_is_xn),
 .de2ex_exp                    (de2ex_exp                    ), 
 .de2ex_mret                   (de2ex_mret                   ),
-.de2ex_csr_index              (de2ex_csr_index              )
+.de2ex_csr_index              (de2ex_csr_index              ),
+.de2ex_wr_csrwdata            (de2ex_wr_csrwdata),
+.de2ex_e_ecfm            (de2ex_e_ecfm      ), 
+.de2ex_e_bk              (de2ex_e_bk        )
+
 );
 
 
@@ -223,6 +249,8 @@ de_ex de_ex_u(
 .de2ex_csr_index         (de2ex_csr_index         ),
 .de2ex_rs1addr           (rs1_addr           ), 
 .de2ex_rs2addr           (rs2_addr           ),
+.de2ex_e_ecfm            (de2ex_e_ecfm      ), 
+.de2ex_e_bk              (de2ex_e_bk        ),
 
 // output port
 .de2ex_pc_ffout          (de2ex_pc_ffout),
@@ -249,7 +277,9 @@ de_ex de_ex_u(
 .de2ex_mret_ffout        (de2ex_mret_ffout        ),
 .de2ex_csr_index_ffout   (de2ex_csr_index_ffout   ),
 .de2ex_rs1addr_ffout     (de2ex_rs1addr_ffout     ), 
-.de2ex_rs2addr_ffout     (de2ex_rs2addr_ffout     )
+.de2ex_rs2addr_ffout     (de2ex_rs2addr_ffout     ),
+.de2ex_e_ecfm_ffout      (de2ex_e_ecfm_ffout      ), 
+.de2ex_e_bk_ffout        (de2ex_e_bk_ffout        )
 
 );
 
@@ -274,8 +304,6 @@ wire ex2mem_load;
 //wire ex2mem_rd_is_x1, ex2mem_rd_is_xn;
 wire [2:0] mem2ex_mem_op;
 wire [31:0] mem2ex_memadr;
-wire [11:0] ex2mem_wr_csrindex;
-wire [31:0] ex2mem_wr_csrwdata;
 
 inst_execute inst_execute_u(
 .de2ex_wr_mem_ffout       (de2ex_wr_mem_ffout),
@@ -369,8 +397,6 @@ wire [31:0] ex2readram_addr_ffout;
 wire [2:0] ex2readram_opmode_ffout;
 //wire ex2mem_load_ffout;
 wire ex2mem_rd_is_x1_ffout, ex2mem_rd_is_xn_ffout;
-wire [11:0] ex2mem_wr_csrindex_ffout;
-wire [31:0] ex2mem_wr_csrwdata_ffout;
 wire [31:0] ex2mem_pc_ffout;
 
 ex_mem ex_mem_u(
@@ -403,6 +429,9 @@ ex_mem ex_mem_u(
 .ex2mem_wr_csrwdata      (ex2mem_wr_csrwdata       ),
 .mem2wb_exp_ffout        (mem2wb_exp_ffout         ),
 .ex2mem_mret             (de2ex_mret_ffout         ),
+.ex2mem_e_ecfm           (de2ex_e_ecfm_ffout      ), 
+.ex2mem_e_bk             (de2ex_e_bk_ffout        ),
+
 //output port 
 .ex2mem_wr_reg_ffout     (ex2mem_wr_reg_ffout     ),
 .ex2mem_wr_regindex_ffout(ex2mem_wr_regindex_ffout),
@@ -424,7 +453,9 @@ ex_mem ex_mem_u(
 .ex2mem_wr_csrreg_ffout  (ex2mem_wr_csrreg_ffout  ),
 .ex2mem_wr_csrindex_ffout(ex2mem_wr_csrindex_ffout),
 .ex2mem_wr_csrwdata_ffout(ex2mem_wr_csrwdata_ffout),
-.ex2mem_mret_ffout       (ex2mem_mret_ffout       )
+.ex2mem_mret_ffout       (ex2mem_mret_ffout       ),
+.ex2mem_e_ecfm_ffout     (ex2mem_e_ecfm_ffout      ), 
+.ex2mem_e_bk_ffout       (ex2mem_e_bk_ffout        )
 
 );
 
@@ -519,10 +550,8 @@ wire [31:0] mem2wb_wr_wdata_ffout;
 wire mem2wb_rd_is_x1_ffout;
 wire mem2wb_rd_is_xn_ffout;
 wire [31:0] mem2wb_pc_ffout;
-wire [11:0] mem2wb_wr_csrindex_ffout;
-wire [31:0] mem2wb_wr_csrwdata_ffout;
 
-wire [31:0] mem2wb_wr_csrwdata = ex2mem_wr_csrwdata_ffout;
+assign mem2wb_wr_csrwdata = ex2mem_wr_csrwdata_ffout;
 
 mem_wb mem_wb_u(
 .clk                     (clk                     ), 
@@ -542,6 +571,8 @@ mem_wb mem_wb_u(
 .mem2wb_wr_csrindex      (ex2mem_wr_csrindex_ffout),
 .mem2wb_wr_csrwdata      (ex2mem_wr_csrwdata_ffout),
 .mem2wb_mret             (ex2mem_mret_ffout       ),
+.mem2wb_e_ecfm     (ex2mem_e_ecfm_ffout      ), 
+.mem2wb_e_bk       (ex2mem_e_bk_ffout        ),
 
 //output port
 .mem2wb_rd_is_x1_ffout   (mem2wb_rd_is_x1_ffout   ),
@@ -554,7 +585,9 @@ mem_wb mem_wb_u(
 .mem2wb_wr_csrreg_ffout  (mem2wb_wr_csrreg_ffout  ),
 .mem2wb_wr_csrindex_ffout(mem2wb_wr_csrindex_ffout),
 .mem2wb_wr_csrwdata_ffout(mem2wb_wr_csrwdata_ffout),
-.mem2wb_mret_ffout       (mem2wb_mret_ffout       )
+.mem2wb_mret_ffout       (mem2wb_mret_ffout       ),
+.mem2wb_e_ecfm_ffout     (mem2wb_e_ecfm_ffout      ), 
+.mem2wb_e_bk_ffout       (mem2wb_e_bk_ffout        )
 
 );
 
@@ -609,6 +642,7 @@ regfile regfile_u(
 .mem2wb_wr_wdata         (mem2wb_wr_wdata         ), 
 .mem2wb_wr_wdata_ffout   (mem2wb_wr_wdata_ffout   ), 
 .wb2regfile_wr_wdata     (wb2regfile_wr_wdata     ),
+
 //output port
 .rs1v                    (rs1v                    ),
 .rs2v                    (rs2v                    ), 
@@ -623,6 +657,7 @@ wire [31:0] mie     ;
 //wire [31:0] mcause  ;
 wire [31:0] mtval   ;
 wire [31:0] mip     ;
+assign mem2wb_wr_csrreg = ex2mem_wr_csrreg_ffout;
 
 wire [31:0] mem2wb_instr_ffout;
 csrfile csrfile_u(
@@ -644,15 +679,15 @@ csrfile csrfile_u(
 .ex2mem_wr_csrwdata     (ex2mem_wr_csrwdata     ), 
 .mem2wb_wr_csrwdata     (mem2wb_wr_csrwdata     ), 
 .mem2wb_wr_csrwdata_ffout(mem2wb_wr_csrwdata_ffout),
-.wb2csrfile_i_ms        (wb2csrfile_i_ms        ),
-.wb2csrfile_i_mt        (wb2csrfile_i_mt        ),
-.wb2csrfile_i_me        (wb2csrfile_i_me        ),
-.wb2csrfile_e_iam       (wb2csrfile_e_iam       ),
-.wb2csrfile_e_ii        (wb2csrfile_e_ii        ),
-.wb2csrfile_e_bk        (wb2csrfile_e_bk        ),
-.wb2csrfile_e_lam       (wb2csrfile_e_lam       ),
-.wb2csrfile_e_ecfm      (wb2csrfile_e_ecfm      ),
-.mem2wb_instr_ffout     (mem2wb_instr_ffout     ),
+.wb2csrfile_i_ms         (1'b0),
+.wb2csrfile_i_mt         (1'b0),
+.wb2csrfile_i_me         (1'b0),
+.wb2csrfile_e_iam        (1'b0),
+.wb2csrfile_e_ii         (1'b0),
+.wb2csrfile_e_bk         (mem2wb_e_bk_ffout       ),
+.wb2csrfile_e_lam        (1'b0),
+.wb2csrfile_e_ecfm       (mem2wb_e_ecfm_ffout     ),
+.mem2wb_instr_ffout     (32'b0), //mem2wb_instr_ffout     ),
 .mem2wb_pc_ffout        (mem2wb_pc_ffout        ),
 .ex2mem_pc_ffout        (ex2mem_pc_ffout        ),
 //                        
