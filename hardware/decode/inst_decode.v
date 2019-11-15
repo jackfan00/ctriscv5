@@ -294,8 +294,8 @@ begin
             end
         `BRANCH_BGE:
             if ( (!rs1v[31]&rs2v[31]) | 
-                 (rs1v[30:0]>rs2v[30:0] && rs1v[31]==1'b0 && rs2v[31]==1'b0) |
-                 (rs1v[30:0]>rs2v[30:0] && rs1v[31]==1'b1 && rs2v[31]==1'b1)                  
+                 (rs1v[30:0]>=rs2v[30:0] && rs1v[31]==1'b0 && rs2v[31]==1'b0) |
+                 (rs1v[30:0]>=rs2v[30:0] && rs1v[31]==1'b1 && rs2v[31]==1'b1)                  
                )
             begin
                 de2fe_branch =1;

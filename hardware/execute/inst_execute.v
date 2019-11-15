@@ -129,8 +129,8 @@ always @*
     `ALU_SLTI:
         begin
           c1 = de2ex_rd_oprand1_ffout[31] & (!de2ex_rd_oprand2_ffout[31]) ;
-          c2 = de2ex_rd_oprand1_ffout[30:0] < de2ex_rd_oprand2_ffout[31:0];
-          c3 = (!de2ex_rd_oprand1_ffout[31]) & de2ex_rd_oprand2_ffout[31];
+          c2 = de2ex_rd_oprand1_ffout[30:0] < de2ex_rd_oprand2_ffout[30:0];
+          c3 = de2ex_rd_oprand1_ffout[31] ^ de2ex_rd_oprand2_ffout[31];
           alu_out = c1 || (c2 & (!c3));
         end
     //case ALU_SLTU:

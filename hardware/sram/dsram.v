@@ -8,12 +8,22 @@ input [BW*8-1:0] din;
 output [BW*8-1:0] dout;
 
 //
-
 reg [7:0] mem0[(1<<AW)-1:0];
 reg [7:0] mem1[(1<<AW)-1:0];
 reg [7:0] mem2[(1<<AW)-1:0];
 reg [7:0] mem3[(1<<AW)-1:0];
-
+//
+///integer i;
+///initial begin
+///  for (i=0;i<(1<<AW);i=i+1)
+///    begin
+///      mem0[i] = 8'b0;
+///      mem1[i] = 8'b0;
+///      mem2[i] = 8'b0;
+///      mem3[i] = 8'b0;
+///    end
+///end
+//
 always @(posedge clk)
 begin
   if (~csn & ~wen)

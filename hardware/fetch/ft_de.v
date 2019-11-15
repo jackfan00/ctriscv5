@@ -49,7 +49,7 @@ begin
        fe2de_predict_bxxtaken_ffout <= 0;
        fe2de_rv16_ffout <= 0;
      end
-   else if (~de_store_load_conflict) //if (~fet_stall)
+   else if (~de_store_load_conflict && ~de_stall) //if (~fet_stall)
      begin
 //       fe2de_instr_ffout <=  rv32_instr_todec;
        fet_is_x1_ffout <= fet_is_x1;
@@ -61,12 +61,12 @@ end
 
 always @(posedge clk)
 begin
-   if (cpurst || fet_flush || branch_predict_err || cross_bd_ff ||
+   if (cpurst || fet_flush || branch_predict_err || (cross_bd_ff & !de_stall) ||
            (mem2wb_exp_ffout || interrupt) )   /**< insert dummy NOP command to flush pipeline */
      begin       
        fe2de_instr_ffout <=  0;
      end
-   else if (~de_store_load_conflict)
+   else if (~de_store_load_conflict && ~de_stall)
      begin
        fe2de_instr_ffout <=  rv32_instr_todec;
      end
@@ -77,7 +77,7 @@ always @(posedge clk)
 begin
    if (cpurst)
      fe2de_pc_ffout = 0;
-   else if (~de_store_load_conflict)
+   else if (~de_store_load_conflict && ~de_stall)
      fe2de_pc_ffout = fetch_pc;
 end     
 

@@ -130,7 +130,8 @@ end
 
 //32 bits adder
 reg [31:0] bypass_mepc, bypass_mtvec;
-wire [31:0] pcop1 = isjalr ? jalr_xn : pc;
+//wire [31:0] pcop1 = isjalr ? jalr_xn : pc;
+wire [31:0] pcop1 = isjalr & (!cross_bd_ff) ? jalr_xn : pc;
 wire [31:0] nxtpc = 
        wb2csrfile_int_ffout ? {mtvec[31:2],2'b0} + {mcause[4:0],2'b0} :
        //wb2csrfile_exp_ffout ? {mtvec[31:2],2'b0} :
@@ -166,7 +167,7 @@ always @(posedge clk)
 begin
   if (cpurst)
     cross_bd_ff <= 1'b0;
-  else if (cross_bd_ff)
+  else if (cross_bd_ff & (!branch_predict_err))
     cross_bd_ff <= 1'b0;
   else
     cross_bd_ff <= cross_bd;

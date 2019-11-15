@@ -1,5 +1,6 @@
 module test_top;
 `define ITCM top_u.isram_u
+`define DTCM top_u.dsram_u
 `define ITCM_SIZE 16384
 `define PC_WRITE_TOHOST       32'h00000086
 
@@ -25,7 +26,12 @@ initial begin
       `ITCM.mem[i/8][55:48] = itcm_mem[i+6];
       `ITCM.mem[i/8][63:56] = itcm_mem[i+7];
   end
-  //
+  for (i=0;i<`ITCM_SIZE;i=i+4) begin
+      `DTCM.mem0[i/4][7:0  ] = itcm_mem[i+0];
+      `DTCM.mem1[i/4][7:0  ] = itcm_mem[i+1];
+      `DTCM.mem2[i/4][7:0  ] = itcm_mem[i+2];
+      `DTCM.mem3[i/4][7:0  ] = itcm_mem[i+3];
+  end
   $display("ITCM 0x00: %h", `ITCM.mem[0][7:0  ]);
   $display("ITCM 0x01: %h", `ITCM.mem[0][15:8 ]);
   $display("ITCM 0x02: %h", `ITCM.mem[0][23:16]);
