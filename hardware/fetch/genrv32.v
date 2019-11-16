@@ -28,6 +28,7 @@ assign isrv16 = eff_instr[1:0]!=2'b11;
 always @(posedge clk)
 begin
 //  if (sram_cs_ff & (!fet_stall) )
+  if (!fet_stall )
     pre_instr_h <= instr[63:48];
 end
 

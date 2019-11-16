@@ -133,14 +133,17 @@ reg [31:0] bypass_mepc, bypass_mtvec;
 //wire [31:0] pcop1 = isjalr ? jalr_xn : pc;
 wire [31:0] pcop1 = isjalr & (!cross_bd_ff) ? jalr_xn : pc;
 wire [31:0] nxtpc = 
+       //need to modify?????
        wb2csrfile_int_ffout ? {mtvec[31:2],2'b0} + {mcause[4:0],2'b0} :
        //wb2csrfile_exp_ffout ? {mtvec[31:2],2'b0} :
        //ismret ? mepc :
        isecall ? {bypass_mtvec[31:2],2'b0} :
        ismret ? bypass_mepc :
-       branch_predict_err ? de2fe_branch_target :
-       
+       branch_predict_err ? de2fe_branch_target :       
        fet_stall | fetch_misalign | jalr_dep ? pc : pcop1 + nxtpcoffset;
+
+//pc jump condition 
+wire jc = wb2csrfile_int_ffout | isecall | ismret | branch_predict_err | jb;
 
 assign holdpc = fet_stall | fetch_misalign | jalr_dep;
 
@@ -159,6 +162,9 @@ assign fet_flush = fetch_misalign | jalr_dep;
 //cross 8bytes boundary
 //assign isram_adr = cpurst ? boot_addr[31:0] : (nxtpc[2:1]==2'b11 && (!jb)) ? nxtpc[31:3]+1'b1 : nxtpc[31:3];
 assign isram_adr = cpurst ? boot_addr[31:0] : 
+                   // continuous fetch case, dont need 1 more dummty clock at cross-boundry
+                   cross_bd & (!jc) ? pc[31:3]+1'b1 :  
+                   //
                    cross_bd_ff &(!branch_predict_err) ? pc[31:3]+1'b1 :
                             nxtpc[31:3];
 //cross boundry need fetch 2 times
@@ -166,6 +172,9 @@ assign cross_bd = (nxtpc[2:1]==2'b11);
 always @(posedge clk)
 begin
   if (cpurst)
+    cross_bd_ff <= 1'b0;
+  // continuous fetch case, dont need 1 more dummty clock at cross-boundry  
+  else if (cross_bd & (!jc))
     cross_bd_ff <= 1'b0;
   else if (cross_bd_ff & (!branch_predict_err))
     cross_bd_ff <= 1'b0;
