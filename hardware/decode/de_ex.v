@@ -206,4 +206,7 @@ begin
    else
      de2ex_pc_ffout <= de2ex_pc;
 end     
+
+
+  
 endmodule

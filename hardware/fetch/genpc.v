@@ -1,4 +1,4 @@
-module genpc(clk, cpurst, fet_stall,
+module genpc(clk, cpurst, fet_stall, btb_pc, btb_valid,
 boot_addr,
 r_x1, rs3v,
 dec_is_x1, exe_is_x1, mem_is_x1, wb_is_x1,
@@ -34,6 +34,8 @@ cross_bd_ff
 
 input clk, cpurst;
 input fet_stall;
+input [31:0] btb_pc;
+input btb_valid;
 input [31:0] boot_addr;
 input [31:0] r_x1, rs3v;
 input dec_is_x1, exe_is_x1, mem_is_x1, wb_is_x1;
@@ -169,9 +171,17 @@ assign isram_adr = cpurst ? boot_addr[31:0] :
                             nxtpc[31:3];
 //cross boundry need fetch 2 times
 assign cross_bd = (nxtpc[2:1]==2'b11);
+
+// btb predict, 
+wire btb_hit_npc = (btb_pc == nxtpc) & btb_valid;
+//
+
 always @(posedge clk)
 begin
   if (cpurst)
+    cross_bd_ff <= 1'b0;
+  // dont need 2 cycle if btb hit  
+  else if (btb_hit_npc)
     cross_bd_ff <= 1'b0;
   // continuous fetch case, dont need 1 more dummty clock at cross-boundry  
   else if (cross_bd & (!jc))

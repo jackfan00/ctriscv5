@@ -39,7 +39,8 @@ de2ex_exp, de2ex_mret,
 de2ex_csr_index,
 de2ex_wr_csrwdata,
 de2ex_e_ecfm, de2ex_e_bk,
-de_store_load_conflict
+de_store_load_conflict,
+de2fe_branch
 );
 input de2ex_store_ffout, de2ex_mem_en_ffout;
 input [31:0] fe2de_pc_ffout,fe2de_ir_ffout;
@@ -79,6 +80,7 @@ output [11:0] de2ex_csr_index;
 output [31:0] de2ex_wr_csrwdata;
 output de2ex_e_ecfm, de2ex_e_bk;
 output de_store_load_conflict;
+output de2fe_branch;
 //
     wire [6:0] opcode = fe2de_ir_ffout[6:0] ;
     wire [2:0] func3 = fe2de_ir_ffout[14:12] ;

@@ -47,11 +47,17 @@ wire [31:0] de2ex_wr_csrwdata;
 wire [11:0] ex2mem_wr_csrindex_ffout;
 wire [31:0] ex2mem_wr_csrwdata_ffout;
 wire [31:0] mem2wb_wr_csrwdata;
+wire [31:0] btb_pc, btb_instr;
+wire btb_valid;
+wire [15:0] rv16_instr_todec;
 
 fetch fetch_u( 
 .clk                 (clk),
 .cpurst              (cpurst), 
 .fet_stall           (fet_stall),
+.btb_pc                       (btb_pc                       ), 
+.btb_instr                    (btb_instr                    ),
+.btb_valid                    (btb_valid                    ),
 .boot_addr           (boot_addr),
 .r_x1                (r_x1),
 .rs3v                (rs3v),
@@ -99,11 +105,13 @@ fetch fetch_u(
 .predict_bxxtaken    (predict_bxxtaken),
 .fe2de_rv16          (fe2de_rv16),
 .fet_flush           (fet_flush),
-.cross_bd_ff         (cross_bd_ff)
+.cross_bd_ff         (cross_bd_ff),
+.rv16_instr_todec             (rv16_instr_todec             )
 
 );
 
 //
+wire de2fe_branch, de2ex_inst_valid;
 wire de_store_load_conflict;
 wire [31:0] fe2de_pc_ffout, fe2de_ir_ffout;
 ft_de ft_de_u(
@@ -126,6 +134,9 @@ ft_de ft_de_u(
 .branch_predict_err           (branch_predict_err),
 .cross_bd_ff                  (cross_bd_ff               ),
 .de_store_load_conflict       (de_store_load_conflict),
+.de2fe_branch                 (de2fe_branch                 ), 
+.de2ex_inst_valid             (de2ex_inst_valid             ),
+.rv16_instr_todec             (rv16_instr_todec             ),
 
 // output port                
 .fe2de_pc_ffout               (fe2de_pc_ffout), 
@@ -134,7 +145,10 @@ ft_de ft_de_u(
 .fet_is_xn_ffout              (fet_is_xn_ffout ),
 .fe2de_predict_bxxtaken_ffout (fe2de_predict_bxxtaken_ffout),
 .fe2de_rv16_ffout             (fe2de_rv16_ffout),
-.fet_stall                    (fet_stall)
+.fet_stall                    (fet_stall),
+.btb_pc                       (btb_pc                       ), 
+.btb_instr                    (btb_instr                    ),
+.btb_valid                    (btb_valid                    )
 );
 //
 
@@ -145,7 +159,6 @@ wire [31:0] de2ex_rd_oprand2, de2ex_rd_oprand2_ffout;
 wire [2:0] de2ex_aluop ;
 wire [6:0] de2ex_aluop_sub ;
 wire [4:0] de2ex_wr_regindex ;
-wire de2ex_inst_valid ;
 
 wire [2:0] de2ex_csrop;
 wire [31:0] de2ex_pc;
@@ -198,7 +211,8 @@ inst_decode inst_decode_u(
 .de2ex_wr_csrwdata            (de2ex_wr_csrwdata),
 .de2ex_e_ecfm            (de2ex_e_ecfm      ), 
 .de2ex_e_bk              (de2ex_e_bk        ),
-.de_store_load_conflict  (de_store_load_conflict)
+.de_store_load_conflict  (de_store_load_conflict),
+.de2fe_branch            (de2fe_branch            )
 
 );
 

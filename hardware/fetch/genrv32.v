@@ -1,7 +1,10 @@
 module genrv32( clk, jalr_dep, jb_ff, sram_cs_ff, pc, instr, fet_stall,
+btb_pc, btb_instr,
+btb_valid,
 
 rv32_instr, isrv16,
-fetch_misalign
+fetch_misalign,
+rv16_instr_todec
 );
 
 input clk, jalr_dep;
@@ -9,19 +12,29 @@ input jb_ff, sram_cs_ff;
 input [31:0] pc;
 input [63:0] instr;
 input fet_stall;
+input [31:0] btb_pc, btb_instr;
+input btb_valid;
 
 output [31:0] rv32_instr;
 output isrv16;
 output fetch_misalign;
+output [15:0] rv16_instr_todec;
+
+// btb predict
+wire btb_hit = (btb_pc == pc) & btb_valid;
+//
 
 reg [15:0] pre_instr_h;
 reg fetch_misalign_ff;
-wire [31:0] eff_instr = pc[2:1]==2'b00 ? instr[31:0]  :
+wire [31:0] eff_instr = btb_hit ? btb_instr :
+                   pc[2:1]==2'b00 ? instr[31:0]  :
                    pc[2:1]==2'b01 ? instr[47:16] :
                    pc[2:1]==2'b10 ? instr[63:32] :
                    {instr[15:0],pre_instr_h[15:0]} ;   //fetch cross boundry
 //                   fetch_misalign_ff && (pc[2:1]==2'b11) ? {instr[15:0],pre_instr_h[15:0]} : 
 //                   {instr[63:48],instr[63:48]};
+
+assign rv16_instr_todec = eff_instr[15:0];
 
 assign isrv16 = eff_instr[1:0]!=2'b11;
 

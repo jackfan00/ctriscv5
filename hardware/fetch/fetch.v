@@ -1,4 +1,5 @@
 module fetch ( clk, cpurst, fet_stall,
+btb_pc, btb_instr, btb_valid,
 boot_addr,
 r_x1, rs3v,
 dec_is_x1, exe_is_x1, mem_is_x1, wb_is_x1,
@@ -22,10 +23,13 @@ fetch_rs3n,
 predict_bxxtaken,
 fe2de_rv16,
 fet_flush,
-cross_bd_ff
+cross_bd_ff,
+rv16_instr_todec
 );
 input clk,cpurst;
 input fet_stall;
+input [31:0] btb_pc, btb_instr;
+input btb_valid;
 input [31:0] boot_addr;
 input [31:0] r_x1, rs3v;
 input dec_is_x1, exe_is_x1, mem_is_x1, wb_is_x1;
@@ -53,6 +57,7 @@ output predict_bxxtaken;
 output fe2de_rv16;
 output fet_flush;
 output cross_bd_ff;
+output [15:0] rv16_instr_todec;
 
 wire isrv16;
 assign fe2de_rv16 = isrv16;
@@ -61,6 +66,8 @@ genpc genpc_u(
 .clk(clk), 
 .cpurst(cpurst), 
 .fet_stall(fet_stall),
+.btb_pc(btb_pc),
+.btb_valid(btb_valid),
 .boot_addr(boot_addr),
 .r_x1(r_x1),
 .rs3v(rs3v),
@@ -123,10 +130,15 @@ genrv32 genrv32_u(
 .pc(fetch_pc), 
 .instr(instr_fromsram), 
 .fet_stall(fet_stall),
+.btb_pc(btb_pc), 
+.btb_instr(btb_instr),
+.btb_valid(btb_valid),
+
 // output port
 .rv32_instr(rv32_instr_todec), 
 .isrv16(isrv16),
-.fetch_misalign(fetch_misalign)
+.fetch_misalign(fetch_misalign),
+.rv16_instr_todec(rv16_instr_todec)
 );
 
 endmodule
