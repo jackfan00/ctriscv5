@@ -99,7 +99,7 @@ mini_decode mini_decode_u (
    .jalr_dep(jalr_dep),
    .fetch_rs3n(fetch_rs3n),
    .ismret(ismret),
-   .isecall(isecall),
+   .isecallbk(isecallbk),
    .jalr_xn(jalr_xn),
    .if_csr_r_index(if_csr_r_index)
 );
@@ -139,13 +139,13 @@ wire [31:0] nxtpc =
        wb2csrfile_int_ffout ? {mtvec[31:2],2'b0} + {mcause[4:0],2'b0} :
        //wb2csrfile_exp_ffout ? {mtvec[31:2],2'b0} :
        //ismret ? mepc :
-       isecall ? {bypass_mtvec[31:2],2'b0} :
+       isecallbk ? {bypass_mtvec[31:2],2'b0} :
        ismret ? bypass_mepc :
        branch_predict_err ? de2fe_branch_target :       
        fet_stall | fetch_misalign | jalr_dep ? pc : pcop1 + nxtpcoffset;
 
 //pc jump condition 
-wire jc = wb2csrfile_int_ffout | isecall | ismret | branch_predict_err | jb;
+wire jc = wb2csrfile_int_ffout | isecallbk | ismret | branch_predict_err | jb;
 
 assign holdpc = fet_stall | fetch_misalign | jalr_dep;
 

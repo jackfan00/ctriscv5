@@ -26,6 +26,14 @@ de2ex_mret,
 de2ex_csr_index,
 de2ex_rs1addr, de2ex_rs2addr,
 de2ex_e_ecfm, de2ex_e_bk,
+//de2ex_mstatus_pmie,
+//de2ex_mstatus_mie ,
+de2ex_mstatus,
+de2ex_mtvec       ,
+de2ex_mepc        ,
+de2ex_causecode  ,
+de2ex_mtval,
+de2ex_rv16,
 
 de2ex_pc_ffout,
 de2ex_wr_mem_ffout,
@@ -51,7 +59,15 @@ de2ex_exp_ffout,
 de2ex_mret_ffout,
 de2ex_csr_index_ffout,
 de2ex_rs1addr_ffout, de2ex_rs2addr_ffout,
-de2ex_e_ecfm_ffout, de2ex_e_bk_ffout
+de2ex_e_ecfm_ffout, de2ex_e_bk_ffout,
+de2ex_mstatus_pmie_ffout,
+de2ex_mstatus_mie_ffout ,
+de2ex_mtvec_ffout       ,
+de2ex_mepc_ffout        ,
+de2ex_causecode_ffout  ,
+de2ex_mtval_ffout ,
+de2ex_rv16_ffout
+
 
 );
 
@@ -81,6 +97,14 @@ input de2ex_mret;
 input [11:0] de2ex_csr_index;
 input [4:0] de2ex_rs1addr, de2ex_rs2addr;
 input de2ex_e_ecfm, de2ex_e_bk;
+//input de2ex_mstatus_pmie;
+//input de2ex_mstatus_mie ;
+input [31:0] de2ex_mstatus;
+input [31:0] de2ex_mtvec       ;
+input [31:0] de2ex_mepc        ;
+input [4:0] de2ex_causecode   ;
+input [31:0] de2ex_mtval;
+input de2ex_rv16;
 
 output [31:0] de2ex_pc_ffout;
 output de2ex_wr_mem_ffout ;
@@ -106,6 +130,13 @@ output de2ex_mret_ffout;
 output [11:0] de2ex_csr_index_ffout;
 output [4:0] de2ex_rs1addr_ffout, de2ex_rs2addr_ffout;
 output de2ex_e_ecfm_ffout, de2ex_e_bk_ffout;
+output de2ex_mstatus_pmie_ffout;
+output de2ex_mstatus_mie_ffout ;
+output [31:0] de2ex_mtvec_ffout       ;
+output [31:0] de2ex_mepc_ffout        ;
+output [4:0] de2ex_causecode_ffout   ;
+output [31:0] de2ex_mtval_ffout;
+output de2ex_rv16_ffout;
 
 //reg [31:0] de2ex_pc_ffout;
 reg de2ex_wr_mem_ffout ;
@@ -131,11 +162,18 @@ reg de2ex_mret_ffout;
 reg [11:0] de2ex_csr_index_ffout;
 reg [4:0] de2ex_rs1addr_ffout, de2ex_rs2addr_ffout;
 reg de2ex_e_ecfm_ffout, de2ex_e_bk_ffout;
+reg de2ex_mstatus_pmie_ffout;
+reg de2ex_mstatus_mie_ffout ;
+reg [31:0] de2ex_mtvec_ffout       ;
+reg [31:0] de2ex_mepc_ffout        ;
+reg [4:0] de2ex_causecode_ffout   ;
+reg [31:0] de2ex_mtval_ffout;
+reg de2ex_rv16_ffout;
 
 always @(posedge clk)
 begin
     if (cpurst || 
-          (de_stall==1 && exe_store_load_conflict==0 && mem_stall==0 && readram_stall==0 && mult_stall==0) || (mem2wb_exp_ffout || interrupt)) /**< insert dummy NOP command to flush pipeline */
+          (de_stall==1 && exe_store_load_conflict==0 && mem_stall==0 && readram_stall==0 && mult_stall==0))// || (mem2wb_exp_ffout || interrupt)) /**< insert dummy NOP command to flush pipeline */
       begin
           //de2ex_pc_ffout <= de2ex_pc;
           de2ex_aluop_ffout <= 0;
@@ -164,6 +202,13 @@ begin
           de2ex_rs2addr_ffout <= 0;
           de2ex_e_ecfm_ffout <= 0;
           de2ex_e_bk_ffout <= 0;
+          de2ex_mstatus_pmie_ffout <= 0;
+          de2ex_mstatus_mie_ffout <= 0;
+          de2ex_mtvec_ffout <= 0;
+          de2ex_mepc_ffout <= 0;
+          de2ex_causecode_ffout <= 0;
+          de2ex_mtval_ffout <= 0;
+          de2ex_rv16_ffout <= 0;
       end
     else if (exe_store_load_conflict==0 && mem_stall==0 && readram_stall==0 && mult_stall==0)
       begin
@@ -194,6 +239,13 @@ begin
           de2ex_rs2addr_ffout <= de2ex_rs2addr;
           de2ex_e_ecfm_ffout <= de2ex_e_ecfm;
           de2ex_e_bk_ffout <= de2ex_e_bk;
+          de2ex_mstatus_pmie_ffout <= de2ex_mstatus[7];
+          de2ex_mstatus_mie_ffout <= de2ex_mstatus[3];
+          de2ex_mtvec_ffout <= de2ex_mtvec;
+          de2ex_mepc_ffout <= de2ex_mepc;
+          de2ex_causecode_ffout <= de2ex_causecode;
+          de2ex_mtval_ffout <= de2ex_mtval;
+          de2ex_rv16_ffout <= de2ex_rv16;
 
       end
 end    

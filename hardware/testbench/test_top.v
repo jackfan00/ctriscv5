@@ -2,7 +2,9 @@ module test_top;
 `define ITCM top_u.isram_u
 `define DTCM top_u.dsram_u
 `define ITCM_SIZE 16384
-`define PC_WRITE_TOHOST       32'h00000086
+
+//`define PC_WRITE_TOHOST       32'h00000086  //e200 test
+`define PC_WRITE_TOHOST       32'h00000040    //compilance test
 
 
 reg[8*300:1] testcase;
@@ -106,8 +108,16 @@ always @(posedge clk)
 
 wire [31:0] x3 = top_u.core_u.regfile_u.regfile_xx[3];
 initial begin
-#10000;
+#1000;
 @(pc_write_to_host_cnt == 32'd8);
+// check signature
+$display("intercept write_tohost, generate signature file");
+for (i=32'h2000;i>32'h20;i=i+4)
+  begin
+    if (`DTCM.mem0[i/4]===8'hxx) 
+       i = 32'h0; //break;
+    $display("%02x%02x%02x%02x",`DTCM.mem3[i/4],`DTCM.mem2[i/4],`DTCM.mem1[i/4],`DTCM.mem0[i/4]);    
+  end
 //
         $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");

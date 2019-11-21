@@ -24,7 +24,14 @@ mem2wb_exp_ffout,
 ex2mem_mret,
 ex2mem_e_ecfm,
 ex2mem_e_bk,
-
+ex2mem_mstatus_pmie,
+ex2mem_mstatus_mie ,
+ex2mem_mtvec       ,
+ex2mem_mepc        ,
+ex2mem_causecode  ,
+ex2mem_mtval,
+ex2mem_rv16,
+//
 ex2mem_wr_reg_ffout,
 ex2mem_wr_regindex_ffout,
 ex2mem_wr_wdata_ffout,
@@ -46,7 +53,14 @@ ex2mem_wr_csrindex_ffout ,
 ex2mem_wr_csrwdata_ffout ,
 ex2mem_mret_ffout,
 ex2mem_e_ecfm_ffout,
-ex2mem_e_bk_ffout
+ex2mem_e_bk_ffout,
+ex2mem_mstatus_pmie_ffout,
+ex2mem_mstatus_mie_ffout ,
+ex2mem_mtvec_ffout       ,
+ex2mem_mepc_ffout        ,
+ex2mem_causecode_ffout  ,
+ex2mem_mtval_ffout ,
+ex2mem_rv16_ffout
 
 
 
@@ -76,6 +90,13 @@ input mem2wb_exp_ffout;
 input ex2mem_mret;
 input ex2mem_e_ecfm;
 input ex2mem_e_bk;
+input ex2mem_mstatus_pmie ;
+input ex2mem_mstatus_mie  ;
+input [31:0] ex2mem_mtvec        ;
+input [31:0] ex2mem_mepc         ;
+input [4:0] ex2mem_causecode    ;
+input [31:0] ex2mem_mtval        ;
+input ex2mem_rv16         ;
 
 
 output ex2mem_wr_reg_ffout;
@@ -99,6 +120,13 @@ output [31:0] ex2mem_wr_csrwdata_ffout ;
 output ex2mem_mret_ffout;
 output ex2mem_e_ecfm_ffout;
 output ex2mem_e_bk_ffout;
+output ex2mem_mstatus_pmie_ffout ;
+output ex2mem_mstatus_mie_ffout  ;
+output [31:0] ex2mem_mtvec_ffout        ;
+output [31:0] ex2mem_mepc_ffout         ;
+output [4:0] ex2mem_causecode_ffout    ;
+output [31:0] ex2mem_mtval_ffout        ;
+output ex2mem_rv16_ffout         ;
 
 
 reg ex2mem_wr_reg_ffout;
@@ -121,12 +149,19 @@ reg [31:0] ex2mem_wr_csrwdata_ffout ;
 reg ex2mem_mret_ffout;
 reg ex2mem_e_ecfm_ffout;
 reg ex2mem_e_bk_ffout;
+reg ex2mem_mstatus_pmie_ffout ;
+reg ex2mem_mstatus_mie_ffout  ;
+reg [31:0] ex2mem_mtvec_ffout        ;
+reg [31:0] ex2mem_mepc_ffout         ;
+reg [4:0] ex2mem_causecode_ffout    ;
+reg [31:0] ex2mem_mtval_ffout        ;
+reg ex2mem_rv16_ffout         ;
 
 always @(posedge clk)
 begin
    if (cpurst ||
-          (mult_stall || (exe_store_load_conflict & mem_stall==0) ) || 
-           (mem2wb_exp_ffout || interrupt) ) /**< insert dummy NOP command to flush pipeline */
+          (mult_stall || (exe_store_load_conflict & mem_stall==0) ) )//|| 
+          // (mem2wb_exp_ffout || interrupt) ) /**< insert dummy NOP command to flush pipeline */
 //////////////////          (mult_stall && mem_stall==0 && readram_stall==0 && exe_store_load_conflict==0) || (mem2wb_exp_ffout || interrupt) ) /**< insert dummy NOP command to flush pipeline */
      begin
        //ex2mem_pc_ffout = ex2mem_pc;
@@ -152,6 +187,13 @@ begin
        ex2mem_mret_ffout <= 0;
        ex2mem_e_ecfm_ffout <= 0;
        ex2mem_e_bk_ffout   <= 0;
+       ex2mem_mstatus_pmie_ffout <= 0;
+       ex2mem_mstatus_mie_ffout  <= 0;
+       ex2mem_mtvec_ffout        <= 0;
+       ex2mem_mepc_ffout         <= 0;
+       ex2mem_causecode_ffout    <= 0;
+       ex2mem_mtval_ffout        <= 0;
+       ex2mem_rv16_ffout         <= 0;
      end
 /////////////   else  if ( mem_stall==0 && readram_stall==0 && exe_store_load_conflict==0 )
    else  if ( mem_stall==0 && readram_stall==0 )
@@ -179,6 +221,13 @@ begin
        ex2mem_mret_ffout <= ex2mem_mret;
        ex2mem_e_ecfm_ffout <= ex2mem_e_ecfm;
        ex2mem_e_bk_ffout   <= ex2mem_e_bk;
+       ex2mem_mstatus_pmie_ffout <= ex2mem_mstatus_pmie;
+       ex2mem_mstatus_mie_ffout  <= ex2mem_mstatus_mie;
+       ex2mem_mtvec_ffout        <= ex2mem_mtvec;
+       ex2mem_mepc_ffout         <= ex2mem_mepc;
+       ex2mem_causecode_ffout    <= ex2mem_causecode;
+       ex2mem_mtval_ffout        <= ex2mem_mtval;
+       ex2mem_rv16_ffout         <= ex2mem_rv16;
      end
 end
 

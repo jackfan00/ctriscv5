@@ -12,6 +12,7 @@ rs1v, rs2v,
 de2ex_load_ffout,
 de2ex_wr_regindex_ffout,
 csr_rdat,
+mepc,
 //
 branch_predict_err,
 de2fe_branch_target,
@@ -40,7 +41,10 @@ de2ex_csr_index,
 de2ex_wr_csrwdata,
 de2ex_e_ecfm, de2ex_e_bk,
 de_store_load_conflict,
-de2fe_branch
+de2fe_branch,
+de2ex_causecode,
+de2ex_mtval,
+de2ex_mepc
 );
 input de2ex_store_ffout, de2ex_mem_en_ffout;
 input [31:0] fe2de_pc_ffout,fe2de_ir_ffout;
@@ -50,6 +54,7 @@ input [31:0] rs1v, rs2v;
 input de2ex_load_ffout;
 input [4:0] de2ex_wr_regindex_ffout;
 input [31:0] csr_rdat;
+input [31:0] mepc;
 
 output branch_predict_err ;
 output [31:0] de2fe_branch_target;
@@ -81,6 +86,13 @@ output [31:0] de2ex_wr_csrwdata;
 output de2ex_e_ecfm, de2ex_e_bk;
 output de_store_load_conflict;
 output de2fe_branch;
+output [4:0] de2ex_causecode;
+output [31:0] de2ex_mtval;
+output [31:0] de2ex_mepc;
+
+//
+reg de2ex_e_ecfm, de2ex_e_bk;
+
 //
     wire [6:0] opcode = fe2de_ir_ffout[6:0] ;
     wire [2:0] func3 = fe2de_ir_ffout[14:12] ;
@@ -94,7 +106,7 @@ output de2fe_branch;
     //wire [31:0] rs2v = read_regfile(rs2);
     wire [4:0] rd = fe2de_ir_ffout[11:7] ;
     wire [31:0] imm = {{20{fe2de_ir_ffout[31]}},fe2de_ir_ffout[31:20]} ;  ///**< signed value */
-    assign de2ex_csr_index = {imm[11:0]};
+    assign de2ex_csr_index = de2ex_e_ecfm|de2ex_e_bk ? 12'h342 : {imm[11:0]};
     
     wire [31:0] LUIimm = {fe2de_ir_ffout[31:12],12'b0}; // & 0xfffff000);  ///**< msb[31:12] */
     wire [31:0] JALimm = {{11{fe2de_ir_ffout[31]}},fe2de_ir_ffout[31],fe2de_ir_ffout[19:12],fe2de_ir_ffout[20],fe2de_ir_ffout[30:21],1'b0};
@@ -128,12 +140,13 @@ reg [6:0] de2ex_aluop_sub ;
 reg de2ex_wr_reg ;
 reg [4:0] de2ex_wr_regindex ;
 reg de2ex_inst_valid ;
-reg de2ex_e_ecfm, de2ex_e_bk;
 reg [2:0] de2ex_csrop;
 reg de2ex_exp, de2ex_mret;
+reg [31:0] de2ex_mepc;
     //
 always @*
 begin
+    de2ex_mepc = mepc;
     de2ex_e_ecfm =0;
     de2ex_e_bk =0;
     de_r_rs1 =0;
@@ -326,14 +339,18 @@ begin
         //
         //mcause
         de2ex_e_ecfm = (fe2de_ir_ffout[31:7]==25'b0);
-        de2ex_e_bk = (fe2de_ir_ffout[31:7]==25'b1);
+        de2ex_e_bk = (fe2de_ir_ffout[31:7]==25'h2000);
         //
         case(func3)
         
         //`SYSTEM_ECALL, `SYSTEM_MRET
         `SYSTEM_EBREAK:
             begin
+            de2ex_mepc = de2ex_pc;
             de2ex_exp =1;
+            de2ex_wr_csrreg =1;
+            de2ex_csrop = `CSR_SET;
+            de2ex_rd_oprand1 =de2ex_e_ecfm ? 32'd11 : 32'd3;
             if (func7==7'h18)
               begin
                 de2ex_mret =1;
@@ -461,6 +478,7 @@ assign branch_predict_err = (de2fe_branch ^ fe2de_predict_bxxtaken_ffout) & de_o
 assign de2fe_branch_target = fe2de_pc_ffout + de2fe_branch_offset;
 
 assign    de2ex_pc = fe2de_pc_ffout;
+assign    de2ex_instr = fe2de_ir_ffout;
 
 reg de_stall;
 always @*
@@ -500,5 +518,24 @@ begin
 end
 //
 assign de_store_load_conflict = de2ex_load & de2ex_mem_en & de2ex_store_ffout & de2ex_mem_en_ffout;
+
+wire de2ex_i_ms=1'b0;
+wire de2ex_i_mt=1'b0;
+wire de2ex_i_me=1'b0;
+wire de2ex_e_iam=1'b0;
+wire de2ex_e_ii=1'b0;
+wire de2ex_e_lam=1'b0;
+//
+assign de2ex_causecode = 
+                         de2ex_i_ms   ? 5'd3 : 
+                         de2ex_i_mt   ? 5'd7 :
+                         de2ex_i_me   ? 5'd11 :
+                         de2ex_e_iam  ? 5'd0 :
+                         de2ex_e_ii   ? 5'd2 :
+                         de2ex_e_bk   ? 5'd3 :
+                         de2ex_e_lam  ? 5'd4 :
+                         de2ex_e_ecfm ? 5'd11 : 5'd16;                       
+
+assign de2ex_mtval = (de2ex_e_ii ) ? de2ex_instr : de2ex_pc;
 
 endmodule

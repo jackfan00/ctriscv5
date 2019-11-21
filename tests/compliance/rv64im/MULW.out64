@@ -1,0 +1,94 @@
+Info Session started: Tue Nov 19 23:28:09 2019
+
+Info ------------- ENVIRONMENT -------------
+Info --------------------------------------
+Info -------- FLAGS (from /home/jack/riscv-compliance/riscv-ovpsim/bin/Linux64/riscvOVPsim.exe)
+Info --variant  RV64IM
+Info --program  /home/jack/riscv-compliance/work/rv64im/MULW.elf
+Info --signaturedump
+Info --customcontrol
+Info --override  riscvOVPsim/cpu/sigdump/SignatureFile=/home/jack/riscv-compliance/work/rv64im/MULW.signature.output
+Info --override  riscvOVPsim/cpu/sigdump/ResultReg=3
+Info --override  riscvOVPsim/cpu/simulateexceptions=T
+Info --override  riscvOVPsim/cpu/defaultsemihost=F
+Info --logfile  /home/jack/riscv-compliance/work/rv64im/MULW.out64
+Info --override  riscvOVPsim/cpu/user_version=2.3
+Info --override  riscvOVPsim/cpu/priv_version=1.11
+Info --------------------------------------
+Imperas riscvOVPsim
+
+CpuManagerFixedPlatform (64-Bit) v20190923.0 Open Virtual Platform simulator from www.IMPERAS.com.
+Copyright (c) 2005-2019 Imperas Software Ltd.  Contains Imperas Proprietary Information.
+Licensed Software, All Rights Reserved.
+Visit www.IMPERAS.com for multicore debug, verification and analysis solutions.
+
+CpuManagerFixedPlatform started: Tue Nov 19 23:28:09 2019
+
+
+Info (OR_OF) Target 'riscvOVPsim/cpu' has object file read from '/home/jack/riscv-compliance/work/rv64im/MULW.elf'
+Info (OR_PH) Program Headers:
+Info (OR_PH) Type           Offset             VirtAddr           PhysAddr
+Info (OR_PH)                FileSiz            MemSiz             Flags  Align
+Info (OR_PD) LOAD           0x0000000000001000 0x0000000080000000 0x0000000080000000
+Info (OR_PD)                0x0000000000000384 0x0000000000000384 R-E    1000
+Info (OR_PD) LOAD           0x0000000000002000 0x0000000080001000 0x0000000080001000
+Info (OR_PD)                0x0000000000001304 0x0000000000001304 RW-    1000
+Info (SIGNATURE_DUMP) Found Symbol 'begin_signature' in application at 0x80002000
+Info (SIGNATURE_DUMP) Found Symbol 'end_signature' in application at 0x80002190
+Info (SIGNATURE_DUMP) Signature File enabled, file '/home/jack/riscv-compliance/work/rv64im/MULW.signature.output'.
+Info (SIGNATURE_DUMP) Extracting signature from 0x80002000 size 400 bytes
+Info (SIGNATURE_DUMP) Symbol 'begin_signature' at 0x80002000
+Info (SIGNATURE_DUMP) Symbol 'end_signature' at 0x80002190
+Info (SIGNATURE_DUMP) Intercept 'write_tohost'. Generate Signature file
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000ffffffff0000000000000001
+000000000000000000000000ffffffff
+00000000ffffffff0000000000000000
+00000000000000010000000000000001
+00000000000000000000000000000000
+000000000000000100000000ffffffff
+00000000000000000000000000000001
+00000000000000000000000000000000
+00000000000000000000000000000000
+00000000ffffffff0000000000000000
+00000000ffffffff00000000ffffffff
+00000000ffffffff00000000ffffffff
+00000000ffffffff00000000ffffffff
+00000000ffffffff00000000ffffffff
+00000000ffffffff00000000ffffffff
+00000000ffffffff00000000ffffffff
+00000000ffffffff00000000ffffffff
+00000000ffffffff00000000ffffffff
+00000000ffffffff00000000ffffffff
+00000000ffffffff00000000ffffffff
+00000000ffffffff00000000ffffffff
+00000000ffffffff00000000ffffffff
+Test PASSED
+Info 
+Info ---------------------------------------------------
+Info CPU 'riscvOVPsim/cpu' STATISTICS
+Info   Type                  : riscv (RV64IM)
+Info   Nominal MIPS          : 100
+Info   Final program counter : 0x80000044
+Info   Simulated instructions: 190
+Info   Simulated MIPS        : run too short for meaningful result
+Info ---------------------------------------------------
+Info 
+Info ---------------------------------------------------
+Info SIMULATION TIME STATISTICS
+Info   Simulated time        : 0.00 seconds
+Info   User time             : 0.00 seconds
+Info   System time           : 0.00 seconds
+Info   Elapsed time          : 0.01 seconds
+Info ---------------------------------------------------
+
+CpuManagerFixedPlatform finished: Tue Nov 19 23:28:09 2019
+
+
+CpuManagerFixedPlatform (64-Bit) v20190923.0 Open Virtual Platform simulator from www.IMPERAS.com.
+Visit www.IMPERAS.com for multicore debug, verification and analysis solutions.
+
+Info Session ended: Tue Nov 19 23:28:09 2019
+

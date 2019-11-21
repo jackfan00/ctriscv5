@@ -28,6 +28,13 @@ ex2mem_store_ffout,
 ex2mem_mem_en_ffout,
 de2ex_csr_index_ffout,
 de2ex_exp_ffout,
+de2ex_mstatus_mie_ffout ,
+de2ex_mstatus_pmie_ffout,
+de2ex_mtval_ffout       ,
+de2ex_mtvec_ffout       ,
+de2ex_mepc_ffout        ,
+de2ex_causecode_ffout   ,
+de2ex_rv16_ffout   ,
 
 // output port
 ex2mem_wr_reg,
@@ -47,7 +54,14 @@ ex2mem_rd_is_x1, ex2mem_rd_is_xn,
 ex2mem_wr_csrreg   ,
 ex2mem_wr_csrindex ,
 ex2mem_wr_csrwdata ,
-ex2mem_exp
+ex2mem_exp,
+ex2mem_mstatus_mie  ,
+ex2mem_mstatus_pmie ,
+ex2mem_mtval        ,
+ex2mem_mtvec        ,
+ex2mem_mepc         ,
+ex2mem_causecode    ,
+ex2mem_rv16    
 
 );
 
@@ -77,6 +91,13 @@ input ex2mem_store_ffout;
 input ex2mem_mem_en_ffout;
 input [11:0] de2ex_csr_index_ffout;
 input de2ex_exp_ffout;
+input de2ex_mstatus_mie_ffout ;    
+input de2ex_mstatus_pmie_ffout;   
+input [31:0] de2ex_mtval_ffout       ;          
+input [31:0] de2ex_mtvec_ffout       ;          
+input [31:0] de2ex_mepc_ffout        ;           
+input [4:0] de2ex_causecode_ffout   ;      
+input de2ex_rv16_ffout   ;      
 
 //regfile
 output ex2mem_wr_reg;
@@ -100,6 +121,13 @@ output ex2mem_wr_csrreg   ;
 output [11:0] ex2mem_wr_csrindex ;
 output [31:0] ex2mem_wr_csrwdata ;
 output ex2mem_exp;
+output ex2mem_mstatus_mie  ; 
+output ex2mem_mstatus_pmie ; 
+output [31:0] ex2mem_mtval        ; 
+output [31:0] ex2mem_mtvec        ; 
+output [31:0] ex2mem_mepc         ; 
+output [4:0] ex2mem_causecode    ; 
+output ex2mem_rv16    ; 
 
 reg [63:0] alu_out_t64;
 reg [31:0] alu_out;
@@ -253,4 +281,13 @@ assign ex2mem_rd_is_x1 = de2ex_rd_is_x1_ffout;
 assign ex2mem_rd_is_xn = de2ex_rd_is_xn_ffout;
 
 assign ex2mem_exp = de2ex_exp_ffout;
+
+assign ex2mem_mstatus_mie = de2ex_mstatus_mie_ffout;
+assign ex2mem_mstatus_pmie = de2ex_mstatus_pmie_ffout;
+assign ex2mem_mtval = de2ex_mtval_ffout;
+assign ex2mem_mtvec = de2ex_mtvec_ffout;
+assign ex2mem_mepc = de2ex_mepc_ffout;
+assign ex2mem_causecode = de2ex_causecode_ffout;
+assign ex2mem_rv16 = de2ex_rv16_ffout;
+
 endmodule

@@ -12,9 +12,9 @@
 
 module csrfile(
 clk, cpurst,
-wb2csrfile_exp         ,
+//wb2csrfile_exp         ,
 wb2csrfile_int         ,
-wb2csrfile_mret        ,
+//wb2csrfile_mret        ,
 wb2csrfile_wr_reg      ,
 wb2csrfile_wr_regindex , ex2mem_wr_csrreg, mem2wb_wr_csrreg, mem2wb_wr_csrreg_ffout,
 csr_r_index   , ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, mem2wb_wr_csrindex_ffout,
@@ -30,7 +30,16 @@ wb2csrfile_e_ecfm      ,
 mem2wb_instr_ffout     ,
 mem2wb_pc_ffout        ,
 ex2mem_pc_ffout        ,
-                         
+ex2mem_mtval, mem2wb_mtval, wb2csrfile_mtval,
+ex2mem_causecode, mem2wb_causecode, wb2csrfile_causecode,
+ex2mem_mtvec, mem2wb_mtvec, wb2csrfile_mtvec,
+ex2mem_mepc, mem2wb_mepc, wb2csrfile_mepc,
+ex2mem_mstatus_mie, mem2wb_mstatus_mie, wb2csrfile_mstatus_mie,
+ex2mem_mstatus_pmie, mem2wb_mstatus_pmie, wb2csrfile_mstatus_pmie,
+wb2csrfile_rv16,
+ex2mem_mret, mem2wb_mret, wb2csrfile_mret,
+ex2mem_exp, mem2wb_exp, wb2csrfile_exp,
+//        
 mstatus                ,
 mie                    ,
 mtvec                  ,
@@ -43,9 +52,9 @@ csr_rdat
 );
 
 input clk, cpurst      ;
-input wb2csrfile_exp   ;
+//input wb2csrfile_exp   ;
 input wb2csrfile_int   ;
-input wb2csrfile_mret  ;
+//input wb2csrfile_mret  ;
 input wb2csrfile_wr_reg, ex2mem_wr_csrreg, mem2wb_wr_csrreg, mem2wb_wr_csrreg_ffout;
 input [11:0] wb2csrfile_wr_regindex;
 input [11:0] csr_r_index, ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, mem2wb_wr_csrindex_ffout;
@@ -61,6 +70,15 @@ input wb2csrfile_e_ecfm;
 input [31:0] mem2wb_instr_ffout;
 input [31:0] mem2wb_pc_ffout   ;
 input [31:0] ex2mem_pc_ffout   ;
+input [31:0] ex2mem_mtval, mem2wb_mtval, wb2csrfile_mtval;
+input [4:0] ex2mem_causecode, mem2wb_causecode, wb2csrfile_causecode;
+input [31:0] ex2mem_mtvec, mem2wb_mtvec, wb2csrfile_mtvec;
+input [31:0] ex2mem_mepc, mem2wb_mepc, wb2csrfile_mepc;
+input ex2mem_mstatus_mie, mem2wb_mstatus_mie, wb2csrfile_mstatus_mie;
+input ex2mem_mstatus_pmie, mem2wb_mstatus_pmie, wb2csrfile_mstatus_pmie;
+input wb2csrfile_rv16;
+input ex2mem_mret, mem2wb_mret, wb2csrfile_mret;
+input ex2mem_exp, mem2wb_exp, wb2csrfile_exp;
 
 output [31:0] mstatus ; 
 output [31:0] mie     ;
@@ -85,11 +103,11 @@ begin
   else if (wb2csrfile_intorexp)
     begin
       mstatus_mie <= 1'b0;
-      mstatus_pmie <= mstatus_mie;
+      mstatus_pmie <= wb2csrfile_mstatus_mie;
     end
   else if (wb2csrfile_mret)
     begin
-      mstatus_mie <= mstatus_pmie;
+      mstatus_mie <= wb2csrfile_mstatus_pmie;
       mstatus_pmie <= 1'b0;
     end
   else if (wb2csrfile_wr_reg && wb2csrfile_wr_regindex[11:0]==12'h300)
@@ -145,7 +163,7 @@ begin
     end    
   else if (wb2csrfile_int)
     begin
-      mepc <= ex2mem_pc_ffout[31:0];  // next instr pc
+      mepc <= wb2csrfile_rv16 ? mem2wb_pc_ffout+ 3'd2 : mem2wb_pc_ffout+ 3'd4; //ex2mem_pc_ffout[31:0];  // next instr pc
     end    
   else if (wb2csrfile_wr_reg && wb2csrfile_wr_regindex[11:0]==12'h341)
     begin
@@ -172,7 +190,7 @@ begin
     end
   else if (wb2csrfile_intorexp)
     begin
-      causecode <= causecode_t;
+      causecode <= wb2csrfile_causecode;//causecode_t;
       cause_int <= wb2csrfile_int;
     end  
 end
@@ -188,7 +206,7 @@ begin
   else if (wb2csrfile_exp)
     begin
      // mtval <= (wb2csrfile_e_ii | wb2csrfile_e_bk | wb2csrfile_e_ecfm) ? mem2wb_instr_ffout : mem2wb_pc_ffout;
-      mtval <= (wb2csrfile_e_ii ) ? mem2wb_instr_ffout : mem2wb_pc_ffout;
+      mtval <= wb2csrfile_mtval; //(wb2csrfile_e_ii ) ? mem2wb_instr_ffout : mem2wb_pc_ffout;
     end
 end
 //
@@ -211,18 +229,54 @@ end
 assign mip = {20'b0, mip_msip, 3'b0, mip_mtip, 3'b0, mip_meip, 3'b0};
 //
 reg [31:0] csr_rdat;
+reg mstatus_index, mtvec_index, mepc_index, mcause_index, mtval_index;
 always @*
 begin
   csr_rdat =0;
+  mstatus_index= (csr_r_index==12'h300);
+  mtvec_index  = (csr_r_index==12'h305);
+  mepc_index   = (csr_r_index==12'h341);
+  mcause_index = (csr_r_index==12'h342);
+  mtval_index  = (csr_r_index==12'h343);
+  
+  // "read before write conflict" at csrfile
   /**< priority is important, otherwise function error in case (repeat r15 = r15 - r1) */
-  if (ex2mem_wr_csrindex == csr_r_index && ex2mem_wr_csrreg )  /**< ex/de data dependence , 1st priority*/
+  //ex2mem 1st priority, then mem2wb, then wb2csrfile/wb2reg
+  if (ex2mem_mret & mstatus_index)
+    csr_rdat = {19'b0, 2'b11, 3'b0, 1'b0, 3'b0, ex2mem_mstatus_pmie, 3'b0} & {32{mstatus_index}};    
+  else if (ex2mem_exp & (mstatus_index|mtvec_index|mepc_index|mtval_index|mcause_index))
+    csr_rdat = {19'b0, 2'b11, 3'b0, ex2mem_mstatus_mie, 3'b0, 1'b0, 3'b0} & {32{mstatus_index}} |
+               ex2mem_mtvec & {32{mtvec_index}} |
+               ex2mem_mepc  & {32{mepc_index}}  |
+               ex2mem_mtval  & {32{mtval_index}}  |
+               {cause_int, 26'b0, ex2mem_causecode[4:0]} & {32{mcause_index}};
+  else if (ex2mem_wr_csrindex == csr_r_index && ex2mem_wr_csrreg )  /**< ex/de data dependence , 1st priority*/
       csr_rdat = ex2mem_wr_csrwdata;
   
+  //2nd priority
+  else if (mem2wb_exp & (mstatus_index|mtvec_index|mepc_index|mtval_index|mcause_index))
+    csr_rdat = {19'b0, 2'b11, 3'b0, mem2wb_mstatus_mie, 3'b0, 1'b0, 3'b0} & {32{mstatus_index}} |
+               mem2wb_mtvec & {32{mtvec_index}} |
+               mem2wb_mepc  & {32{mepc_index}}  |
+               mem2wb_mtval  & {32{mtval_index}}  |
+               {cause_int, 26'b0, mem2wb_causecode[4:0]} & {32{mcause_index}};
+  else if (mem2wb_mret & mstatus_index)
+    csr_rdat = {19'b0, 2'b11, 3'b0, 1'b0, 3'b0, mem2wb_mstatus_pmie, 3'b0} & {32{mstatus_index}};
   else if (ex2mem_wr_csrindex_ffout == csr_r_index && mem2wb_wr_csrreg)  /**< mem/de data dependence, 2nd priority */
       csr_rdat = mem2wb_wr_csrwdata;
   
+  //3rd priority
+  else if (wb2csrfile_exp & (mstatus_index|mtvec_index|mepc_index|mtval_index|mcause_index))
+    csr_rdat = {19'b0, 2'b11, 3'b0, wb2csrfile_mstatus_mie, 3'b0, 1'b0, 3'b0} & {32{mstatus_index}} |
+               wb2csrfile_mtvec & {32{mtvec_index}} |
+               wb2csrfile_mepc  & {32{mepc_index}}  |
+               wb2csrfile_mtval  & {32{mtval_index}}  |
+               {cause_int, 26'b0, wb2csrfile_causecode[4:0]} & {32{mcause_index}};
+  else if (wb2csrfile_mret & mstatus_index)
+    csr_rdat = {19'b0, 2'b11, 3'b0, 1'b0, 3'b0, wb2csrfile_mstatus_pmie, 3'b0} & {32{mstatus_index}};
   else if (mem2wb_wr_csrindex_ffout == csr_r_index && mem2wb_wr_csrreg_ffout)  /**< wb/de data dependence, 3rd priority */
       csr_rdat = mem2wb_wr_csrwdata_ffout;
+
   else    
     begin
       case(csr_r_index[11:0])

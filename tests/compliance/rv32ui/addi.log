@@ -1,0 +1,74 @@
+Info Session started: Tue Nov 19 23:28:06 2019
+
+Info ------------- ENVIRONMENT -------------
+Info --------------------------------------
+Info -------- FLAGS (from /home/jack/riscv-compliance/riscv-ovpsim/bin/Linux64/riscvOVPsim.exe)
+Info --variant  RV32I
+Info --program  /home/jack/riscv-compliance/work/rv32ui/addi.elf
+Info --signaturedump
+Info --customcontrol
+Info --override  riscvOVPsim/cpu/sigdump/SignatureFile=/home/jack/riscv-compliance/work/rv32ui/addi.signature.output
+Info --override  riscvOVPsim/cpu/sigdump/ResultReg=3
+Info --override  riscvOVPsim/cpu/simulateexceptions=T
+Info --override  riscvOVPsim/cpu/defaultsemihost=F
+Info --logfile  /home/jack/riscv-compliance/work/rv32ui/addi.log
+Info --override  riscvOVPsim/cpu/user_version=2.2
+Info --override  riscvOVPsim/cpu/priv_version=1.10
+Info --------------------------------------
+Imperas riscvOVPsim
+
+CpuManagerFixedPlatform (64-Bit) v20190923.0 Open Virtual Platform simulator from www.IMPERAS.com.
+Copyright (c) 2005-2019 Imperas Software Ltd.  Contains Imperas Proprietary Information.
+Licensed Software, All Rights Reserved.
+Visit www.IMPERAS.com for multicore debug, verification and analysis solutions.
+
+CpuManagerFixedPlatform started: Tue Nov 19 23:28:06 2019
+
+
+Info (OR_OF) Target 'riscvOVPsim/cpu' has object file read from '/home/jack/riscv-compliance/work/rv32ui/addi.elf'
+Info (OR_PH) Program Headers:
+Info (OR_PH) Type           Offset     VirtAddr   PhysAddr   FileSiz    MemSiz     Flags Align
+Info (OR_PD) LOAD           0x00001000 0x80000000 0x80000000 0x00000504 0x00000504 R-E   1000
+Info (OR_PD) LOAD           0x00002000 0x80001000 0x80001000 0x00001204 0x00001204 RW-   1000
+Info (SIGNATURE_DUMP) Found Symbol 'begin_signature' in application at 0x80002000
+Info (SIGNATURE_DUMP) Found Symbol 'end_signature' in application at 0x80002080
+Info (SIGNATURE_DUMP) Signature File enabled, file '/home/jack/riscv-compliance/work/rv32ui/addi.signature.output'.
+Info (SIGNATURE_DUMP) Extracting signature from 0x80002000 size 128 bytes
+Info (SIGNATURE_DUMP) Symbol 'begin_signature' at 0x80002000
+Info (SIGNATURE_DUMP) Symbol 'end_signature' at 0x80002080
+Info (SIGNATURE_DUMP) Intercept 'write_tohost'. Generate Signature file
+0000000200000000ffffffff00000001
+7ffff80080000000fffff8000000000a
+800007ff800007fe7fffffff000007ff
+fffffffe00000000ffffffff7ffff7ff
+00000017000000180000001880000000
+00000016000000170000001800000016
+ffffffffffffffff0000000000000020
+0000000000000000ffffffffffffffff
+Test PASSED
+Info 
+Info ---------------------------------------------------
+Info CPU 'riscvOVPsim/cpu' STATISTICS
+Info   Type                  : riscv (RV32I)
+Info   Nominal MIPS          : 100
+Info   Final program counter : 0x80000044
+Info   Simulated instructions: 319
+Info   Simulated MIPS        : run too short for meaningful result
+Info ---------------------------------------------------
+Info 
+Info ---------------------------------------------------
+Info SIMULATION TIME STATISTICS
+Info   Simulated time        : 0.00 seconds
+Info   User time             : 0.00 seconds
+Info   System time           : 0.00 seconds
+Info   Elapsed time          : 0.01 seconds
+Info ---------------------------------------------------
+
+CpuManagerFixedPlatform finished: Tue Nov 19 23:28:06 2019
+
+
+CpuManagerFixedPlatform (64-Bit) v20190923.0 Open Virtual Platform simulator from www.IMPERAS.com.
+Visit www.IMPERAS.com for multicore debug, verification and analysis solutions.
+
+Info Session ended: Tue Nov 19 23:28:06 2019
+
