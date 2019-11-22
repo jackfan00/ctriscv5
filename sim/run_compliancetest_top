@@ -1,0 +1,1 @@
+ncverilog +nc64bit  +access+rw +notimingcheck +delay_mode_distributed +define+COMPLIANCE_TEST +TESTCASE=$1 +REFERENCEOUT=$2 +SIGNATURE=$3 -sv -f ../hardware/top.vc

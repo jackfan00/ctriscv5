@@ -3,19 +3,37 @@ module test_top;
 `define DTCM top_u.dsram_u
 `define ITCM_SIZE 16384
 
-//`define PC_WRITE_TOHOST       32'h00000086  //e200 test
+`ifdef COMPLIANCE_TEST
 `define PC_WRITE_TOHOST       32'h00000040    //compilance test
+`else
+`define PC_WRITE_TOHOST       32'h00000086  //e200 test
+`endif
 
 
-reg[8*300:1] testcase;
+reg[8*300:1] testcase, referenceout;
+reg [31:0] signature_startaddr, signature;
 initial begin
   $display("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");  
   if($value$plusargs("TESTCASE=%s",testcase))begin
     $display("TESTCASE=%s",testcase);
   end  
+`ifdef COMPLIANCE_TEST
+  if($value$plusargs("REFERENCEOUT=%s",referenceout))begin
+    $display("REFERENCEOUT=%s",referenceout);
+  end
+  //  
+  signature_startaddr = 32'h2000;
+  if($value$plusargs("SIGNATURE=%h",signature))begin
+    //$display("SIGNATURE=%x",signature);
+    if (signature!=0)
+       signature_startaddr = signature;
+  end  
+  $display("SIGNATURE=%x",signature_startaddr);
+`endif
 end
 integer i;
 reg [7:0] itcm_mem [0:`ITCM_SIZE-1];
+reg [31:0] signature_mem [0:255];
 initial begin
   $readmemh({testcase, ".verilog"}, itcm_mem);
   for (i=0;i<`ITCM_SIZE;i=i+8) begin
@@ -44,6 +62,10 @@ initial begin
   $display("ITCM 0x07: %h", `ITCM.mem[0][63:56]);
 //  $display("ITCM 0x16: %h", `ITCM.mem[8'h16]);
 //  $display("ITCM 0x20: %h", `ITCM.mem[8'h20]);
+
+`ifdef COMPLIANCE_TEST
+  $readmemh({referenceout, ".reference_output"}, signature_mem);
+`endif
 end
 //
 reg clk, cpurst;
@@ -68,6 +90,7 @@ initial begin
 #100;
   cpurst=1'b0;
 #1000000;
+  $display("TEST_FAIL::TIMEOUT");
   $finish;
 end
 //
@@ -107,17 +130,36 @@ always @(posedge clk)
   end
 
 wire [31:0] x3 = top_u.core_u.regfile_u.regfile_xx[3];
+reg cpass;
 initial begin
 #1000;
 @(pc_write_to_host_cnt == 32'd8);
+
+`ifdef COMPLIANCE_TEST
 // check signature
 $display("intercept write_tohost, generate signature file");
-for (i=32'h2000;i>32'h20;i=i+4)
+for (i=signature_startaddr;i>32'h20;i=i+4)
   begin
     if (`DTCM.mem0[i/4]===8'hxx) 
        i = 32'h0; //break;
-    $display("%02x%02x%02x%02x",`DTCM.mem3[i/4],`DTCM.mem2[i/4],`DTCM.mem1[i/4],`DTCM.mem0[i/4]);    
+    //$display("%02x%02x%02x%02x",`DTCM.mem3[i/4],`DTCM.mem2[i/4],`DTCM.mem1[i/4],`DTCM.mem0[i/4]);    
   end
+
+cpass = 1'b1;  
+for (i=0;i<4096;i=i+4)
+  begin
+    if ((signature_mem[i/4]===32'hxxxxxxxx))// || !cpass)
+      i= 6000; //break
+    if ( (signature_mem[i/4][7:0  ] !== `DTCM.mem0[(i+signature_startaddr)/4]) ||
+         (signature_mem[i/4][15:8 ] !== `DTCM.mem1[(i+signature_startaddr)/4]) ||
+         (signature_mem[i/4][23:16] !== `DTCM.mem2[(i+signature_startaddr)/4]) ||
+         (signature_mem[i/4][31:24] !== `DTCM.mem3[(i+signature_startaddr)/4]) )
+       cpass = 1'b0;  
+    $display("ref:%08x -- simout:%02x%02x%02x%02x",
+    signature_mem[i/4],
+    `DTCM.mem3[(i+signature_startaddr)/4],`DTCM.mem2[(i+signature_startaddr)/4],`DTCM.mem1[(i+signature_startaddr)/4],`DTCM.mem0[(i+signature_startaddr)/4]);    
+  end
+`endif
 //
         $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
@@ -130,7 +172,11 @@ for (i=32'h2000;i>32'h20;i=i+4)
 //        $display("~~~~~The test ending reached at cycle: %d ~~~~~~~~~~~~~", pc_write_to_host_cycle);
         $display("~~~~~~~~~~~~~~~The final x3 Reg value: %d ~~~~~~~~~~~~~", x3);
         $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+`ifdef COMPLIANCE_TEST
+    if (cpass) begin
+`else
     if (x3 == 1) begin
+`endif
         $display("~~~~~~~~~~~~~~~~ TEST_PASS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         $display("~~~~~~~~~ #####     ##     ####    #### ~~~~~~~~~~~~~~~~");

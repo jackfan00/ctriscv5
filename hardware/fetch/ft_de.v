@@ -73,7 +73,7 @@ begin
      begin       
        fe2de_instr_ffout <=  0;
      end
-   else if (~de_store_load_conflict && ~de_stall)
+   else if (~de_store_load_conflict && ~de_stall && ~fet_stall)
      begin
        fe2de_instr_ffout <=  rv32_instr_todec;
      end
@@ -84,7 +84,7 @@ always @(posedge clk)
 begin
    if (cpurst)
      fe2de_pc_ffout = 0;
-   else if (~de_store_load_conflict && ~de_stall)
+   else if (~de_store_load_conflict && ~de_stall && ~fet_stall)
      fe2de_pc_ffout = fetch_pc;
 end     
 

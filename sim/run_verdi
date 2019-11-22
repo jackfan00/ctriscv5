@@ -1,1 +1,1 @@
-verdi -f ../hardware/top.vc &
+verdi +define+COMPLIANCE_TEST -f ../hardware/top.vc &
