@@ -380,12 +380,12 @@ begin
                 de2ex_wr_csrreg =1;
             end
 
-            if (rd!=0)
-            begin
+            //if (rd!=0)
+            //begin
                 de2ex_rd_oprand2 = csr_rdat; //csrindex;
                 de2ex_rd_csrreg =1;
                 de2ex_wr_reg =1;
-            end
+            //end
             end
         `SYSTEM_CSRRC:
             begin
@@ -396,12 +396,12 @@ begin
             begin
                 de2ex_wr_csrreg =1;
             end
-            if (rd!=0)
-            begin
+            //if (rd!=0)
+            //begin
                 de2ex_rd_oprand2 = csr_rdat; //csrindex;
                 de2ex_rd_csrreg =1;
                 de2ex_wr_reg =1;
-            end
+            //end
             end
         `SYSTEM_CSRRWI:
             begin
@@ -426,12 +426,12 @@ begin
                 de2ex_wr_csrreg =1;
             end
 
-            if (rd!=0)
-            begin
+            //if (rd!=0)
+            //begin
                 de2ex_rd_oprand2 = csr_rdat; //csrindex;
                 de2ex_rd_csrreg =1;
                 de2ex_wr_reg =1;
-            end
+            //end
             end
         `SYSTEM_CSRRCI:
             begin
@@ -442,12 +442,12 @@ begin
             begin
                 de2ex_wr_csrreg =1;
             end
-            if (rd!=0)
-            begin
+            //if (rd!=0)
+            //begin
                 de2ex_rd_oprand2 = csr_rdat; //csrindex;
                 de2ex_rd_csrreg =1;
                 de2ex_wr_reg =1;
-            end
+            //end
             end
         endcase
         end

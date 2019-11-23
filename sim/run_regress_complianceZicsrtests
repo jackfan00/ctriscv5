@@ -1,0 +1,7 @@
+#!/bin/bash
+./run_compliancetest_top ../tests/compliance/rv32Zicsr/I-CSRRC-01.elf    ../tests/compliance/rv32Zicsr/references/I-CSRRC-01    > I-CSRRC.log
+./run_compliancetest_top ../tests/compliance/rv32Zicsr/I-CSRRCI-01.elf     ../tests/compliance/rv32Zicsr/references/I-CSRRCI-01     > I-CSRRCI.log
+./run_compliancetest_top ../tests/compliance/rv32Zicsr/I-CSRRS-01.elf    ../tests/compliance/rv32Zicsr/references/I-CSRRS-01    > I-CSRRS.log
+./run_compliancetest_top ../tests/compliance/rv32Zicsr/I-CSRRSI-01.elf     ../tests/compliance/rv32Zicsr/references/I-CSRRSI-01     > I-CSRRSI.log
+./run_compliancetest_top ../tests/compliance/rv32Zicsr/I-CSRRW-01.elf   ../tests/compliance/rv32Zicsr/references/I-CSRRW-01   > I-CSRRW.log
+./run_compliancetest_top ../tests/compliance/rv32Zicsr/I-CSRRWI-01.elf     ../tests/compliance/rv32Zicsr/references/I-CSRRWI-01     > I-CSRRWI.log
