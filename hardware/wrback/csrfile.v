@@ -136,6 +136,20 @@ begin
 end
 assign mie = {20'b0, mie_msie, 3'b0, mie_mtie, 3'b0, mie_meie, 3'b0};
 //
+reg [31:0] mscratch;
+always @(posedge clk)
+begin
+  if (cpurst)
+    begin
+      mscratch <= 30'b0;
+    end
+  else if (wb2csrfile_wr_reg && wb2csrfile_wr_regindex[11:0]==12'h340)
+    begin
+      mscratch <= wb2csrfile_wr_wdata[31:0];
+    end
+end
+
+//
 reg [31:2] mtvec_w;
 always @(posedge clk)
 begin
@@ -280,12 +294,28 @@ begin
   else    
     begin
       case(csr_r_index[11:0])
+        12'hf11:
+          csr_rdat = 32'b0;  //mvendorID,
+        12'hf12:
+          csr_rdat = 32'b0;  //marchID,
+        12'hf13:
+          csr_rdat = 32'b0;  //mimpID,
+        12'hf14:
+          csr_rdat = 32'b0;  //mhartID,
+
+//a value of zero can be returned to
+//indicate the misa register has not been implemented, requiring that CPU capabilities be determined
+//through a separate non-standard mechanism.  
+        12'h301:
+          csr_rdat = 32'b0;  //misa,
         12'h300:
           csr_rdat = mstatus[31:0];
         12'h304:
           csr_rdat = mie[31:0];
         12'h305:
           csr_rdat = mtvec[31:0];
+        12'h340:
+          csr_rdat = mscratch[31:0];
         12'h341:
           csr_rdat = mepc[31:0];
         12'h342:

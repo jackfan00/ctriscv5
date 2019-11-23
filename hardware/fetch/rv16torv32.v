@@ -25,7 +25,7 @@ wire [4:0] c1_rd = rv16[11:7];
 wire [5:0] c1_nzimm = {rv16[12],rv16[6:2]};
 wire [11:1] c1_jalimm = {rv16[12],rv16[8],rv16[10:9],rv16[6],rv16[7],rv16[2],rv16[11],rv16[5:3]};
 wire [5:0] c1_imm = {rv16[12],rv16[6:2]};
-wire [9:4] c1_addi16sp_nzimm = {rv16[12],rv16[3:2],rv16[4],rv16[2],rv16[6]};
+wire [9:4] c1_addi16sp_nzimm = {rv16[12],rv16[4:3],rv16[5],rv16[2],rv16[6]};
 wire [17:12] c1_lui_nzuimm = {rv16[12],rv16[6:2]};
 wire [5:0] c1_shamt = {rv16[12],rv16[6:2]};
 wire [8:1] c1_bxx_offset = {rv16[12],rv16[6:5],rv16[2],rv16[11:10],rv16[4:3]};
@@ -51,10 +51,10 @@ wire [31:0] c1_instr = ({32{CNOP}} & 32'h13) |
                   ({32{CADDI}} & {{6{c1_nzimm[5]}},c1_nzimm[5:0],c1_rs1,3'b0,c1_rd,7'h13}) |  // addi rd, rd, nzimm[5:0]
                   ({32{CJAL}} & {c1_jalimm[11],c1_jalimm[10:1],c1_jalimm[11],{8{c1_jalimm[11]}},5'h1,7'h6f}) |  //JAL x1, offset[11:1]
                   ({32{CLI}} & {{6{c1_imm[5]}},c1_imm[5:0],5'h0,3'b0,c1_rd,7'h13}) |   //addi rd, x0, imm[5:0]
-                  ({32{CADDI16SP}} & {2'b0,c1_addi16sp_nzimm[9:4],4'b0,5'h2,3'b0,5'h2,7'h13}) |  //addi x2, x2, nzimm[9:4]
+                  ({32{CADDI16SP}} & {{2{c1_addi16sp_nzimm[9]}},c1_addi16sp_nzimm[9:4],4'b0,5'h2,3'b0,5'h2,7'h13}) |  //addi x2, x2, nzimm[9:4]
                   ({32{CLUI}} & {{14{c1_lui_nzuimm[17]}},c1_lui_nzuimm[17:12],c1_rd,7'h37}) |  //lui rd,  nzuimm[17:12]
-                  ({32{CSRLI}} & {7'h00,c1_shamt[5:0],2'b1,c1_rdprime,3'b101,2'b1,c1_rdprime,7'h13}) |  //srli rd', rd',  shamt[5:0]
-                  ({32{CSRAI}} & {7'h20,c1_shamt[5:0],2'b1,c1_rdprime,3'b101,2'b1,c1_rdprime,7'h13}) |  //srai rd', rd',  shamt[5:0]
+                  ({32{CSRLI}} & {6'h00,c1_shamt[5:0],2'b1,c1_rdprime,3'b101,2'b1,c1_rdprime,7'h13}) |  //srli rd', rd',  shamt[5:0]
+                  ({32{CSRAI}} & {6'h10,c1_shamt[5:0],2'b1,c1_rdprime,3'b101,2'b1,c1_rdprime,7'h13}) |  //srai rd', rd',  shamt[5:0]
                   ({32{CANDI}} & {{6{c1_imm[5]}},c1_imm[5:0],2'b1,c1_rdprime,3'b111,2'b1,c1_rdprime,7'h13}) |  //andi rd', rd',  imm[5:0]
                   ({32{CSUB}} & {7'h20,2'b1,c1_rs2prime,2'b1,c1_rdprime,3'b0,2'b1,c1_rdprime,7'h33}) |  //sub rd', rd', rs2' 
                   ({32{CXOR}} & {7'h00,2'b1,c1_rs2prime,2'b1,c1_rdprime,3'b100,2'b1,c1_rdprime,7'h33}) |  //xor rd', rd', rs2' 

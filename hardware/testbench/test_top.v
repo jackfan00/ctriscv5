@@ -4,7 +4,11 @@ module test_top;
 `define ITCM_SIZE 16384
 
 `ifdef COMPLIANCE_TEST
-`define PC_WRITE_TOHOST       32'h00000040    //compilance test
+`define PC_WRITE_TOHOST       32'h00000040    //compilance rv32i test
+`define HAS_REFERENCEOUT
+`elsif COMPLIANCEIMC_TEST
+`define PC_WRITE_TOHOST       32'h00000036    //compilance rv32imc test
+`define HAS_REFERENCEOUT
 `else
 `define PC_WRITE_TOHOST       32'h00000086  //e200 test
 `endif
@@ -17,7 +21,8 @@ initial begin
   if($value$plusargs("TESTCASE=%s",testcase))begin
     $display("TESTCASE=%s",testcase);
   end  
-`ifdef COMPLIANCE_TEST
+
+`ifdef HAS_REFERENCEOUT
   if($value$plusargs("REFERENCEOUT=%s",referenceout))begin
     $display("REFERENCEOUT=%s",referenceout);
   end
@@ -63,7 +68,7 @@ initial begin
 //  $display("ITCM 0x16: %h", `ITCM.mem[8'h16]);
 //  $display("ITCM 0x20: %h", `ITCM.mem[8'h20]);
 
-`ifdef COMPLIANCE_TEST
+`ifdef HAS_REFERENCEOUT
   $readmemh({referenceout, ".reference_output"}, signature_mem);
 `endif
 end
@@ -135,7 +140,7 @@ initial begin
 #1000;
 @(pc_write_to_host_cnt == 32'd8);
 
-`ifdef COMPLIANCE_TEST
+`ifdef HAS_REFERENCEOUT
 // check signature
 $display("intercept write_tohost, generate signature file");
 for (i=signature_startaddr;i>32'h20;i=i+4)
@@ -172,7 +177,7 @@ for (i=0;i<4096;i=i+4)
 //        $display("~~~~~The test ending reached at cycle: %d ~~~~~~~~~~~~~", pc_write_to_host_cycle);
         $display("~~~~~~~~~~~~~~~The final x3 Reg value: %d ~~~~~~~~~~~~~", x3);
         $display("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-`ifdef COMPLIANCE_TEST
+`ifdef HAS_REFERENCEOUT
     if (cpass) begin
 `else
     if (x3 == 1) begin
