@@ -25,6 +25,8 @@ multprod_LO_ffout,
 multprod_HI_ffout,
 load_misaligned_exxeption,
 ex2mem_exp_ffout,
+div2mem_divvalid_ffout,
+div2mem_wr_wdata_ffout,
 
 //output port
 mem2ex_mem_op,
@@ -68,6 +70,9 @@ input [31:0] multprod_LO_ffout;
 input [31:0] multprod_HI_ffout;
 input load_misaligned_exxeption;
 input ex2mem_exp_ffout;
+input div2mem_divvalid_ffout;
+input [31:0] div2mem_wr_wdata_ffout;
+
 
 output [2:0] mem2ex_mem_op;
 output [31:0] mem2ex_memadr;
@@ -103,22 +108,26 @@ begin
     if (ex2mem_load_ffout)
         mem2wb_wr_wdata = readram_rdata;
     
-    else begin   /**< sel from aluout / multout / divout */
-        if (mul2mem_prod_complete_ffout) begin
-            //if (mul2mem_LO_ffout){
-            //    mem2wb_wr_wdata = multprod_LO_ffout;
-            //}
-            //else{
-            //    mem2wb_wr_wdata = multprod_HI_ffout;
-            //}
-            mem2wb_wr_wdata = mul2mem_LO_ffout ? multprod_LO_ffout : 
-                               mul2mem_HI_ffout ? multprod_HI_ffout : 32'b0;
-
-        end
-        else
-            mem2wb_wr_wdata = ex2mem_wr_wdata_ffout;
+    ///////else begin   /**< sel from aluout / multout / divout */
+    ///////    if (mul2mem_prod_complete_ffout) begin
+    ///////        //if (mul2mem_LO_ffout){
+    ///////        //    mem2wb_wr_wdata = multprod_LO_ffout;
+    ///////        //}
+    ///////        //else{
+    ///////        //    mem2wb_wr_wdata = multprod_HI_ffout;
+    ///////        //}
+    ///////        mem2wb_wr_wdata = mul2mem_LO_ffout ? multprod_LO_ffout : 
+    ///////                           mul2mem_HI_ffout ? multprod_HI_ffout : 32'b0;
+    ///////                           
+    ///////    end
+    ///////    else if (div2mem_divvalid_ffout) begin
+    ///////        mem2wb_wr_wdata = div2mem_wr_wdata_ffout;
+    ///////    end
+    ///////end    
         
-    end
+    else
+        mem2wb_wr_wdata = ex2mem_wr_wdata_ffout;
+        
 end
 
 

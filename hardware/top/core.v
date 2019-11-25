@@ -155,6 +155,7 @@ fetch fetch_u(
 );
 
 //
+wire div_stall;
 wire de2fe_branch, de2ex_inst_valid;
 wire de_store_load_conflict;
 wire [31:0] fe2de_pc_ffout, fe2de_ir_ffout;
@@ -167,6 +168,7 @@ ft_de ft_de_u(
 .readram_stall                (readram_stall),
 .mem_stall                    (mem_stall), 
 .mult_stall                   (mult_stall),
+.div_stall                   (div_stall),
 .fetch_pc                     (fetch_pc), 
 .rv32_instr_todec             (rv32_instr_todec),
 .fet_is_x1                    (fet_is_x1), 
@@ -294,6 +296,7 @@ de_ex de_ex_u(
 .mem_stall               (mem_stall), 
 .readram_stall           (readram_stall), 
 .mult_stall              (mult_stall),
+.div_stall                   (div_stall),
 .mem2wb_exp_ffout        (mem2wb_exp_ffout ),
 .interrupt               (interrupt ),
 .de2ex_pc                (de2ex_pc),
@@ -389,6 +392,10 @@ wire ex2mem_load;
 //wire ex2mem_rd_is_x1, ex2mem_rd_is_xn;
 wire [2:0] mem2ex_mem_op;
 wire [31:0] mem2ex_memadr;
+wire ex2mem_mulvalid;
+wire [31:0] mul2mem_wr_wdata;
+wire div2mem_divvalid;
+wire [31:0] div2mem_wr_wdata;
 
 inst_execute inst_execute_u(
 .de2ex_wr_mem_ffout       (de2ex_wr_mem_ffout),
@@ -424,6 +431,10 @@ inst_execute inst_execute_u(
 .de2ex_causecode_ffout    (de2ex_causecode_ffout    ),
 .de2ex_mtval_ffout        (de2ex_mtval_ffout          ),
 .de2ex_rv16_ffout        (de2ex_rv16_ffout          ),
+.ex2mem_mulvalid          (ex2mem_mulvalid          ),
+.mul2mem_wr_wdata         (mul2mem_wr_wdata         ),
+.div2mem_divvalid         (div2mem_divvalid         ),
+.div2mem_wr_wdata         (div2mem_wr_wdata         ),
 
 // output port            
 .ex2mem_wr_reg            (ex2mem_wr_reg            ),
@@ -456,7 +467,7 @@ inst_execute inst_execute_u(
 
 );
 
-wire [31:0] multprod_LO_ffout, multprod_HI_ffout;
+wire [31:0] multprod_LO_ffout, multprod_HI_ffout, div2mem_wr_wdata_ffout;
 inst_mult inst_mult_u(
 .clk                        (clk                        ), 
 .cpurst                     (cpurst                     ),
@@ -480,7 +491,15 @@ inst_mult inst_mult_u(
 .mul2mem_LO_ffout           (mul2mem_LO_ffout           ),
 .multprod_LO_ffout          (multprod_LO_ffout          ), 
 .multprod_HI_ffout          (multprod_HI_ffout          ),
-.mult_stall                 (mult_stall                 )
+.mult_stall                 (mult_stall                 ),
+.div_stall                   (div_stall),
+.div2mem_wr_wdata_ffout     (div2mem_wr_wdata_ffout     ),
+.div2mem_divvalid_ffout     (div2mem_divvalid_ffout     ),
+.ex2mem_mulvalid          (ex2mem_mulvalid          ),
+.mul2mem_wr_wdata         (mul2mem_wr_wdata         ),
+.div2mem_divvalid         (div2mem_divvalid         ),
+.div2mem_wr_wdata         (div2mem_wr_wdata         )
+
 );
 
 
@@ -507,6 +526,7 @@ ex_mem ex_mem_u(
 .interrupt               (interrupt               ),
 .exe_store_load_conflict (exe_store_load_conflict ),
 .mult_stall              (mult_stall              ), 
+.div_stall                   (div_stall),
 .mem_stall               (mem_stall               ), 
 .readram_stall           (readram_stall           ),
 .ex2mem_wr_reg           (ex2mem_wr_reg           ),
@@ -615,6 +635,8 @@ inst_memacc inst_memacc_u(
 .multprod_HI_ffout          (multprod_HI_ffout          ),
 .load_misaligned_exxeption  (load_misaligned_exxeption  ),
 .ex2mem_exp_ffout           (ex2mem_exp_ffout           ),
+.div2mem_wr_wdata_ffout     (div2mem_wr_wdata_ffout     ),
+.div2mem_divvalid_ffout     (div2mem_divvalid_ffout     ),
 
 //output port              
 .mem2ex_mem_op              (mem2ex_mem_op              ),

@@ -35,6 +35,11 @@ de2ex_mtvec_ffout       ,
 de2ex_mepc_ffout        ,
 de2ex_causecode_ffout   ,
 de2ex_rv16_ffout   ,
+ex2mem_mulvalid,
+mul2mem_wr_wdata,
+div2mem_divvalid,
+div2mem_wr_wdata,
+
 
 // output port
 ex2mem_wr_reg,
@@ -98,6 +103,11 @@ input [31:0] de2ex_mtvec_ffout       ;
 input [31:0] de2ex_mepc_ffout        ;           
 input [4:0] de2ex_causecode_ffout   ;      
 input de2ex_rv16_ffout   ;      
+input ex2mem_mulvalid;
+input [31:0] mul2mem_wr_wdata;
+input div2mem_divvalid;
+input [31:0] div2mem_wr_wdata;
+
 
 //regfile
 output ex2mem_wr_reg;
@@ -204,7 +214,11 @@ always @*
 //assign    ex2mem_pc = de2ex_pc_ffout;
 assign    ex2mem_wr_reg = de2ex_wr_reg_ffout;
 assign    ex2mem_wr_regindex = de2ex_wr_regindex_ffout;
-assign    ex2mem_wr_wdata = de2ex_rd_csrreg_ffout & de2ex_wr_reg_ffout ? de2ex_rd_oprand2_ffout : alu_out;  //reg wdata
+
+assign    ex2mem_wr_wdata = de2ex_rd_csrreg_ffout & de2ex_wr_reg_ffout ? de2ex_rd_oprand2_ffout : 
+                            de2ex_MD_OP_ffout & ex2mem_mulvalid ? mul2mem_wr_wdata :
+                            de2ex_MD_OP_ffout & div2mem_divvalid ? div2mem_wr_wdata :
+                            alu_out;  //reg wdata
 
 reg [31:0] csr_out;
 always @*

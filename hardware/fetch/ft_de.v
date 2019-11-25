@@ -1,6 +1,6 @@
 module ft_de(
 clk, cpurst, fet_flush,
-de_stall, exe_store_load_conflict, readram_stall, mem_stall, mult_stall,
+de_stall, exe_store_load_conflict, readram_stall, mem_stall, mult_stall, div_stall,
 fetch_pc, rv32_instr_todec,
 fet_is_x1, fet_is_xn, predict_bxxtaken, fe2de_rv16,
 mem2wb_exp_ffout, interrupt, branch_predict_err,
@@ -16,7 +16,7 @@ fe2de_rv16_ffout,
 fet_stall,
 btb_pc, btb_instr, btb_valid
 );
-input clk, cpurst, fet_flush, de_stall, exe_store_load_conflict, readram_stall, mem_stall, mult_stall;
+input clk, cpurst, fet_flush, de_stall, exe_store_load_conflict, readram_stall, mem_stall, mult_stall, div_stall;
 input [31:0] fetch_pc, rv32_instr_todec;
 input fet_is_x1, fet_is_xn, predict_bxxtaken, fe2de_rv16;
 input mem2wb_exp_ffout;
@@ -35,7 +35,7 @@ output fet_stall;
 output [31:0] btb_pc, btb_instr;
 output btb_valid;
 
-assign fet_stall = de_store_load_conflict | de_stall | exe_store_load_conflict | readram_stall | mem_stall | mult_stall;
+assign fet_stall = de_store_load_conflict | de_stall | exe_store_load_conflict | readram_stall | mem_stall | mult_stall | div_stall;
 ///dff_e_cell #(32) u0 ( .clk(clk), .en(~stall), .d(fetch_pc),         .q(dec_pc) );
 ///dff_e_cell #(32) u1 ( .clk(clk), .en(~stall), .d(rv32_instr_todec), .q(dec_instr) );
 ///dff_e_cell #(1) u2  ( .clk(clk), .en(~stall), .d(predict_bxxtaken), .q(fe2de_predict_bxxtaken_ffout) );

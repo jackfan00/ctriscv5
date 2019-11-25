@@ -1,0 +1,4 @@
+../hardware/testbench/tb_divrem.v
+../hardware/execute/divrem_top.v
+../hardware/execute/divrem.v
+
