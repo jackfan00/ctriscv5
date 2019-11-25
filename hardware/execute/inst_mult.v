@@ -194,8 +194,8 @@ begin
 end
 
 //
-wire de2ex_div_fuse;
-wire diven_p = ex2div_diven_p & !de2ex_div_fuse ; //use previous result in fuse case
+wire de2ex_div_fuse, diven, divout_valid;
+wire diven_p = ex2div_diven_p & (!diven) & (!divout_valid) & !de2ex_div_fuse ; //use previous result in fuse case
 
 wire [31:0] rem, quo;
 divrem_top divrem_top_u(
@@ -242,7 +242,7 @@ begin
 end
 
 wire div_enable = diven | diven_p;
-assign div_stall = de2ex_inst_valid_ffout && de2ex_MD_OP_ffout && div_enable &&  (!de2ex_div_fuse_p_ffout);
+assign div_stall = de2ex_inst_valid_ffout && de2ex_MD_OP_ffout && div_enable && (!div2mem_divvalid) && (!de2ex_div_fuse_p_ffout);
 
 assign div2mem_divvalid = divout_valid | de2ex_div_fuse_p_ffout;
 wire divop = (de2ex_aluop_ffout == `ALU_DIV) | (de2ex_aluop_ffout == `ALU_DIVU);

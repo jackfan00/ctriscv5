@@ -1,0 +1,9 @@
+#!/bin/bash
+./run_compliancetest_top ../tests/compliance/rv32im/MUL.elf  ../tests/compliance/rv32im/references/MUL    > mul.log
+./run_compliancetest_top ../tests/compliance/rv32im/MULH.elf      ../tests/compliance/rv32im/references/MULH     > mulh.log
+./run_compliancetest_top ../tests/compliance/rv32im/MULHSU.elf     ../tests/compliance/rv32im/references/MULHSU    > mulhsu.log
+./run_compliancetest_top ../tests/compliance/rv32im/MULHU.elf      ../tests/compliance/rv32im/references/MULHU     > mulhu.log
+./run_compliancetest_top ../tests/compliance/rv32im/DIV.elf   ../tests/compliance/rv32im/references/DIV   > div.log
+./run_compliancetest_top ../tests/compliance/rv32im/DIVU.elf     ../tests/compliance/rv32im/references/DIVU     > divu.log
+./run_compliancetest_top ../tests/compliance/rv32im/REM.elf    ../tests/compliance/rv32im/references/REM    > rem.log
+./run_compliancetest_top ../tests/compliance/rv32im/REMU.elf     ../tests/compliance/rv32im/references/REMU     > remu.log

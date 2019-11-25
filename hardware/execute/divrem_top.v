@@ -19,7 +19,8 @@ output [31:0] rem, quo;
 
 
 wire div0 = (divider==32'b0);
-wire ovflow = (divider==32'hffffffff) & (dividend==32'h80000000) & divsigned;
+//spec is wrong about overflow definition : table 5.1
+wire ovflow = (divider==32'h1) & (dividend==32'h80000000) & divsigned;
 //
 
 wire [31:0] divider_undivsigned  = divsigned & divider[31]  ? {1'b0,~divider[30:0]}+1'b1  : divider[31:0];
@@ -47,7 +48,13 @@ wire s2 = divsigned & dividend[31];
 
 wire result_signed = s1 ^ s2;
 
-wire [31:0] rems = result_signed ? ~rem_undivsigned[30:0]+1'b1 : rem_undivsigned[31:0];
+// be careful about rem :
+// ex: 101/-100 = (q=-1, rem=1), -101/100=(q=-1,rem=-1)
+// ex: -1/-100 = (0,-1)
+
+wire [31:0] rems = (quo_undivsigned==32'b0) ? dividend :
+          result_signed & s2 ? ~rem_undivsigned[30:0]+1'b1 : rem_undivsigned[31:0];
+
 wire [31:0] quos = result_signed ? ~quo_undivsigned[30:0]+1'b1 : quo_undivsigned[31:0];
 
 assign rem = div0 ? dividend : 
