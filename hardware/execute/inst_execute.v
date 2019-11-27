@@ -22,7 +22,7 @@ de2ex_csrop_ffout,
 de2ex_rd_is_x1_ffout,
 de2ex_rd_is_xn_ffout,
 mem2ex_mem_op,
-mem_misaligned_exxeption,
+store_misaligned_exxeption,
 mem2ex_memadr,
 ex2mem_store_ffout,
 ex2mem_mem_en_ffout,
@@ -90,7 +90,7 @@ input de2ex_rd_is_x1_ffout;
 input de2ex_rd_is_xn_ffout;
 //from mem back-to exe
 input [2:0] mem2ex_mem_op;
-input mem_misaligned_exxeption ;
+input store_misaligned_exxeption ;
 input [31:0] mem2ex_memadr;
 input ex2mem_store_ffout;
 input ex2mem_mem_en_ffout;
@@ -238,14 +238,14 @@ assign    ex2mem_wr_csrreg   = de2ex_wr_csrreg_ffout;
 assign    ex2mem_wr_csrindex = de2ex_csr_index_ffout;
 assign    ex2mem_wr_csrwdata = csr_out;
 
-assign    ex2mem_memaddr =  mem_misaligned_exxeption ? mem2ex_memadr : alu_out;
+assign    ex2mem_memaddr =  store_misaligned_exxeption ? mem2ex_memadr : alu_out;
 
 //always @*
 //begin
 //    /**< avoid read dataram[] array core dump, only for software purpose */
 //
 //    if (de2ex_mem_en_ffout) begin
-//        if (mem_misaligned_exxeption)
+//        if (store_misaligned_exxeption)
 //            ex2mem_memaddr = mem2ex_memadr;
 //        
 //        else
@@ -258,9 +258,9 @@ assign    ex2mem_memaddr =  mem_misaligned_exxeption ? mem2ex_memadr : alu_out;
 
 assign   ex2mem_wr_mem = de2ex_wr_mem_ffout;
 assign   ex2mem_wr_memwdata = de2ex_wr_memwdata_ffout;
-assign   ex2mem_mem_op = mem_misaligned_exxeption ? mem2ex_mem_op : de2ex_mem_op_ffout;
+assign   ex2mem_mem_op = store_misaligned_exxeption ? mem2ex_mem_op : de2ex_mem_op_ffout;
 
-//    if (mem_misaligned_exxeption){
+//    if (store_misaligned_exxeption){
 //        ex2mem_mem_op = mem2ex_mem_op;
 //    }
 //    else{

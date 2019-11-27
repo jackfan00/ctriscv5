@@ -1,4 +1,5 @@
-module fetch ( clk, cpurst, fet_stall,
+module fetch ( clk, cpurst, 
+de_stall, exe_stall, memacc_stall,
 btb_pc, btb_instr, btb_valid,
 boot_addr,
 r_x1, rs3v,
@@ -16,6 +17,7 @@ mcause,
 de2ex_wr_csrreg, ex2mem_wr_csrreg, mem2wb_wr_csrreg, mem2wb_wr_csrreg_ffout,
 de2ex_wr_csrindex, ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, mem2wb_wr_csrindex_ffout,
 de2ex_wr_csrwdata, ex2mem_wr_csrwdata, mem2wb_wr_csrwdata, mem2wb_wr_csrwdata_ffout,
+lr_isram_cs, lr_isram_cs_ff,
 
 isram_cs, isram_adr, rv32_instr_todec, fetch_pc,
 fet_is_x1, fet_is_xn,
@@ -24,10 +26,13 @@ predict_bxxtaken,
 fe2de_rv16,
 fet_flush,
 cross_bd_ff,
-rv16_instr_todec
+jalr_dep,
+rv16_instr_todec,
+fet_stall
+
 );
 input clk,cpurst;
-input fet_stall;
+input de_stall, exe_stall, memacc_stall;
 input [31:0] btb_pc, btb_instr;
 input btb_valid;
 input [31:0] boot_addr;
@@ -46,6 +51,7 @@ input [4:0] mcause;
 input de2ex_wr_csrreg, ex2mem_wr_csrreg, mem2wb_wr_csrreg, mem2wb_wr_csrreg_ffout;
 input [11:0] de2ex_wr_csrindex, ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, mem2wb_wr_csrindex_ffout;
 input [31:0] de2ex_wr_csrwdata, ex2mem_wr_csrwdata, mem2wb_wr_csrwdata, mem2wb_wr_csrwdata_ffout;
+input lr_isram_cs, lr_isram_cs_ff;
 
 output isram_cs;
 output [31:3] isram_adr;
@@ -57,15 +63,20 @@ output predict_bxxtaken;
 output fe2de_rv16;
 output fet_flush;
 output cross_bd_ff;
+output jalr_dep;
 output [15:0] rv16_instr_todec;
+output fet_stall;
 
+wire lr_isram_cs_endp;
 wire isrv16;
 assign fe2de_rv16 = isrv16;
 
 genpc genpc_u(
 .clk(clk), 
 .cpurst(cpurst), 
-.fet_stall(fet_stall),
+.de_stall(de_stall), 
+.exe_stall(exe_stall), 
+.memacc_stall(memacc_stall),
 .btb_pc(btb_pc),
 .btb_valid(btb_valid),
 .boot_addr(boot_addr),
@@ -105,6 +116,8 @@ genpc genpc_u(
 .ex2mem_wr_csrwdata      (ex2mem_wr_csrwdata      ), 
 .mem2wb_wr_csrwdata      (mem2wb_wr_csrwdata      ), 
 .mem2wb_wr_csrwdata_ffout(mem2wb_wr_csrwdata_ffout),
+.lr_isram_cs             (lr_isram_cs             ),
+.lr_isram_cs_endp        (lr_isram_cs_endp        ),
 
 // output port
 .isram_adr(isram_adr), 
@@ -118,9 +131,30 @@ genpc genpc_u(
 .fetch_rs3n(fetch_rs3n),
 .predict_bxxtaken(predict_bxxtaken),
 .fet_flush(fet_flush),
-.holdpc(holdpc),
-.cross_bd_ff(cross_bd_ff)
+//.holdpc(holdpc),
+.cross_bd_ff(cross_bd_ff),
+.fet_stall(fet_stall)
+
 );
+
+// exclude load-store isram
+////reg lr_isram_cs_ff;
+////always @(posedge clk)
+////  begin
+////    if (cpurst)
+////      lr_isram_cs_ff <= 1'b0;
+////    else 
+////      lr_isram_cs_ff <= lr_isram_cs;;
+////  end
+wire lr_isram_cs_stp = lr_isram_cs & (!lr_isram_cs_ff);
+assign lr_isram_cs_endp = (!lr_isram_cs) & lr_isram_cs_ff;
+reg [63:0] instr_hold;
+always @(posedge clk)
+  begin
+    if (lr_isram_cs_stp)
+       instr_hold <= instr_fromsram;
+  end
+wire [63:0] valid_instr_fromsram = lr_isram_cs_ff ? instr_hold : instr_fromsram;
 
 genrv32 genrv32_u( 
 .clk(clk), 
@@ -128,11 +162,12 @@ genrv32 genrv32_u(
 .jb_ff(jb_ff), 
 .sram_cs_ff(sram_cs_ff), 
 .pc(fetch_pc), 
-.instr(instr_fromsram), 
+.instr(valid_instr_fromsram), //instr_fromsram), 
 .fet_stall(fet_stall),
 .btb_pc(btb_pc), 
 .btb_instr(btb_instr),
 .btb_valid(btb_valid),
+.lr_isram_cs(lr_isram_cs),
 
 // output port
 .rv32_instr(rv32_instr_todec), 

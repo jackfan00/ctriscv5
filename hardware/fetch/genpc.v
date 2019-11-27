@@ -1,4 +1,5 @@
-module genpc(clk, cpurst, fet_stall, btb_pc, btb_valid,
+module genpc(clk, cpurst,  btb_pc, btb_valid,
+de_stall, exe_stall, memacc_stall,
 boot_addr,
 r_x1, rs3v,
 dec_is_x1, exe_is_x1, mem_is_x1, wb_is_x1,
@@ -17,6 +18,7 @@ mcause,
 de2ex_wr_csrreg, ex2mem_wr_csrreg, mem2wb_wr_csrreg, mem2wb_wr_csrreg_ffout,
 de2ex_wr_csrindex, ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, mem2wb_wr_csrindex_ffout,
 de2ex_wr_csrwdata, ex2mem_wr_csrwdata, mem2wb_wr_csrwdata, mem2wb_wr_csrwdata_ffout,
+lr_isram_cs, lr_isram_cs_endp,
 
 isram_adr, 
 pc, 
@@ -28,12 +30,13 @@ isram_cs_ff,
 fetch_rs3n,
 predict_bxxtaken,
 fet_flush,
-holdpc, 
-cross_bd_ff
+//holdpc, 
+cross_bd_ff,
+fet_stall
 );
 
 input clk, cpurst;
-input fet_stall;
+input de_stall, exe_stall, memacc_stall;
 input [31:0] btb_pc;
 input btb_valid;
 input [31:0] boot_addr;
@@ -54,7 +57,8 @@ input [4:0] mcause;
 input de2ex_wr_csrreg, ex2mem_wr_csrreg, mem2wb_wr_csrreg, mem2wb_wr_csrreg_ffout;
 input [11:0] de2ex_wr_csrindex, ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, mem2wb_wr_csrindex_ffout;
 input [31:0] de2ex_wr_csrwdata, ex2mem_wr_csrwdata, mem2wb_wr_csrwdata, mem2wb_wr_csrwdata_ffout;
-
+input lr_isram_cs, lr_isram_cs_endp;
+//
 output [31:3] isram_adr;
 output [31:0] pc;
 output fet_is_x1, fet_is_xn;
@@ -65,9 +69,11 @@ output isram_cs_ff;
 output [4:0] fetch_rs3n;
 output predict_bxxtaken;
 output fet_flush;
-output holdpc;
+//output holdpc;
 output cross_bd_ff;
+output fet_stall;
 
+reg cross_bd_ff;
 wire [31:0] jaloffset, jalroffset, bxxoffset, jalr_xn;
 wire [11:0] if_csr_r_index;
 mini_decode mini_decode_u (
@@ -104,13 +110,16 @@ mini_decode mini_decode_u (
    .if_csr_r_index(if_csr_r_index)
 );
 
-reg cross_bd_ff;
+//fet_stall : hold pc and flush decode pipe
+assign fet_stall = jalr_dep | lr_isram_cs | (cross_bd_ff&(!branch_predict_err));
+
 reg [31:0] nxtpcoffset;
 always @*
 begin
-  if (cross_bd_ff)  //1st priority
-    nxtpcoffset =0;
-  else if (isjal)
+  //if (cross_bd_ff)  //1st priority
+  //  nxtpcoffset =0;
+  //else 
+  if (isjal)
     nxtpcoffset = jaloffset;
   else if (isjalr)
     nxtpcoffset = jalroffset;
@@ -135,38 +144,43 @@ reg [31:0] bypass_mepc, bypass_mtvec;
 //wire [31:0] pcop1 = isjalr ? jalr_xn : pc;
 wire [31:0] pcop1 = isjalr & (!cross_bd_ff) ? jalr_xn : pc;
 wire [31:0] nxtpc = 
+
+// branch_predict_err is 1st priority
+// because fetched addr is wrong, so need to correct it first.
+       branch_predict_err ? de2fe_branch_target :   
+       fet_stall|de_stall|exe_stall|memacc_stall ? pc :
        //need to modify?????
        wb2csrfile_int_ffout ? {mtvec[31:2],2'b0} + {mcause[4:0],2'b0} :
-       //wb2csrfile_exp_ffout ? {mtvec[31:2],2'b0} :
-       //ismret ? mepc :
        isecallbk ? {bypass_mtvec[31:2],2'b0} :
        ismret ? bypass_mepc :
-       branch_predict_err ? de2fe_branch_target :       
-       fet_stall | fetch_misalign | jalr_dep ? pc : pcop1 + nxtpcoffset;
+//       branch_predict_err ? de2fe_branch_target :   
+                            pcop1 + nxtpcoffset ;//       
+       //fet_stall | fetch_misalign | jalr_dep ? pc : pcop1 + nxtpcoffset;
 
 //pc jump condition 
-wire jc = wb2csrfile_int_ffout | isecallbk | ismret | branch_predict_err | jb;
+wire jc = (wb2csrfile_int_ffout | isecallbk | ismret | branch_predict_err | jb) & (!lr_isram_cs);
 
-assign holdpc = fet_stall | fetch_misalign | jalr_dep;
+//assign holdpc = fet_stall | fetch_misalign | jalr_dep;
 
 wire cross_bd;
 reg [31:0] pc;
 always @(posedge clk )
 begin
   if (cpurst)
-    pc <= 32'b0;
+    pc <= boot_addr; //32'b0;
   else //if (!cross_bd_ff)
     pc <= nxtpc;
 end
 
-assign fet_flush = fetch_misalign | jalr_dep;
+assign fet_flush = fet_stall; //fetch_misalign | jalr_dep;
 
 //cross 8bytes boundary
 //assign isram_adr = cpurst ? boot_addr[31:0] : (nxtpc[2:1]==2'b11 && (!jb)) ? nxtpc[31:3]+1'b1 : nxtpc[31:3];
 assign isram_adr = cpurst ? boot_addr[31:0] : 
+                   
                    // continuous fetch case, dont need 1 more dummty clock at cross-boundry
                    cross_bd & (!jc) ? pc[31:3]+1'b1 :  
-                   //
+                   //jump address and cross 8-byte boundry, need read 2 cycle
                    cross_bd_ff &(!branch_predict_err) ? pc[31:3]+1'b1 :
                             nxtpc[31:3];
 //cross boundry need fetch 2 times
@@ -189,6 +203,7 @@ begin
   else if (cross_bd_ff & (!branch_predict_err))
     cross_bd_ff <= 1'b0;
   else
+  //jump address and cross 8-byte boundry
     cross_bd_ff <= cross_bd;
 end
 
@@ -198,7 +213,8 @@ begin
   isram_adr_ff <= isram_adr[31:3];
 end
 assign isram_cs = cpurst ? 1'b1 : ((nxtpc[2:1]==2'b11) && (isram_adr[31:3] == isram_adr_ff[31:3])) ||
-                (isram_adr[31:3] != isram_adr_ff[31:3]);
+                                  (isram_adr[31:3] != isram_adr_ff[31:3]) ||
+                                  lr_isram_cs_endp;
 reg isram_cs_ff;
 always @(posedge clk )
 begin

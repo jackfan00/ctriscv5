@@ -1,6 +1,7 @@
 ../hardware/testbench/test_top.v
 
 
+../hardware/define/addrmap_define.v
 ../hardware/define/opcode_define.v
 ../hardware/decode/decode_include.v
 ../hardware/execute/execute_include.v

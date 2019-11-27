@@ -41,14 +41,14 @@ mem2wb_wr_mem,
 mem2wb_mem_wdata,
 mem2wb_rd_is_x1,
 mem2wb_rd_is_xn,
-mem_stall,
+store_stall,
 dsram_addr,
 dsram_cs,
 dsram_we,
 dsram_ben,
 dsram_wdata,
 mem2wb_exp,
-mem_misaligned_exxeption
+store_misaligned_exxeption
 );
 input clk, cpurst;
 input ex2mem_wr_reg_ffout;
@@ -86,14 +86,14 @@ output mem2wb_wr_mem;  // to sram write enable
 output [31:0] mem2wb_mem_wdata;
 output mem2wb_rd_is_x1;
 output mem2wb_rd_is_xn;
-output mem_stall;
+output store_stall;
 output [31:0] dsram_addr;
 output dsram_cs;
 output dsram_we;
 output [3:0] dsram_ben;
 output [31:0] dsram_wdata;
 output mem2wb_exp;
-output mem_misaligned_exxeption;
+output store_misaligned_exxeption;
 
 assign mem2wb_rd_is_x1 = ex2mem_rd_is_x1_ffout;
 assign mem2wb_rd_is_xn = ex2mem_rd_is_xn_ffout;
@@ -132,7 +132,7 @@ end
 
 
 //    /**< STORE misaligned */
-//    if (mem_misaligned_exxeption_ffout){
+//    if (store_misaligned_exxeption_ffout){
 //        mem2wb_memaddr = mem2ex_memadr_ffout;
 //        mem2wb_mem_op = mem2ex_mem_op_ffout;
 //        mem_wr_memwdata = mem2ex_wr_memwdata_ffout;
@@ -143,14 +143,14 @@ end
 //        mem_wr_memwdata = ex2mem_wr_memwdata_ffout;
 //    }
 
-reg mem_misaligned_exxeption_ffout;
+reg store_misaligned_exxeption_ffout;
 reg [31:0] mem2ex_memadr_ffout;
 reg [2:0] mem2ex_mem_op_ffout;
 reg [31:0] mem2ex_wr_memwdata_ffout;
 
-wire [31:0] mem2wb_memaddr = mem_misaligned_exxeption_ffout ? mem2ex_memadr_ffout : ex2mem_memaddr_ffout;
-wire [2:0] mem2wb_mem_op = mem_misaligned_exxeption_ffout ? mem2ex_mem_op_ffout : ex2mem_mem_op_ffout;
-wire [31:0] mem_wr_memwdata = mem_misaligned_exxeption_ffout ? mem2ex_wr_memwdata_ffout : ex2mem_wr_memwdata_ffout;
+wire [31:0] mem2wb_memaddr = store_misaligned_exxeption_ffout ? mem2ex_memadr_ffout : ex2mem_memaddr_ffout;
+wire [2:0] mem2wb_mem_op = store_misaligned_exxeption_ffout ? mem2ex_mem_op_ffout : ex2mem_mem_op_ffout;
+wire [31:0] mem_wr_memwdata = store_misaligned_exxeption_ffout ? mem2ex_wr_memwdata_ffout : ex2mem_wr_memwdata_ffout;
 
 //    /**< disable write reg when LOAD misaligned, until next cycle */
 //    if (load_misaligned_exxeption && mem2wb_mem_op){
@@ -174,7 +174,7 @@ assign mem2wb_wr_reg = load_misaligned_exxeption  ? 0 : ex2mem_wr_reg_ffout;
     /**< this is only for software implementation, in hardware should have byte-enable signal to support byte access*/
     //int oldv = dataram[intaddr];
 
-reg mem_misaligned_exxeption;
+reg store_misaligned_exxeption;
 reg [31:0] mem2wb_mem_wdata;
 reg [3:0] mem2wb_mem_byteen;
 reg [31:0] mem2ex_memadr;
@@ -182,7 +182,7 @@ reg [2:0] mem2ex_mem_op;
 reg [31:0] mem2ex_wr_memwdata;
 always @*
   begin
-    mem_misaligned_exxeption =0;
+    store_misaligned_exxeption =0;
     mem2wb_mem_wdata = mem_wr_memwdata;
     mem2wb_mem_byteen = 4'b0;
     mem2ex_memadr =0;
@@ -244,7 +244,7 @@ always @*
                     mem2ex_mem_op = `STORE_SB;
                     //mem2ex_wr_memwdata = ((mem_wr_memwdata>>8)&0xff);
                     mem2ex_wr_memwdata = {24'b0,mem_wr_memwdata[15:8]};
-                    mem_misaligned_exxeption =1;
+                    store_misaligned_exxeption =1;
                   end
                 endcase
             `STORE_SW:
@@ -262,7 +262,7 @@ always @*
                     mem2ex_mem_op = `STORE_SB;
                     //mem2ex_wr_memwdata = (mem_wr_memwdata>>24)&0xff;
                     mem2ex_wr_memwdata = {24'b0,mem_wr_memwdata[31:24]};
-                    mem_misaligned_exxeption =1;
+                    store_misaligned_exxeption =1;
                   end
                 2:
                   begin
@@ -273,7 +273,7 @@ always @*
                     mem2ex_mem_op = `STORE_SH;
                     //mem2ex_wr_memwdata = (mem_wr_memwdata>>16)&0xffff;
                     mem2ex_wr_memwdata = {16'b0,mem_wr_memwdata[31:16]};
-                    mem_misaligned_exxeption =1;
+                    store_misaligned_exxeption =1;
                   end
                 3:
                   begin
@@ -284,7 +284,7 @@ always @*
                     mem2ex_mem_op = `STORE_SHB;
                     //mem2ex_wr_memwdata = (mem_wr_memwdata>>8)&0xffffff;
                     mem2ex_wr_memwdata = {8'b0,mem_wr_memwdata[31:8]};
-                    mem_misaligned_exxeption =1;
+                    store_misaligned_exxeption =1;
                   end
                 endcase
 
@@ -300,9 +300,9 @@ always @*
 
     end
 
-assign    mem_stall = mem_misaligned_exxeption & mem2wb_mem_en & mem2wb_wr_mem & ex2mem_store_ffout;
+assign    store_stall = store_misaligned_exxeption & mem2wb_mem_en & mem2wb_wr_mem & ex2mem_store_ffout;
 
-assign mem2wb_exp = ex2mem_exp_ffout | mem_stall | load_misaligned_exxeption;
+assign mem2wb_exp = ex2mem_exp_ffout | store_stall | load_misaligned_exxeption;
 
 // data ram signal
 assign dsram_addr = mem2wb_wr_mem ? mem2wb_memaddr : readram_addr;
@@ -316,14 +316,14 @@ always @(posedge clk)
 begin
   if (cpurst)
     begin
-      mem_misaligned_exxeption_ffout <=0;
+      store_misaligned_exxeption_ffout <=0;
       mem2ex_memadr_ffout <= 0;
       mem2ex_mem_op_ffout <= 0;
       mem2ex_wr_memwdata_ffout <= 0;
     end
   else
     begin
-      mem_misaligned_exxeption_ffout <= mem_stall;  //mem_misaligned_exxeption;
+      store_misaligned_exxeption_ffout <= store_stall;  //store_misaligned_exxeption;
       mem2ex_memadr_ffout <= mem2ex_memadr;
       mem2ex_mem_op_ffout <= mem2ex_mem_op;
       mem2ex_wr_memwdata_ffout <= mem2ex_wr_memwdata;

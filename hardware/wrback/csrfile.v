@@ -12,6 +12,7 @@
 
 module csrfile(
 clk, cpurst,
+mip_msip, mip_mtip, mip_meip,
 //wb2csrfile_exp         ,
 wb2csrfile_int         ,
 //wb2csrfile_mret        ,
@@ -52,6 +53,7 @@ csr_rdat
 );
 
 input clk, cpurst      ;
+input mip_msip, mip_mtip, mip_meip;
 //input wb2csrfile_exp   ;
 input wb2csrfile_int   ;
 //input wb2csrfile_mret  ;
@@ -224,22 +226,23 @@ begin
     end
 end
 //
-reg mip_meip, mip_mtip, mip_msip;
-always @(posedge clk)
-begin
-  if (cpurst)
-    begin
-      mip_meip <= 1'b0;
-      mip_mtip <= 1'b0;
-      mip_msip <= 1'b0;
-    end
-  else if (wb2csrfile_wr_reg && wb2csrfile_wr_regindex[11:0]==12'h344)
-    begin
-      mip_meip <= wb2csrfile_wr_wdata[3];
-      mip_mtip <= wb2csrfile_wr_wdata[7];
-      mip_msip <= wb2csrfile_wr_wdata[11];
-    end
-end
+/////reg mip_meip, mip_mtip, mip_msip;
+/////always @(posedge clk)
+/////begin
+/////  if (cpurst)
+/////    begin
+/////      mip_meip <= 1'b0;
+/////      mip_mtip <= 1'b0;
+/////      mip_msip <= 1'b0;
+/////    end
+/////  else if (wb2csrfile_wr_reg && wb2csrfile_wr_regindex[11:0]==12'h344)
+/////    begin
+/////      mip_meip <= wb2csrfile_wr_wdata[3];
+/////      mip_mtip <= wb2csrfile_wr_wdata[7];
+/////      mip_msip <= wb2csrfile_wr_wdata[11];
+/////    end
+/////end
+//mip read-only register
 assign mip = {20'b0, mip_msip, 3'b0, mip_mtip, 3'b0, mip_meip, 3'b0};
 //
 reg [31:0] csr_rdat;

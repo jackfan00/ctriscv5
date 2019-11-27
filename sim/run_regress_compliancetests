@@ -12,12 +12,12 @@
 ./run_compliancetest_top ../tests/compliance/rv32i/I-BNE-01.elf     ../tests/compliance/rv32i/references/I-BNE-01     > I-bne.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-JALR-01.elf    ../tests/compliance/rv32i/references/I-JALR-01    > I-jalr.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-JAL-01.elf     ../tests/compliance/rv32i/references/I-JAL-01     > I-jal.log
-./run_compliancetest_top ../tests/compliance/rv32i/I-LBU-01.elf     ../tests/compliance/rv32i/references/I-LBU-01 2030    > I-lbu.log
-./run_compliancetest_top ../tests/compliance/rv32i/I-LB-01.elf      ../tests/compliance/rv32i/references/I-LB-01  2030    > I-lb.log
-./run_compliancetest_top ../tests/compliance/rv32i/I-LHU-01.elf     ../tests/compliance/rv32i/references/I-LHU-01 2030    > I-lhu.log
-./run_compliancetest_top ../tests/compliance/rv32i/I-LH-01.elf      ../tests/compliance/rv32i/references/I-LH-01  2030    > I-lh.log
+./run_compliancetest_top ../tests/compliance/rv32i/I-LBU-01.elf     ../tests/compliance/rv32i/references/I-LBU-01 80002030    > I-lbu.log
+./run_compliancetest_top ../tests/compliance/rv32i/I-LB-01.elf      ../tests/compliance/rv32i/references/I-LB-01  80002030    > I-lb.log
+./run_compliancetest_top ../tests/compliance/rv32i/I-LHU-01.elf     ../tests/compliance/rv32i/references/I-LHU-01 80002030    > I-lhu.log
+./run_compliancetest_top ../tests/compliance/rv32i/I-LH-01.elf      ../tests/compliance/rv32i/references/I-LH-01  80002030    > I-lh.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-LUI-01.elf     ../tests/compliance/rv32i/references/I-LUI-01     > I-lui.log
-./run_compliancetest_top ../tests/compliance/rv32i/I-LW-01.elf      ../tests/compliance/rv32i/references/I-LW-01  2030    > I-lw.log
+./run_compliancetest_top ../tests/compliance/rv32i/I-LW-01.elf      ../tests/compliance/rv32i/references/I-LW-01  80002030    > I-lw.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-ORI-01.elf     ../tests/compliance/rv32i/references/I-ORI-01     > I-ori.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-OR-01.elf      ../tests/compliance/rv32i/references/I-OR-01      > I-or.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-SB-01.elf      ../tests/compliance/rv32i/references/I-SB-01      > I-sb.log
@@ -39,11 +39,11 @@
 ./run_compliancetest_top ../tests/compliance/rv32i/I-DELAY_SLOTS-01.elf     ../tests/compliance/rv32i/references/I-DELAY_SLOTS-01     > I-DELAY_SLOTS.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-EBREAK-01.elf     ../tests/compliance/rv32i/references/I-EBREAK-01     > I-EBREAK.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-ECALL-01.elf     ../tests/compliance/rv32i/references/I-ECALL-01     > I-ECALL.log
-./run_compliancetest_top ../tests/compliance/rv32i/I-ENDIANESS-01.elf     ../tests/compliance/rv32i/references/I-ENDIANESS-01 2010    > I-ENDIANESS.log
-./run_compliancetest_top ../tests/compliance/rv32i/I-IO.elf     ../tests/compliance/rv32i/references/I-IO 2030    > I-IO.log
+./run_compliancetest_top ../tests/compliance/rv32i/I-ENDIANESS-01.elf     ../tests/compliance/rv32i/references/I-ENDIANESS-01 80002010    > I-ENDIANESS.log
+./run_compliancetest_top ../tests/compliance/rv32i/I-IO.elf     ../tests/compliance/rv32i/references/I-IO 80002030    > I-IO.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-MISALIGN_JMP-01.elf     ../tests/compliance/rv32i/references/I-MISALIGN_JMP-01     > I-MISALIGN_JMP.log
-./run_compliancetest_top ../tests/compliance/rv32i/I-MISALIGN_LDST-01.elf     ../tests/compliance/rv32i/references/I-MISALIGN_LDST-01 2010    > I-MISALIGN_LDST.log
+./run_compliancetest_top ../tests/compliance/rv32i/I-MISALIGN_LDST-01.elf     ../tests/compliance/rv32i/references/I-MISALIGN_LDST-01 80002010    > I-MISALIGN_LDST.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-NOP-01.elf     ../tests/compliance/rv32i/references/I-NOP-01     > I-NOP.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-RF_size-01.elf     ../tests/compliance/rv32i/references/I-RF_size-01     > I-RF_size.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-RF_width-01.elf     ../tests/compliance/rv32i/references/I-RF_width-01     > I-RF_width.log
-./run_compliancetest_top ../tests/compliance/rv32i/I-RF_x0-01.elf     ../tests/compliance/rv32i/references/I-RF_x0-01 2010    > I-RF_x0.log
+./run_compliancetest_top ../tests/compliance/rv32i/I-RF_x0-01.elf     ../tests/compliance/rv32i/references/I-RF_x0-01 80002010    > I-RF_x0.log

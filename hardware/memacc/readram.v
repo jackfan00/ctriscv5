@@ -14,7 +14,7 @@ ex2readram_mem_en_ffout,  ex2mem_load_ffout,
 readram_addr,
 load_misaligned_exxeption,
 readram_rdata,
-readram_stall
+load_stall
 );
 input clk, cpurst;
 input [2:0] ex2readram_opmode_ffout;
@@ -26,7 +26,7 @@ input ex2readram_mem_en_ffout,  ex2mem_load_ffout;
 output [31:0] readram_addr;  // to sram read addr
 output load_misaligned_exxeption;
 output [31:0] readram_rdata;
-output readram_stall;
+output load_stall;
 
 reg [31:0] readram2ex_memaddr;
 
@@ -209,7 +209,7 @@ always @*
 
 assign    load_misaligned_exxeption = load_misaligned_exxeption_t & ex2readram_mem_en_ffout &  ex2mem_load_ffout;
 
-assign    readram_stall =load_misaligned_exxeption;
+assign    load_stall =load_misaligned_exxeption;
 
 always @(posedge clk)
 begin

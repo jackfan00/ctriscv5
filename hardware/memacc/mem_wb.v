@@ -1,6 +1,7 @@
 module mem_wb(
 clk, cpurst,
-mem_stall, readram_stall, exe_store_load_conflict,  interrupt,
+memacc_stall,
+//mem_stall, readram_stall, exe_store_load_conflict,  interrupt,
 mem2wb_rd_is_x1,
 mem2wb_rd_is_xn,
 mem2wb_wr_reg,
@@ -46,7 +47,8 @@ mem2wb_rv16_ffout
 );
 
 input clk, cpurst;
-input mem_stall, readram_stall, exe_store_load_conflict, interrupt;
+input memacc_stall;
+//input mem_stall, readram_stall, exe_store_load_conflict, interrupt;
 input mem2wb_rd_is_x1;
 input mem2wb_rd_is_xn;
 input mem2wb_wr_reg;
@@ -109,10 +111,14 @@ reg [4:0] mem2wb_causecode_ffout    ;
 reg [31:0] mem2wb_mtval_ffout        ; 
 reg mem2wb_rv16_ffout         ; 
 
+
+// there is no stall case : write back cannot be stall
 always @(posedge clk)
 begin
    if (cpurst ||
-     (mem_stall==1 || readram_stall==1 || exe_store_load_conflict==1) ) //|| (mem2wb_exp_ffout || interrupt) )   /**< insert dummy NOP command to flush pipeline */
+       memacc_stall
+      )
+    // (mem_stall==1 || readram_stall==1 || exe_store_load_conflict==1) ) //|| (mem2wb_exp_ffout || interrupt) )   /**< insert dummy NOP command to flush pipeline */
      begin
 
        //mem2wb_pc_ffout = mem2wb_pc;

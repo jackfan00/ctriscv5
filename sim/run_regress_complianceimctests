@@ -13,8 +13,8 @@
 ./run_complianceimctest_top ../tests/compliance/rv32imc/C-J.elf     ../tests/compliance/rv32imc/references/C-J     > C-j.log
 ./run_complianceimctest_top ../tests/compliance/rv32imc/C-LI.elf     ../tests/compliance/rv32imc/references/C-LI     > C-li.log
 ./run_complianceimctest_top ../tests/compliance/rv32imc/C-LUI.elf     ../tests/compliance/rv32imc/references/C-LUI     > C-lui.log
-./run_complianceimctest_top ../tests/compliance/rv32imc/C-LW.elf      ../tests/compliance/rv32imc/references/C-LW  2080    > C-lw.log
-./run_complianceimctest_top ../tests/compliance/rv32imc/C-LWSP.elf      ../tests/compliance/rv32imc/references/C-LWSP  2100    > C-lwsp.log
+./run_complianceimctest_top ../tests/compliance/rv32imc/C-LW.elf      ../tests/compliance/rv32imc/references/C-LW  80002080    > C-lw.log
+./run_complianceimctest_top ../tests/compliance/rv32imc/C-LWSP.elf      ../tests/compliance/rv32imc/references/C-LWSP  80002100    > C-lwsp.log
 ./run_complianceimctest_top ../tests/compliance/rv32imc/C-MV.elf     ../tests/compliance/rv32imc/references/C-MV     > C-mv.log
 ./run_complianceimctest_top ../tests/compliance/rv32imc/C-OR.elf      ../tests/compliance/rv32imc/references/C-OR      > C-or.log
 ./run_complianceimctest_top ../tests/compliance/rv32imc/C-SLLI.elf    ../tests/compliance/rv32imc/references/C-SLLI    > C-slli.log

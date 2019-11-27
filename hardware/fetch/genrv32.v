@@ -1,6 +1,7 @@
 module genrv32( clk, jalr_dep, jb_ff, sram_cs_ff, pc, instr, fet_stall,
 btb_pc, btb_instr,
 btb_valid,
+lr_isram_cs,
 
 rv32_instr, isrv16,
 fetch_misalign,
@@ -14,6 +15,7 @@ input [63:0] instr;
 input fet_stall;
 input [31:0] btb_pc, btb_instr;
 input btb_valid;
+input lr_isram_cs;
 
 output [31:0] rv32_instr;
 output isrv16;
@@ -41,7 +43,8 @@ assign isrv16 = eff_instr[1:0]!=2'b11;
 always @(posedge clk)
 begin
 //  if (sram_cs_ff & (!fet_stall) )
-  if (!fet_stall )
+//  if (!fet_stall && !lr_isram_cs)
+  if (!lr_isram_cs)  //when load-store case, isram addr is not fetch code addr, so skip
     pre_instr_h <= instr[63:48];
 end
 

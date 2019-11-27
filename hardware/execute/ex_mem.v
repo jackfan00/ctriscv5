@@ -1,6 +1,8 @@
 module ex_mem(
 clk, cpurst,
-mult_stall, div_stall, mem_stall, readram_stall, exe_store_load_conflict, interrupt,
+memacc_stall,
+mult_stall, div_stall, //mem_stall, readram_stall, 
+exe_store_load_conflict, //interrupt,
 ex2mem_wr_reg,
 ex2mem_wr_regindex,
 ex2mem_wr_wdata,
@@ -67,7 +69,9 @@ ex2mem_rv16_ffout
 );
 
 input clk, cpurst;
-input mult_stall, div_stall, mem_stall, readram_stall, exe_store_load_conflict, interrupt;
+input memacc_stall;
+input mult_stall, div_stall; //, mem_stall, readram_stall, 
+input exe_store_load_conflict; //, interrupt;
 input ex2mem_wr_reg;
 input [4:0] ex2mem_wr_regindex;
 input [31:0] ex2mem_wr_wdata;
@@ -157,12 +161,17 @@ reg [4:0] ex2mem_causecode_ffout    ;
 reg [31:0] ex2mem_mtval_ffout        ;
 reg ex2mem_rv16_ffout         ;
 
+wire stall = memacc_stall;
 always @(posedge clk)
 begin
-   if (cpurst ||
-          (mult_stall || div_stall || (exe_store_load_conflict & mem_stall==0) ) )//|| 
-          // (mem2wb_exp_ffout || interrupt) ) /**< insert dummy NOP command to flush pipeline */
-//////////////////          (mult_stall && mem_stall==0 && readram_stall==0 && exe_store_load_conflict==0) || (mem2wb_exp_ffout || interrupt) ) /**< insert dummy NOP command to flush pipeline */
+   if (   cpurst ||
+         (mult_stall & (!stall)) ||
+         (div_stall  & (!stall)) ||
+         (exe_store_load_conflict & (!stall))
+      )   
+        
+      //    (mult_stall || div_stall || (exe_store_load_conflict & mem_stall==0) ) )//|| 
+           /**< insert dummy NOP command to flush pipeline */
      begin
        //ex2mem_pc_ffout = ex2mem_pc;
        ex2mem_wr_reg_ffout <= 0;
@@ -195,8 +204,8 @@ begin
        ex2mem_mtval_ffout        <= 0;
        ex2mem_rv16_ffout         <= 0;
      end
-/////////////   else  if ( mem_stall==0 && readram_stall==0 && exe_store_load_conflict==0 )
-   else  if ( mem_stall==0 && readram_stall==0 )
+//   else  if ( mem_stall==0 && readram_stall==0 )
+   else  if ( stall==0 )
      begin
        //ex2mem_pc_ffout = ex2mem_pc;
        ex2mem_wr_reg_ffout <= ex2mem_wr_reg;
@@ -236,7 +245,7 @@ always @(posedge clk)
 begin
    if (cpurst)
      ex2mem_pc_ffout <= 0;
-   else
+   else if (~stall)
      ex2mem_pc_ffout <= ex2mem_pc;
 end     
 

@@ -2,6 +2,8 @@ module core (
 clk, cpurst, boot_addr, interrupt,
 instr_fromsram,
 dsram_rdata,
+lr_isram_cs,
+lr_isram_cs_ff,
 
 isram_cs,
 isram_adr,
@@ -17,6 +19,7 @@ input [31:0] boot_addr;
 input interrupt;
 input [63:0] instr_fromsram;
 input [31:0] dsram_rdata;
+input lr_isram_cs, lr_isram_cs_ff;
 
 output isram_cs;
 output [31:3] isram_adr;
@@ -94,11 +97,18 @@ wire [31:0] wb2csrfile_mtvec_ffout       ;
 wire [31:0] wb2csrfile_mepc_ffout        ;
 wire [4:0]  wb2csrfile_causecode_ffout   ;
 wire [31:0] wb2csrfile_mtval_ffout;
+wire exe_store_load_conflict, mult_stall, div_stall;
+wire load_stall, store_stall;
+
+assign memacc_stall = load_stall | store_stall;
+assign exe_stall = exe_store_load_conflict | mult_stall | div_stall;
 
 fetch fetch_u( 
 .clk                 (clk),
 .cpurst              (cpurst), 
-.fet_stall           (fet_stall),
+.de_stall(de_stall), 
+.exe_stall(exe_stall), 
+.memacc_stall(memacc_stall),
 .btb_pc                       (btb_pc                       ), 
 .btb_instr                    (btb_instr                    ),
 .btb_valid                    (btb_valid                    ),
@@ -137,6 +147,8 @@ fetch fetch_u(
 .ex2mem_wr_csrwdata      (ex2mem_wr_csrwdata      ), 
 .mem2wb_wr_csrwdata      (mem2wb_wr_csrwdata      ), 
 .mem2wb_wr_csrwdata_ffout(mem2wb_wr_csrwdata_ffout),
+.lr_isram_cs             (lr_isram_cs             ),
+.lr_isram_cs_ff          (lr_isram_cs_ff          ),
 
 // output port
 .isram_cs            (isram_cs), 
@@ -150,12 +162,13 @@ fetch fetch_u(
 .fe2de_rv16          (fe2de_rv16),
 .fet_flush           (fet_flush),
 .cross_bd_ff         (cross_bd_ff),
-.rv16_instr_todec             (rv16_instr_todec             )
+.jalr_dep                     (jalr_dep                     ),
+.rv16_instr_todec             (rv16_instr_todec             ),
+.fet_stall           (fet_stall)
 
 );
 
 //
-wire div_stall;
 wire de2fe_branch, de2ex_inst_valid;
 wire de_store_load_conflict;
 wire [31:0] fe2de_pc_ffout, fe2de_ir_ffout;
@@ -163,12 +176,14 @@ ft_de ft_de_u(
 .clk                          (clk), 
 .cpurst                       (cpurst),
 .fet_flush                    (fet_flush),
+.exe_stall                    (exe_stall), 
+.memacc_stall                 (memacc_stall),
 .de_stall                     (de_stall), 
-.exe_store_load_conflict      (exe_store_load_conflict), 
-.readram_stall                (readram_stall),
-.mem_stall                    (mem_stall), 
-.mult_stall                   (mult_stall),
-.div_stall                   (div_stall),
+//.exe_store_load_conflict      (exe_store_load_conflict), 
+//.load_stall                (load_stall),
+//.store_stall                    (store_stall), 
+//.mult_stall                   (mult_stall),
+//.div_stall                   (div_stall),
 .fetch_pc                     (fetch_pc), 
 .rv32_instr_todec             (rv32_instr_todec),
 .fet_is_x1                    (fet_is_x1), 
@@ -176,13 +191,16 @@ ft_de ft_de_u(
 .predict_bxxtaken             (predict_bxxtaken),
 .fe2de_rv16                   (fe2de_rv16),
 .mem2wb_exp_ffout             (mem2wb_exp_ffout             ),
-.interrupt                    (interrupt                    ),
+//.interrupt                    (interrupt                    ),
 .branch_predict_err           (branch_predict_err),
 .cross_bd_ff                  (cross_bd_ff               ),
 .de_store_load_conflict       (de_store_load_conflict),
 .de2fe_branch                 (de2fe_branch                 ), 
 .de2ex_inst_valid             (de2ex_inst_valid             ),
 .rv16_instr_todec             (rv16_instr_todec             ),
+.lr_isram_cs                  (lr_isram_cs                  ),
+.lr_isram_cs_ff                  (lr_isram_cs_ff                  ),
+.jalr_dep                     (jalr_dep                     ),
 
 // output port                
 .fe2de_pc_ffout               (fe2de_pc_ffout), 
@@ -191,7 +209,7 @@ ft_de ft_de_u(
 .fet_is_xn_ffout              (fet_is_xn_ffout ),
 .fe2de_predict_bxxtaken_ffout (fe2de_predict_bxxtaken_ffout),
 .fe2de_rv16_ffout             (fe2de_rv16_ffout),
-.fet_stall                    (fet_stall),
+//.fet_stall                    (fet_stall),
 .btb_pc                       (btb_pc                       ), 
 .btb_instr                    (btb_instr                    ),
 .btb_valid                    (btb_valid                    )
@@ -291,14 +309,16 @@ wire [4:0] de2ex_rs1addr_ffout, de2ex_rs2addr_ffout;
 de_ex de_ex_u(
 .clk                     (clk), 
 .cpurst                  (cpurst),
+.exe_stall               (exe_stall), 
+.memacc_stall            (memacc_stall),
 .de_stall                (de_stall), 
-.exe_store_load_conflict (exe_store_load_conflict),
-.mem_stall               (mem_stall), 
-.readram_stall           (readram_stall), 
-.mult_stall              (mult_stall),
-.div_stall                   (div_stall),
+//.exe_store_load_conflict (exe_store_load_conflict),
+//.store_stall               (store_stall), 
+//.load_stall           (load_stall), 
+//.mult_stall              (mult_stall),
+//.div_stall                   (div_stall),
 .mem2wb_exp_ffout        (mem2wb_exp_ffout ),
-.interrupt               (interrupt ),
+//.interrupt               (interrupt ),
 .de2ex_pc                (de2ex_pc),
 .de2ex_wr_mem            (de2ex_wr_mem),
 .de2ex_mem_op            (de2ex_mem_op),
@@ -418,7 +438,7 @@ inst_execute inst_execute_u(
 .de2ex_rd_is_x1_ffout     (de2ex_rd_is_x1_ffout),
 .de2ex_rd_is_xn_ffout     (de2ex_rd_is_xn_ffout),
 .mem2ex_mem_op            (mem2ex_mem_op),
-.mem_misaligned_exxeption (mem_misaligned_exxeption),
+.store_misaligned_exxeption (store_misaligned_exxeption),
 .mem2ex_memadr            (mem2ex_memadr),
 .ex2mem_store_ffout       (ex2mem_store_ffout        ),
 .ex2mem_mem_en_ffout      (ex2mem_mem_en_ffout      ),
@@ -523,12 +543,13 @@ wire ex2mem_mret = de2ex_mret_ffout;
 ex_mem ex_mem_u(
 .clk                     (clk                     ), 
 .cpurst                  (cpurst                  ),
-.interrupt               (interrupt               ),
+//.interrupt               (interrupt               ),
+.memacc_stall            (memacc_stall            ),
 .exe_store_load_conflict (exe_store_load_conflict ),
 .mult_stall              (mult_stall              ), 
 .div_stall                   (div_stall),
-.mem_stall               (mem_stall               ), 
-.readram_stall           (readram_stall           ),
+//.store_stall               (store_stall               ), 
+//.load_stall           (load_stall           ),
 .ex2mem_wr_reg           (ex2mem_wr_reg           ),
 .ex2mem_wr_regindex      (ex2mem_wr_regindex      ),
 .ex2mem_wr_wdata         (ex2mem_wr_wdata         ),
@@ -606,7 +627,7 @@ wire mem2wb_wr_mem;  // to sram write enable
 wire [31:0] mem2wb_mem_wdata;
 //wire mem2wb_rd_is_x1;
 //wire mem2wb_rd_is_xn;
-//wire mem_stall;
+//wire store_stall;
 wire [31:0] readram_addr;
 wire [31:0] readram_rdata;
 
@@ -651,14 +672,14 @@ inst_memacc inst_memacc_u(
 .mem2wb_mem_wdata           (mem2wb_mem_wdata           ),
 .mem2wb_rd_is_x1            (mem2wb_rd_is_x1            ),
 .mem2wb_rd_is_xn            (mem2wb_rd_is_xn            ),
-.mem_stall                  (mem_stall                  ),
+.store_stall                  (store_stall                  ),
 .dsram_addr                 (dsram_addr                 ),
 .dsram_cs                   (dsram_cs                   ),
 .dsram_we                   (dsram_we                   ),
 .dsram_ben                  (dsram_ben                  ),
 .dsram_wdata                (dsram_wdata                ),
 .mem2wb_exp                 (mem2wb_exp                 ),
-.mem_misaligned_exxeption   (mem_misaligned_exxeption   )
+.store_misaligned_exxeption   (store_misaligned_exxeption   )
 
 );
 
@@ -677,7 +698,7 @@ readram readram_u(
 .readram_addr              (readram_addr              ),
 .load_misaligned_exxeption (load_misaligned_exxeption ),
 .readram_rdata             (readram_rdata             ),
-.readram_stall             (readram_stall             )
+.load_stall             (load_stall             )
 
 );
 
@@ -690,16 +711,24 @@ wire mem2wb_rd_is_xn_ffout;
 wire [31:0] mem2wb_pc_ffout;
 
 assign mem2wb_wr_csrwdata = ex2mem_wr_csrwdata_ffout;
+assign mem2wb_causecode = ex2mem_causecode_ffout;
+assign mem2wb_mtval = ex2mem_mtval_ffout;
+assign mem2wb_mepc = ex2mem_mepc_ffout;
+assign mem2wb_mstatus_pmie = ex2mem_mstatus_pmie_ffout;
+assign mem2wb_mstatus_mie = ex2mem_mstatus_pmie_ffout;
+assign mem2wb_mtvec = ex2mem_mtvec_ffout;
+
 wire mem2wb_mret = ex2mem_mret_ffout;
 //wire mem2wb_exp  = ex2mem_exp_ffout;
 
 mem_wb mem_wb_u(
 .clk                     (clk                     ), 
 .cpurst                  (cpurst                  ),
-.mem_stall               (mem_stall               ),
-.readram_stall           (readram_stall           ),
-.exe_store_load_conflict (exe_store_load_conflict ), 
-.interrupt               (interrupt               ),
+.memacc_stall            (memacc_stall            ),
+//.store_stall               (store_stall               ),
+//.load_stall           (load_stall           ),
+//.exe_store_load_conflict (exe_store_load_conflict ), 
+//.interrupt               (interrupt               ),
 .mem2wb_rd_is_x1         (mem2wb_rd_is_x1         ),
 .mem2wb_rd_is_xn         (mem2wb_rd_is_xn         ),
 .mem2wb_wr_reg           (mem2wb_wr_reg           ),

@@ -4,13 +4,13 @@ module test_top;
 `define ITCM_SIZE 16384
 
 `ifdef COMPLIANCE_TEST
-`define PC_WRITE_TOHOST       32'h00000040    //compilance rv32i test
+`define PC_WRITE_TOHOST       32'h80000040    //compilance rv32i test
 `define HAS_REFERENCEOUT
 `elsif COMPLIANCEIMC_TEST
-`define PC_WRITE_TOHOST       32'h00000036    //compilance rv32imc test
+`define PC_WRITE_TOHOST       32'h80000036    //compilance rv32imc test
 `define HAS_REFERENCEOUT
 `else
-`define PC_WRITE_TOHOST       32'h00000086  //e200 test
+`define PC_WRITE_TOHOST       32'h80000086  //e200 test
 `endif
 
 
@@ -27,7 +27,7 @@ initial begin
     $display("REFERENCEOUT=%s",referenceout);
   end
   //  
-  signature_startaddr = 32'h2000;
+  signature_startaddr = 32'h80002000;
   if($value$plusargs("SIGNATURE=%h",signature))begin
     //$display("SIGNATURE=%x",signature);
     if (signature!=0)
@@ -42,14 +42,14 @@ reg [31:0] signature_mem [0:255];
 initial begin
   $readmemh({testcase, ".verilog"}, itcm_mem);
   for (i=0;i<`ITCM_SIZE;i=i+8) begin
-      `ITCM.mem[i/8][7:0  ] = itcm_mem[i+0];
-      `ITCM.mem[i/8][15:8 ] = itcm_mem[i+1];
-      `ITCM.mem[i/8][23:16] = itcm_mem[i+2];
-      `ITCM.mem[i/8][31:24] = itcm_mem[i+3];
-      `ITCM.mem[i/8][39:32] = itcm_mem[i+4];
-      `ITCM.mem[i/8][47:40] = itcm_mem[i+5];
-      `ITCM.mem[i/8][55:48] = itcm_mem[i+6];
-      `ITCM.mem[i/8][63:56] = itcm_mem[i+7];
+      `ITCM.dsram_u0.mem0[i/8][7:0  ] = itcm_mem[i+0];
+      `ITCM.dsram_u0.mem1[i/8][7:0  ] = itcm_mem[i+1];
+      `ITCM.dsram_u0.mem2[i/8][7:0  ] = itcm_mem[i+2];
+      `ITCM.dsram_u0.mem3[i/8][7:0  ] = itcm_mem[i+3];
+      `ITCM.dsram_u1.mem0[i/8][7:0  ] = itcm_mem[i+4];
+      `ITCM.dsram_u1.mem1[i/8][7:0  ] = itcm_mem[i+5];
+      `ITCM.dsram_u1.mem2[i/8][7:0  ] = itcm_mem[i+6];
+      `ITCM.dsram_u1.mem3[i/8][7:0  ] = itcm_mem[i+7];
   end
   for (i=0;i<`ITCM_SIZE;i=i+4) begin
       `DTCM.mem0[i/4][7:0  ] = itcm_mem[i+0];
@@ -57,14 +57,14 @@ initial begin
       `DTCM.mem2[i/4][7:0  ] = itcm_mem[i+2];
       `DTCM.mem3[i/4][7:0  ] = itcm_mem[i+3];
   end
-  $display("ITCM 0x00: %h", `ITCM.mem[0][7:0  ]);
-  $display("ITCM 0x01: %h", `ITCM.mem[0][15:8 ]);
-  $display("ITCM 0x02: %h", `ITCM.mem[0][23:16]);
-  $display("ITCM 0x03: %h", `ITCM.mem[0][31:24]);
-  $display("ITCM 0x04: %h", `ITCM.mem[0][39:32]);
-  $display("ITCM 0x05: %h", `ITCM.mem[0][47:40]);
-  $display("ITCM 0x06: %h", `ITCM.mem[0][55:48]);
-  $display("ITCM 0x07: %h", `ITCM.mem[0][63:56]);
+  $display("ITCM 0x00: %h", `ITCM.dsram_u0.mem0[0][7:0  ]);
+  $display("ITCM 0x01: %h", `ITCM.dsram_u0.mem1[0][7:0  ]);
+  $display("ITCM 0x02: %h", `ITCM.dsram_u0.mem2[0][7:0  ]);
+  $display("ITCM 0x03: %h", `ITCM.dsram_u0.mem3[0][7:0  ]);
+  $display("ITCM 0x04: %h", `ITCM.dsram_u1.mem0[0][7:0  ]);
+  $display("ITCM 0x05: %h", `ITCM.dsram_u1.mem1[0][7:0  ]);
+  $display("ITCM 0x06: %h", `ITCM.dsram_u1.mem2[0][7:0  ]);
+  $display("ITCM 0x07: %h", `ITCM.dsram_u1.mem3[0][7:0  ]);
 //  $display("ITCM 0x16: %h", `ITCM.mem[8'h16]);
 //  $display("ITCM 0x20: %h", `ITCM.mem[8'h20]);
 
@@ -135,34 +135,70 @@ always @(posedge clk)
   end
 
 wire [31:0] x3 = top_u.core_u.regfile_u.regfile_xx[3];
-reg cpass;
+reg cpass, itcmen, dtcmen;
 initial begin
 #1000;
+itcmen = 1'b0;
+dtcmen = 1'b0;
 @(pc_write_to_host_cnt == 32'd8);
 
 `ifdef HAS_REFERENCEOUT
 // check signature
 $display("intercept write_tohost, generate signature file");
-for (i=signature_startaddr;i>32'h20;i=i+4)
-  begin
-    if (`DTCM.mem0[i/4]===8'hxx) 
-       i = 32'h0; //break;
-    //$display("%02x%02x%02x%02x",`DTCM.mem3[i/4],`DTCM.mem2[i/4],`DTCM.mem1[i/4],`DTCM.mem0[i/4]);    
-  end
+/////for (i=signature_startaddr;i>32'h20;i=i+4)
+/////  begin
+/////    if (`DTCM.mem0[i/4]===8'hxx) 
+/////       i = 32'h0; //break;
+/////    //$display("%02x%02x%02x%02x",`DTCM.mem3[i/4],`DTCM.mem2[i/4],`DTCM.mem1[i/4],`DTCM.mem0[i/4]);    
+/////  end
 
 cpass = 1'b1;  
+itcmen = (signature_startaddr[31:24]==8'h80);
+dtcmen = (signature_startaddr[31:24]==8'h90);
+
 for (i=0;i<4096;i=i+4)
   begin
     if ((signature_mem[i/4]===32'hxxxxxxxx))// || !cpass)
       i= 6000; //break
-    if ( (signature_mem[i/4][7:0  ] !== `DTCM.mem0[(i+signature_startaddr)/4]) ||
-         (signature_mem[i/4][15:8 ] !== `DTCM.mem1[(i+signature_startaddr)/4]) ||
-         (signature_mem[i/4][23:16] !== `DTCM.mem2[(i+signature_startaddr)/4]) ||
-         (signature_mem[i/4][31:24] !== `DTCM.mem3[(i+signature_startaddr)/4]) )
-       cpass = 1'b0;  
-    $display("ref:%08x -- simout:%02x%02x%02x%02x",
-    signature_mem[i/4],
-    `DTCM.mem3[(i+signature_startaddr)/4],`DTCM.mem2[(i+signature_startaddr)/4],`DTCM.mem1[(i+signature_startaddr)/4],`DTCM.mem0[(i+signature_startaddr)/4]);    
+    if (dtcmen)
+      begin  
+        if ( (signature_mem[i/4][7:0  ] !== `DTCM.mem0[(i+signature_startaddr[23:0])/4]) ||
+             (signature_mem[i/4][15:8 ] !== `DTCM.mem1[(i+signature_startaddr[23:0])/4]) ||
+             (signature_mem[i/4][23:16] !== `DTCM.mem2[(i+signature_startaddr[23:0])/4]) ||
+             (signature_mem[i/4][31:24] !== `DTCM.mem3[(i+signature_startaddr[23:0])/4]) )
+           cpass = 1'b0;  
+        $display("ref:%08x -- simout:%02x%02x%02x%02x",
+                signature_mem[i/4],
+                `DTCM.mem3[(i+signature_startaddr)/4],`DTCM.mem2[(i+signature_startaddr)/4],
+                `DTCM.mem1[(i+signature_startaddr)/4],`DTCM.mem0[(i+signature_startaddr)/4]);    
+      end
+    if (itcmen)
+      begin  
+        if ((i%8)==0)
+          begin
+            if ( (signature_mem[i/4][7:0  ] !== `ITCM.dsram_u0.mem0[(i/8+signature_startaddr[23:0]/8)]) ||
+                 (signature_mem[i/4][15:8 ] !== `ITCM.dsram_u0.mem1[(i/8+signature_startaddr[23:0]/8)]) ||
+                 (signature_mem[i/4][23:16] !== `ITCM.dsram_u0.mem2[(i/8+signature_startaddr[23:0]/8)]) ||
+                 (signature_mem[i/4][31:24] !== `ITCM.dsram_u0.mem3[(i/8+signature_startaddr[23:0]/8)]) )
+               cpass = 1'b0;  
+            $display("ref:%08x -- simout:%02x%02x%02x%02x",
+                    signature_mem[i/4],
+                    `ITCM.dsram_u0.mem3[(i/8+signature_startaddr[23:0]/8)],`ITCM.dsram_u0.mem2[(i/8+signature_startaddr[23:0]/8)],
+                    `ITCM.dsram_u0.mem1[(i/8+signature_startaddr[23:0]/8)],`ITCM.dsram_u0.mem0[(i/8+signature_startaddr[23:0]/8)]);  
+          end        
+        else
+          begin
+            if ( (signature_mem[i/4][7:0  ] !== `ITCM.dsram_u1.mem0[(i/8+signature_startaddr[23:0]/8)]) ||
+                 (signature_mem[i/4][15:8 ] !== `ITCM.dsram_u1.mem1[(i/8+signature_startaddr[23:0]/8)]) ||
+                 (signature_mem[i/4][23:16] !== `ITCM.dsram_u1.mem2[(i/8+signature_startaddr[23:0]/8)]) ||
+                 (signature_mem[i/4][31:24] !== `ITCM.dsram_u1.mem3[(i/8+signature_startaddr[23:0]/8)]) )
+               cpass = 1'b0;  
+            $display("ref:%08x -- simout:%02x%02x%02x%02x",
+                    signature_mem[i/4],
+                    `ITCM.dsram_u1.mem3[(i/8+signature_startaddr[23:0]/8)],`ITCM.dsram_u1.mem2[(i/8+signature_startaddr[23:0]/8)],
+                    `ITCM.dsram_u1.mem1[(i/8+signature_startaddr[23:0]/8)],`ITCM.dsram_u1.mem0[(i/8+signature_startaddr[23:0]/8)]);  
+          end        
+      end
   end
 `endif
 //
@@ -217,6 +253,6 @@ top top_u(
 .clk      (clk      ), 
 .cpurst   (cpurst   ), 
 .interrupt(interrupt),
-.boot_addr(32'h0000_0000)
+.boot_addr(32'h8000_0000)
 );
 endmodule

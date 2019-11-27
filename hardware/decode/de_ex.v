@@ -1,7 +1,9 @@
 module de_ex(
 clk, cpurst,
-de_stall, exe_store_load_conflict, mem_stall, readram_stall, mult_stall, 
-div_stall, mem2wb_exp_ffout, interrupt, 
+exe_stall, memacc_stall,
+de_stall, //exe_store_load_conflict, mem_stall, readram_stall, mult_stall, 
+//div_stall, 
+mem2wb_exp_ffout, //interrupt, 
 de2ex_pc,
 de2ex_wr_mem,
 de2ex_mem_op,
@@ -73,7 +75,9 @@ de2ex_rv16_ffout
 );
 
 input clk, cpurst;
-input de_stall, exe_store_load_conflict, mem_stall, readram_stall, mult_stall, div_stall, mem2wb_exp_ffout, interrupt;
+input exe_stall, memacc_stall;
+input de_stall; //, exe_store_load_conflict, mem_stall, readram_stall, mult_stall, div_stall, 
+input mem2wb_exp_ffout; //, interrupt;
 input [31:0] de2ex_pc;
 input de2ex_wr_mem ;
 input [2:0] de2ex_mem_op ;
@@ -171,10 +175,13 @@ reg [4:0] de2ex_causecode_ffout   ;
 reg [31:0] de2ex_mtval_ffout;
 reg de2ex_rv16_ffout;
 
+wire stall = exe_stall | memacc_stall;
 always @(posedge clk)
 begin
-    if (cpurst || 
-          (de_stall==1 && exe_store_load_conflict==0 && mem_stall==0 && readram_stall==0 && mult_stall==0 && div_stall==0))// || (mem2wb_exp_ffout || interrupt)) /**< insert dummy NOP command to flush pipeline */
+    if (   cpurst || 
+          (de_stall==1 && stall==0 )
+       )//  /**< insert dummy NOP command to flush pipeline */
+     //     (de_stall==1 && exe_store_load_conflict==0 && mem_stall==0 && readram_stall==0 && mult_stall==0 && div_stall==0))// || (mem2wb_exp_ffout || interrupt)) /**< insert dummy NOP command to flush pipeline */
       begin
           //de2ex_pc_ffout <= de2ex_pc;
           de2ex_aluop_ffout <= 0;
@@ -211,7 +218,8 @@ begin
           de2ex_mtval_ffout <= 0;
           de2ex_rv16_ffout <= 0;
       end
-    else if (exe_store_load_conflict==0 && mem_stall==0 && readram_stall==0 && mult_stall==0 && div_stall==0)
+    //else if (exe_store_load_conflict==0 && mem_stall==0 && readram_stall==0 && mult_stall==0 && div_stall==0)
+    else if (stall==0)
       begin
           //de2ex_pc_ffout <= de2ex_pc;
           de2ex_aluop_ffout <= de2ex_aluop;
@@ -256,7 +264,7 @@ always @(posedge clk)
 begin
    if (cpurst)
      de2ex_pc_ffout <= 0;
-   else
+   else if (~stall)
      de2ex_pc_ffout <= de2ex_pc;
 end     
 
