@@ -9,8 +9,7 @@ dec_regfile_wen, exe_regfile_wen, mem_regfile_wen, wb_regfile_wen,
 instr_fromsram, 
 branch_predict_err,
 de2fe_branch_target,
-wb2csrfile_int_ffout,
-wb2csrfile_exp_ffout,
+//wb2csrfile_exp_ffout,
 mtvec,
 mepc,
 mcause,
@@ -18,6 +17,7 @@ de2ex_wr_csrreg, ex2mem_wr_csrreg, mem2wb_wr_csrreg, mem2wb_wr_csrreg_ffout,
 de2ex_wr_csrindex, ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, mem2wb_wr_csrindex_ffout,
 de2ex_wr_csrwdata, ex2mem_wr_csrwdata, mem2wb_wr_csrwdata, mem2wb_wr_csrwdata_ffout,
 lr_isram_cs, lr_isram_cs_ff,
+all_int,
 
 isram_cs, isram_adr, rv32_instr_todec, fetch_pc,
 fet_is_x1, fet_is_xn,
@@ -43,8 +43,7 @@ input dec_regfile_wen, exe_regfile_wen, mem_regfile_wen, wb_regfile_wen;
 input [63:0] instr_fromsram;
 input branch_predict_err;
 input [31:0] de2fe_branch_target;
-input wb2csrfile_int_ffout;
-input wb2csrfile_exp_ffout;
+//input wb2csrfile_exp_ffout;
 input [31:0] mtvec;
 input [31:0] mepc;
 input [4:0] mcause;
@@ -52,6 +51,7 @@ input de2ex_wr_csrreg, ex2mem_wr_csrreg, mem2wb_wr_csrreg, mem2wb_wr_csrreg_ffou
 input [11:0] de2ex_wr_csrindex, ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, mem2wb_wr_csrindex_ffout;
 input [31:0] de2ex_wr_csrwdata, ex2mem_wr_csrwdata, mem2wb_wr_csrwdata, mem2wb_wr_csrwdata_ffout;
 input lr_isram_cs, lr_isram_cs_ff;
+input all_int;
 
 output isram_cs;
 output [31:3] isram_adr;
@@ -100,8 +100,8 @@ genpc genpc_u(
 .isrv16(isrv16), 
 .branch_predict_err(branch_predict_err),
 .de2fe_branch_target(de2fe_branch_target),
-.wb2csrfile_int_ffout(wb2csrfile_int_ffout),
-.wb2csrfile_exp_ffout(wb2csrfile_exp_ffout),
+.all_int(all_int),
+//.wb2csrfile_exp_ffout(wb2csrfile_exp_ffout),
 .mtvec               (mtvec               ),
 .mepc                (mepc                ),
 .mcause              (mcause              ),

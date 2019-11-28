@@ -534,9 +534,9 @@ wire de2ex_e_ii=1'b0;
 wire de2ex_e_lam=1'b0;
 //
 assign de2ex_causecode = 
-                         de2ex_i_ms   ? 5'd3 : 
-                         de2ex_i_mt   ? 5'd7 :
-                         de2ex_i_me   ? 5'd11 :
+                         //clint_soft_int   ? 5'd3 : 
+                         //clint_timer_int   ? 5'd7 :
+                         //de2ex_i_me   ? 5'd11 :
                          de2ex_e_iam  ? 5'd0 :
                          de2ex_e_ii   ? 5'd2 :
                          de2ex_e_bk   ? 5'd3 :
@@ -544,5 +544,6 @@ assign de2ex_causecode =
                          de2ex_e_ecfm ? 5'd11 : 5'd16;                       
 
 assign de2ex_mtval = (de2ex_e_ii ) ? de2ex_instr : de2ex_pc;
+
 
 endmodule

@@ -10,8 +10,8 @@ rv32_instr,
 isrv16, 
 branch_predict_err,
 de2fe_branch_target,
-wb2csrfile_int_ffout,
-wb2csrfile_exp_ffout,
+all_int,
+//wb2csrfile_exp_ffout,
 mtvec,
 mepc,
 mcause,
@@ -49,8 +49,8 @@ input [31:0] rv32_instr;
 input isrv16;
 input branch_predict_err;
 input [31:0] de2fe_branch_target;
-input wb2csrfile_int_ffout;
-input wb2csrfile_exp_ffout;
+input all_int;
+//input wb2csrfile_exp_ffout;
 input [31:0] mtvec;
 input [31:0] mepc;
 input [4:0] mcause;
@@ -150,7 +150,7 @@ wire [31:0] nxtpc =
        branch_predict_err ? de2fe_branch_target :   
        fet_stall|de_stall|exe_stall|memacc_stall|fence_stall ? pc :
        //need to modify?????
-       wb2csrfile_int_ffout ? {mtvec[31:2],2'b0} + {mcause[4:0],2'b0} :
+       all_int ? {mtvec[31:2],2'b0} + {mcause[4:0],2'b0} :
        isecallbk ? {bypass_mtvec[31:2],2'b0} :
        ismret ? bypass_mepc :
 //       branch_predict_err ? de2fe_branch_target :   
@@ -158,7 +158,7 @@ wire [31:0] nxtpc =
        //fet_stall | fetch_misalign | jalr_dep ? pc : pcop1 + nxtpcoffset;
 
 //pc jump condition 
-wire jc = (wb2csrfile_int_ffout | isecallbk | ismret | branch_predict_err | jb) & (!lr_isram_cs);
+wire jc = (all_int | isecallbk | ismret | branch_predict_err | jb) & (!lr_isram_cs);
 
 //assign holdpc = fet_stall | fetch_misalign | jalr_dep;
 

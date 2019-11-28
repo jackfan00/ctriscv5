@@ -1,5 +1,5 @@
 module core (
-clk, cpurst, boot_addr, interrupt,
+clk, cpurst, boot_addr, ext_int, clint_timer_int, clint_soft_int,
 instr_fromsram,
 dsram_rdata,
 lr_isram_cs,
@@ -16,7 +16,7 @@ dsram_wdata
 
 input clk, cpurst;
 input [31:0] boot_addr;
-input interrupt;
+input ext_int, clint_timer_int, clint_soft_int;
 input [63:0] instr_fromsram;
 input [31:0] dsram_rdata;
 input lr_isram_cs, lr_isram_cs_ff;
@@ -104,6 +104,16 @@ wire fence_stall;
 assign memacc_stall = load_stall | store_stall;
 assign exe_stall = exe_store_load_conflict | mult_stall | div_stall;
 
+// interrupt update mcause first, then goto int trap
+///////////reg all_int_ff;
+///////////always @(posedge clk)
+///////////begin
+///////////  if (cpurst)
+///////////    all_int_ff <= 0;
+///////////  else
+///////////    all_int_ff <= all_int;
+///////////end
+//
 fetch fetch_u( 
 .clk                 (clk),
 .cpurst              (cpurst), 
@@ -132,8 +142,7 @@ fetch fetch_u(
 .instr_fromsram      (instr_fromsram), 
 .branch_predict_err  (branch_predict_err),
 .de2fe_branch_target (de2fe_branch_target),
-.wb2csrfile_int_ffout(interrupt       ),
-.wb2csrfile_exp_ffout(mem2wb_exp_ffout),
+//.wb2csrfile_exp_ffout(mem2wb_exp_ffout),
 .mtvec               (mtvec                  ),
 .mepc                (mepc                   ),
 .mcause              (mcause[4:0]            ),
@@ -151,6 +160,7 @@ fetch fetch_u(
 .mem2wb_wr_csrwdata_ffout(mem2wb_wr_csrwdata_ffout),
 .lr_isram_cs             (lr_isram_cs             ),
 .lr_isram_cs_ff          (lr_isram_cs_ff          ),
+.all_int(all_int),  ////////interrupt       ),
 
 // output port
 .isram_cs            (isram_cs), 
@@ -800,7 +810,7 @@ inst_wb inst_wb_u(
 .mem2wb_wr_csrindex_ffout(mem2wb_wr_csrindex_ffout),
 .mem2wb_wr_csrwdata_ffout(mem2wb_wr_csrwdata_ffout), 
 .mem2wb_exp_ffout        (mem2wb_exp_ffout        ),
-.interrupt               (interrupt               ),
+//.interrupt               (interrupt               ),
 .mem2wb_mstatus_pmie_ffout (mem2wb_mstatus_pmie_ffout ),
 .mem2wb_mstatus_mie_ffout  (mem2wb_mstatus_mie_ffout  ),
 .mem2wb_mtval_ffout        (mem2wb_mtval_ffout        ),
@@ -858,11 +868,17 @@ regfile regfile_u(
 assign mem2wb_wr_csrreg = ex2mem_wr_csrreg_ffout;
 wire wb2csrfile_mret = mem2wb_mret_ffout;
 wire wb2csrfile_exp = mem2wb_exp_ffout;
-
 wire [31:0] mem2wb_instr_ffout;
+
+
 csrfile csrfile_u(
 .clk                    (clk                    ), 
 .cpurst                 (cpurst                 ),
+.fe2de_rv16             (fe2de_rv16             ), 
+.fetch_pc               (fetch_pc               ),
+.mip_msip               (clint_soft_int         ), 
+.mip_mtip               (clint_timer_int         ), 
+.mip_meip               (ext_int                 ),
 .ex2mem_mtval            (ex2mem_mtval        ),
 .mem2wb_mtval            (mem2wb_mtval        ),
 .wb2csrfile_mtval        (wb2csrfile_mtval        ),
@@ -890,7 +906,7 @@ csrfile csrfile_u(
 .wb2csrfile_exp          (wb2csrfile_exp          ),
 
 //.wb2csrfile_exp         (mem2wb_exp_ffout       ),
-.wb2csrfile_int         (interrupt              ),
+.wb2csrfile_int         (all_int              ),
 //.wb2csrfile_mret        (mem2wb_mret_ffout        ),
 .csr_r_index            (de2ex_csr_index        ),
 .ex2mem_wr_csrindex     (ex2mem_wr_csrindex     ), 
@@ -924,8 +940,14 @@ csrfile csrfile_u(
 .mcause                 (mcause                 ),
 .mtval                  (mtval                  ),
 .mip                    (mip                    ),
-.csr_rdat               (csr_rdat               )
+.csr_rdat               (csr_rdat               ),
+.g_int                  (g_int                  )
 
 );
+
+// all interrupt combine
+assign all_int = g_int;
+
+
 
 endmodule

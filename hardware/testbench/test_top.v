@@ -245,14 +245,14 @@ end
 
 always #10 clk = ~clk;
 
-wire interrupt = 1'b0;
+wire ext_int = 1'b0;
 
 
 
 top top_u(
 .clk      (clk      ), 
 .cpurst   (cpurst   ), 
-.interrupt(interrupt),
+.ext_int  (ext_int  ),
 .boot_addr(32'h8000_0000)
 );
 endmodule

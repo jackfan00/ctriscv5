@@ -1,7 +1,7 @@
 module top(
-clk, cpurst,  interrupt, boot_addr
+clk, cpurst,  ext_int, boot_addr
 );
-input clk, cpurst, interrupt;
+input clk, cpurst, ext_int;
 input [31:0] boot_addr;
 //
 //input ext_ram_cs, ext_ram_we;
@@ -18,13 +18,17 @@ wire [3:0] lr_sram_ben  ;
 wire [31:0] lr_sram_wdata;
 wire lr_isram_cs;
 reg lr_isram_cs_ff;
+wire [31:0] clint_rdat;
+wire clint_cs_ff;
 
 wire [31:0] lr_sram_rdata;
 core core_u(
 .clk                        (clk), 
 .cpurst                     (cpurst),
 .boot_addr                  (boot_addr),
-.interrupt                  (interrupt),
+.clint_timer_int            (clint_timer_int    ), 
+.clint_soft_int             (clint_soft_int     ),
+.ext_int                    (ext_int            ),
 .instr_fromsram             (instr_fromsram),
 .dsram_rdata                (lr_sram_rdata               ),
 .lr_isram_cs                (lr_isram_cs                 ),
@@ -99,5 +103,23 @@ end
 wire [31:0] rdat = selh ? instr_fromsram[63:32] : instr_fromsram[31:0];
 
 assign lr_sram_rdata = lr_isram_cs_ff ? rdat : 
+                       clint_cs_ff ? clint_rdat :
                         dsram_rdata ;
+                        
+//
+
+clint clint_u(
+.clk          (clk          ), 
+.cpurst       (cpurst       ),
+.lr_sram_we   (lr_sram_we   ), 
+.lr_sram_cs   (lr_sram_cs   ),
+.lr_sram_addr (lr_sram_addr ), 
+.lr_sram_wdata(lr_sram_wdata),
+//           (//           )
+.timer_int    (clint_timer_int    ), 
+.soft_int     (clint_soft_int     ),
+.clint_rdat   (clint_rdat   ),
+.clint_cs_ff  (clint_cs_ff  )
+);
+                        
 endmodule

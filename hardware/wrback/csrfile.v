@@ -12,6 +12,7 @@
 
 module csrfile(
 clk, cpurst,
+fe2de_rv16, fetch_pc,
 mip_msip, mip_mtip, mip_meip,
 //wb2csrfile_exp         ,
 wb2csrfile_int         ,
@@ -48,11 +49,14 @@ mepc                   ,
 mcause                 ,
 mtval                  ,
 mip                    ,
-csr_rdat
+csr_rdat               ,
+g_int
 
 );
 
 input clk, cpurst      ;
+input fe2de_rv16;
+input [31:0] fetch_pc;
 input mip_msip, mip_mtip, mip_meip;
 //input wb2csrfile_exp   ;
 input wb2csrfile_int   ;
@@ -90,11 +94,19 @@ output [31:0] mcause  ;
 output [31:0] mtval   ;
 output [31:0] mip     ;
 output [31:0] csr_rdat;
+output g_int;
 
-//
-wire wb2csrfile_intorexp = wb2csrfile_exp | wb2csrfile_int;
-//
+reg mie_meie, mie_mtie, mie_msie;
 reg mstatus_mie, mstatus_pmie;
+
+//individual int enable
+wire int_indi = (mip_mtip & mie_mtie) | (mip_msip & mie_msie) | (mip_meip & mie_meie);
+//global int enable
+assign g_int = int_indi & mstatus_mie;
+
+
+//wire wb2csrfile_intorexp = wb2csrfile_exp | wb2csrfile_int_i;
+//
 always @(posedge clk)
 begin
   if (cpurst)
@@ -102,7 +114,12 @@ begin
       mstatus_mie <= 1'b0;
       mstatus_pmie <= 1'b0;
     end
-  else if (wb2csrfile_intorexp)
+  else if (g_int)  // int happen, turn-off mie
+    begin
+      mstatus_mie <= 1'b0;
+      mstatus_pmie <= mstatus_mie;
+    end
+  else if (wb2csrfile_exp)
     begin
       mstatus_mie <= 1'b0;
       mstatus_pmie <= wb2csrfile_mstatus_mie;
@@ -120,7 +137,6 @@ begin
 end
 assign mstatus = {19'b0, 2'b11, 3'b0, mstatus_pmie, 3'b0, mstatus_mie, 3'b0};
 //
-reg mie_meie, mie_mtie, mie_msie;
 always @(posedge clk)
 begin
   if (cpurst)
@@ -177,9 +193,10 @@ begin
     begin
       mepc <= mem2wb_pc_ffout[31:0];  //current instr pc
     end    
-  else if (wb2csrfile_int)
+  else if (g_int)  
     begin
-      mepc <= wb2csrfile_rv16 ? mem2wb_pc_ffout+ 3'd2 : mem2wb_pc_ffout+ 3'd4; //ex2mem_pc_ffout[31:0];  // next instr pc
+    //  mepc <= wb2csrfile_rv16 ? mem2wb_pc_ffout+ 3'd2 : mem2wb_pc_ffout+ 3'd4; //ex2mem_pc_ffout[31:0];  // next instr pc
+      mepc <= fe2de_rv16 ? fetch_pc+ 3'd2 : fetch_pc+ 3'd4; //
     end    
   else if (wb2csrfile_wr_reg && wb2csrfile_wr_regindex[11:0]==12'h341)
     begin
@@ -187,14 +204,10 @@ begin
     end
 end
 //
-wire [4:0] causecode_t = wb2csrfile_i_ms   ? 5'd3 : 
-                         wb2csrfile_i_mt   ? 5'd7 :
-                         wb2csrfile_i_me   ? 5'd11 :
-                         wb2csrfile_e_iam  ? 5'd0 :
-                         wb2csrfile_e_ii   ? 5'd2 :
-                         wb2csrfile_e_bk   ? 5'd3 :
-                         wb2csrfile_e_lam  ? 5'd4 :
-                         wb2csrfile_e_ecfm ? 5'd11 : 5'd16;                       
+wire [4:0] causecode_int = mip_msip   ? 5'd3 : 
+                         mip_mtip   ? 5'd7 :
+                         mip_meip   ? 5'd11 :
+                           5'd16;                       
 reg [4:0] causecode;
 reg cause_int;
 always @(posedge clk)
@@ -204,10 +217,15 @@ begin
       causecode <= 5'b0;
       cause_int <= 1'b0;
     end
-  else if (wb2csrfile_intorexp)
+  else if (g_int)
+    begin
+      causecode <= causecode_int;//causecode_t;
+      cause_int <= 1'b1;
+    end  
+  else if (wb2csrfile_exp)
     begin
       causecode <= wb2csrfile_causecode;//causecode_t;
-      cause_int <= wb2csrfile_int;
+      cause_int <= 1'b0;
     end  
 end
 assign mcause = {cause_int, 26'b0, causecode[4:0]};
