@@ -3,6 +3,7 @@
 //#include "regfile.h"
 
 module inst_decode(
+fe2de_g_int_ffout, fe2de_causecode_int_ffout,
 de2ex_store_ffout, de2ex_mem_en_ffout,
 fe2de_pc_ffout,
 fe2de_ir_ffout,
@@ -37,6 +38,7 @@ de_stall,
 rs1_addr, rs2_addr,
 de2ex_rd_is_x1, de2ex_rd_is_xn,
 de2ex_exp, de2ex_mret,
+de2ex_int,
 de2ex_csr_index,
 de2ex_wr_csrwdata,
 de2ex_e_ecfm, de2ex_e_bk,
@@ -47,6 +49,8 @@ de2ex_mtval,
 de2ex_mepc,
 de2ex_fence_stall
 );
+input fe2de_g_int_ffout;
+input [4:0] fe2de_causecode_int_ffout;
 input de2ex_store_ffout, de2ex_mem_en_ffout;
 input [31:0] fe2de_pc_ffout,fe2de_ir_ffout;
 input fe2de_predict_bxxtaken_ffout;
@@ -82,6 +86,7 @@ output de_stall;
 output [4:0] rs1_addr, rs2_addr;
 output de2ex_rd_is_x1, de2ex_rd_is_xn;
 output de2ex_exp, de2ex_mret;
+output de2ex_int;
 output [11:0] de2ex_csr_index;
 output [31:0] de2ex_wr_csrwdata;
 output de2ex_e_ecfm, de2ex_e_bk;
@@ -533,7 +538,7 @@ wire de2ex_e_iam=1'b0;
 wire de2ex_e_ii=1'b0;
 wire de2ex_e_lam=1'b0;
 //
-assign de2ex_causecode = 
+wire [4:0] de2ex_causecode_exp = 
                          //clint_soft_int   ? 5'd3 : 
                          //clint_timer_int   ? 5'd7 :
                          //de2ex_i_me   ? 5'd11 :
@@ -543,7 +548,10 @@ assign de2ex_causecode =
                          de2ex_e_lam  ? 5'd4 :
                          de2ex_e_ecfm ? 5'd11 : 5'd16;                       
 
+assign de2ex_causecode = fe2de_g_int_ffout ? fe2de_causecode_int_ffout : de2ex_causecode_exp;
+
 assign de2ex_mtval = (de2ex_e_ii ) ? de2ex_instr : de2ex_pc;
 
+assign de2ex_int = fe2de_g_int_ffout;
 
 endmodule

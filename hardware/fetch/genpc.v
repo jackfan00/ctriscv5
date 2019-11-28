@@ -19,6 +19,8 @@ de2ex_wr_csrreg, ex2mem_wr_csrreg, mem2wb_wr_csrreg, mem2wb_wr_csrreg_ffout,
 de2ex_wr_csrindex, ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, mem2wb_wr_csrindex_ffout,
 de2ex_wr_csrwdata, ex2mem_wr_csrwdata, mem2wb_wr_csrwdata, mem2wb_wr_csrwdata_ffout,
 lr_isram_cs, lr_isram_cs_endp,
+causecode_int,
+//
 
 isram_adr, 
 pc, 
@@ -58,6 +60,7 @@ input de2ex_wr_csrreg, ex2mem_wr_csrreg, mem2wb_wr_csrreg, mem2wb_wr_csrreg_ffou
 input [11:0] de2ex_wr_csrindex, ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, mem2wb_wr_csrindex_ffout;
 input [31:0] de2ex_wr_csrwdata, ex2mem_wr_csrwdata, mem2wb_wr_csrwdata, mem2wb_wr_csrwdata_ffout;
 input lr_isram_cs, lr_isram_cs_endp;
+input [4:0] causecode_int;
 //
 output [31:3] isram_adr;
 output [31:0] pc;
@@ -150,7 +153,7 @@ wire [31:0] nxtpc =
        branch_predict_err ? de2fe_branch_target :   
        fet_stall|de_stall|exe_stall|memacc_stall|fence_stall ? pc :
        //need to modify?????
-       all_int ? {mtvec[31:2],2'b0} + {mcause[4:0],2'b0} :
+       all_int ?   {bypass_mtvec[31:2],2'b0} + {causecode_int[4:0],2'b0} :
        isecallbk ? {bypass_mtvec[31:2],2'b0} :
        ismret ? bypass_mepc :
 //       branch_predict_err ? de2fe_branch_target :   

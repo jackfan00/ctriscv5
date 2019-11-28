@@ -50,7 +50,8 @@ mcause                 ,
 mtval                  ,
 mip                    ,
 csr_rdat               ,
-g_int
+g_int                  ,
+causecode_int
 
 );
 
@@ -95,6 +96,7 @@ output [31:0] mtval   ;
 output [31:0] mip     ;
 output [31:0] csr_rdat;
 output g_int;
+output [4:0] causecode_int;
 
 reg mie_meie, mie_mtie, mie_msie;
 reg mstatus_mie, mstatus_pmie;
@@ -114,10 +116,10 @@ begin
       mstatus_mie <= 1'b0;
       mstatus_pmie <= 1'b0;
     end
-  else if (g_int)  // int happen, turn-off mie
+  else if (wb2csrfile_int)  // int happen, turn-off mie
     begin
       mstatus_mie <= 1'b0;
-      mstatus_pmie <= mstatus_mie;
+      mstatus_pmie <= wb2csrfile_mstatus_mie;
     end
   else if (wb2csrfile_exp)
     begin
@@ -193,10 +195,10 @@ begin
     begin
       mepc <= mem2wb_pc_ffout[31:0];  //current instr pc
     end    
-  else if (g_int)  
+  else if (wb2csrfile_int)  
     begin
-    //  mepc <= wb2csrfile_rv16 ? mem2wb_pc_ffout+ 3'd2 : mem2wb_pc_ffout+ 3'd4; //ex2mem_pc_ffout[31:0];  // next instr pc
-      mepc <= fe2de_rv16 ? fetch_pc+ 3'd2 : fetch_pc+ 3'd4; //
+      mepc <= wb2csrfile_rv16 ? mem2wb_pc_ffout+ 3'd2 : mem2wb_pc_ffout+ 3'd4; //ex2mem_pc_ffout[31:0];  // next instr pc
+    //  mepc <= fe2de_rv16 ? fetch_pc+ 3'd2 : fetch_pc+ 3'd4; //
     end    
   else if (wb2csrfile_wr_reg && wb2csrfile_wr_regindex[11:0]==12'h341)
     begin
@@ -204,10 +206,10 @@ begin
     end
 end
 //
-wire [4:0] causecode_int = mip_msip   ? 5'd3 : 
-                         mip_mtip   ? 5'd7 :
-                         mip_meip   ? 5'd11 :
-                           5'd16;                       
+wire [4:0] causecode_int = mip_msip & mie_msie   ? 5'd3 : 
+                           mip_mtip & mie_mtie   ? 5'd7 :
+                           mip_meip & mie_meie   ? 5'd11 :
+                           5'd16;        
 reg [4:0] causecode;
 reg cause_int;
 always @(posedge clk)
@@ -217,10 +219,15 @@ begin
       causecode <= 5'b0;
       cause_int <= 1'b0;
     end
-  else if (g_int)
+/////  else if (g_int)
+/////    begin
+/////      causecode <= causecode_int;//causecode_t;
+/////      cause_int <= 1'b1;
+/////    end  
+  else if (wb2csrfile_int)
     begin
-      causecode <= causecode_int;//causecode_t;
-      cause_int <= 1'b1;
+      causecode <= wb2csrfile_causecode;//causecode_t;
+      cause_int <= 1'b0;
     end  
   else if (wb2csrfile_exp)
     begin

@@ -28,6 +28,7 @@ ex2mem_store_ffout,
 ex2mem_mem_en_ffout,
 de2ex_csr_index_ffout,
 de2ex_exp_ffout,
+de2ex_int_ffout,
 de2ex_mstatus_mie_ffout ,
 de2ex_mstatus_pmie_ffout,
 de2ex_mtval_ffout       ,
@@ -60,6 +61,7 @@ ex2mem_wr_csrreg   ,
 ex2mem_wr_csrindex ,
 ex2mem_wr_csrwdata ,
 ex2mem_exp,
+ex2mem_int,
 ex2mem_mstatus_mie  ,
 ex2mem_mstatus_pmie ,
 ex2mem_mtval        ,
@@ -96,6 +98,7 @@ input ex2mem_store_ffout;
 input ex2mem_mem_en_ffout;
 input [11:0] de2ex_csr_index_ffout;
 input de2ex_exp_ffout;
+input de2ex_int_ffout;
 input de2ex_mstatus_mie_ffout ;    
 input de2ex_mstatus_pmie_ffout;   
 input [31:0] de2ex_mtval_ffout       ;          
@@ -131,6 +134,7 @@ output ex2mem_wr_csrreg   ;
 output [11:0] ex2mem_wr_csrindex ;
 output [31:0] ex2mem_wr_csrwdata ;
 output ex2mem_exp;
+output ex2mem_int;
 output ex2mem_mstatus_mie  ; 
 output ex2mem_mstatus_pmie ; 
 output [31:0] ex2mem_mtval        ; 
@@ -295,6 +299,7 @@ assign ex2mem_rd_is_x1 = de2ex_rd_is_x1_ffout;
 assign ex2mem_rd_is_xn = de2ex_rd_is_xn_ffout;
 
 assign ex2mem_exp = de2ex_exp_ffout;
+assign ex2mem_int = de2ex_int_ffout;
 
 assign ex2mem_mstatus_mie = de2ex_mstatus_mie_ffout;
 assign ex2mem_mstatus_pmie = de2ex_mstatus_pmie_ffout;

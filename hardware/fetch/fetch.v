@@ -18,6 +18,8 @@ de2ex_wr_csrindex, ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, mem2wb_wr_csrin
 de2ex_wr_csrwdata, ex2mem_wr_csrwdata, mem2wb_wr_csrwdata, mem2wb_wr_csrwdata_ffout,
 lr_isram_cs, lr_isram_cs_ff,
 all_int,
+causecode_int,
+//
 
 isram_cs, isram_adr, rv32_instr_todec, fetch_pc,
 fet_is_x1, fet_is_xn,
@@ -52,6 +54,8 @@ input [11:0] de2ex_wr_csrindex, ex2mem_wr_csrindex, ex2mem_wr_csrindex_ffout, me
 input [31:0] de2ex_wr_csrwdata, ex2mem_wr_csrwdata, mem2wb_wr_csrwdata, mem2wb_wr_csrwdata_ffout;
 input lr_isram_cs, lr_isram_cs_ff;
 input all_int;
+input [4:0] causecode_int;
+//
 
 output isram_cs;
 output [31:3] isram_adr;
@@ -119,6 +123,7 @@ genpc genpc_u(
 .mem2wb_wr_csrwdata_ffout(mem2wb_wr_csrwdata_ffout),
 .lr_isram_cs             (lr_isram_cs             ),
 .lr_isram_cs_endp        (lr_isram_cs_endp        ),
+.causecode_int           (causecode_int           ),
 
 // output port
 .isram_adr(isram_adr), 

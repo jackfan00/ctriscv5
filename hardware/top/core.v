@@ -100,6 +100,10 @@ wire [31:0] wb2csrfile_mtval_ffout;
 wire exe_store_load_conflict, mult_stall, div_stall;
 wire load_stall, store_stall;
 wire fence_stall;
+wire [4:0] causecode_int;
+wire [4:0] fe2de_causecode_int_ffout;
+wire fe2de_g_int_ffout;
+
 
 assign memacc_stall = load_stall | store_stall;
 assign exe_stall = exe_store_load_conflict | mult_stall | div_stall;
@@ -160,7 +164,8 @@ fetch fetch_u(
 .mem2wb_wr_csrwdata_ffout(mem2wb_wr_csrwdata_ffout),
 .lr_isram_cs             (lr_isram_cs             ),
 .lr_isram_cs_ff          (lr_isram_cs_ff          ),
-.all_int(all_int),  ////////interrupt       ),
+.all_int                 (all_int                 ),  ////////interrupt       ),
+.causecode_int           (causecode_int           ),
 
 // output port
 .isram_cs            (isram_cs), 
@@ -214,6 +219,8 @@ ft_de ft_de_u(
 .lr_isram_cs_ff                  (lr_isram_cs_ff                  ),
 .jalr_dep                     (jalr_dep                     ),
 .fence_stall                  (fence_stall               ),
+.causecode_int                (causecode_int             ),
+.g_int                        (g_int                     ),
 
 // output port                
 .fe2de_pc_ffout               (fe2de_pc_ffout), 
@@ -225,7 +232,9 @@ ft_de ft_de_u(
 //.fet_stall                    (fet_stall),
 .btb_pc                       (btb_pc                       ), 
 .btb_instr                    (btb_instr                    ),
-.btb_valid                    (btb_valid                    )
+.btb_valid                    (btb_valid                    ),
+.fe2de_causecode_int_ffout    (fe2de_causecode_int_ffout    ),
+.fe2de_g_int_ffout            (fe2de_g_int_ffout            )
 );
 //
 wire ex2mem_mstatus_mie, mem2wb_mstatus_mie, wb2csrfile_mstatus_mie;
@@ -247,6 +256,8 @@ wire [31:0] csr_rdat;
 wire de2ex_mem_en_ffout ;
 
 inst_decode inst_decode_u(
+.fe2de_g_int_ffout            (fe2de_g_int_ffout            ), 
+.fe2de_causecode_int_ffout    (fe2de_causecode_int_ffout    ),
 .de2ex_store_ffout            (de2ex_store_ffout            ), 
 .de2ex_mem_en_ffout           (de2ex_mem_en_ffout           ),
 .fe2de_pc_ffout               (fe2de_pc_ffout),
@@ -286,6 +297,7 @@ inst_decode inst_decode_u(
 .de2ex_rd_is_x1               (de2ex_rd_is_x1),
 .de2ex_rd_is_xn               (de2ex_rd_is_xn),
 .de2ex_exp                    (de2ex_exp                    ), 
+.de2ex_int                    (de2ex_int                    ), 
 .de2ex_mret                   (de2ex_mret                   ),
 .de2ex_csr_index              (de2ex_csr_index              ),
 .de2ex_wr_csrwdata            (de2ex_wr_csrwdata),
@@ -332,7 +344,7 @@ de_ex de_ex_u(
 //.load_stall           (load_stall), 
 //.mult_stall              (mult_stall),
 //.div_stall                   (div_stall),
-.mem2wb_exp_ffout        (mem2wb_exp_ffout ),
+//.mem2wb_exp_ffout        (mem2wb_exp_ffout ),
 //.interrupt               (interrupt ),
 .de2ex_pc                (de2ex_pc),
 .de2ex_wr_mem            (de2ex_wr_mem),
@@ -355,6 +367,7 @@ de_ex de_ex_u(
 .de2ex_rd_is_x1          (de2ex_rd_is_x1),
 .de2ex_rd_is_xn          (de2ex_rd_is_xn),
 .de2ex_exp               (de2ex_exp               ),
+.de2ex_int               (de2ex_int               ),
 .de2ex_mret              (de2ex_mret              ),
 .de2ex_csr_index         (de2ex_csr_index         ),
 .de2ex_rs1addr           (rs1_addr           ), 
@@ -390,6 +403,7 @@ de_ex de_ex_u(
 .de2ex_rd_is_x1_ffout    (de2ex_rd_is_x1_ffout),
 .de2ex_rd_is_xn_ffout    (de2ex_rd_is_xn_ffout),
 .de2ex_exp_ffout         (de2ex_exp_ffout         ),
+.de2ex_int_ffout         (de2ex_int_ffout         ),
 .de2ex_mret_ffout        (de2ex_mret_ffout        ),
 .de2ex_csr_index_ffout   (de2ex_csr_index_ffout   ),
 .de2ex_rs1addr_ffout     (de2ex_rs1addr_ffout     ), 
@@ -460,6 +474,7 @@ inst_execute inst_execute_u(
 .ex2mem_mem_en_ffout      (ex2mem_mem_en_ffout      ),
 .de2ex_csr_index_ffout    (de2ex_csr_index_ffout    ),
 .de2ex_exp_ffout          (de2ex_exp_ffout          ),
+.de2ex_int_ffout          (de2ex_int_ffout          ),
 .de2ex_mstatus_pmie_ffout (de2ex_mstatus_pmie_ffout ),
 .de2ex_mstatus_mie_ffout  (de2ex_mstatus_mie_ffout  ),
 .de2ex_mtvec_ffout        (de2ex_mtvec_ffout        ),
@@ -493,6 +508,7 @@ inst_execute inst_execute_u(
 .ex2mem_wr_csrindex       (ex2mem_wr_csrindex       ),
 .ex2mem_wr_csrwdata       (ex2mem_wr_csrwdata       ),
 .ex2mem_exp               (ex2mem_exp               ),
+.ex2mem_int               (ex2mem_int               ),
 .ex2mem_mstatus_pmie (ex2mem_mstatus_pmie ),
 .ex2mem_mstatus_mie  (ex2mem_mstatus_mie  ),
 .ex2mem_mtvec        (ex2mem_mtvec        ),
@@ -582,11 +598,12 @@ ex_mem ex_mem_u(
 .ex2mem_rd_is_x1         (ex2mem_rd_is_x1          ),
 .ex2mem_rd_is_xn         (ex2mem_rd_is_xn          ),
 .ex2mem_exp              (ex2mem_exp               ),
+.ex2mem_int              (ex2mem_int               ),
 .ex2mem_pc               (de2ex_pc_ffout           ),
 .ex2mem_wr_csrreg        (ex2mem_wr_csrreg         ),
 .ex2mem_wr_csrindex      (ex2mem_wr_csrindex       ),
 .ex2mem_wr_csrwdata      (ex2mem_wr_csrwdata       ),
-.mem2wb_exp_ffout        (mem2wb_exp_ffout         ),
+//.mem2wb_exp_ffout        (mem2wb_exp_ffout         ),
 .ex2mem_mret             (ex2mem_mret         ),
 .ex2mem_e_ecfm           (de2ex_e_ecfm_ffout      ), 
 .ex2mem_e_bk             (de2ex_e_bk_ffout        ),
@@ -615,6 +632,7 @@ ex_mem ex_mem_u(
 .ex2mem_rd_is_x1_ffout   (ex2mem_rd_is_x1_ffout   ),
 .ex2mem_rd_is_xn_ffout   (ex2mem_rd_is_xn_ffout   ),
 .ex2mem_exp_ffout        (ex2mem_exp_ffout        ),
+.ex2mem_int_ffout        (ex2mem_int_ffout        ),
 .ex2mem_pc_ffout         (ex2mem_pc_ffout         ),
 .ex2mem_wr_csrreg_ffout  (ex2mem_wr_csrreg_ffout  ),
 .ex2mem_wr_csrindex_ffout(ex2mem_wr_csrindex_ffout),
@@ -660,6 +678,7 @@ inst_memacc inst_memacc_u(
 .ex2mem_mem_en              (ex2mem_mem_en              ),
 .ex2mem_mem_en_ffout        (ex2mem_mem_en_ffout        ),
 .ex2mem_load_ffout          (ex2mem_load_ffout          ),
+.ex2mem_load                (ex2mem_load                ),
 .ex2mem_store_ffout         (ex2mem_store_ffout         ),
 .ex2mem_rd_is_x1_ffout      (ex2mem_rd_is_x1_ffout      ),
 .ex2mem_rd_is_xn_ffout      (ex2mem_rd_is_xn_ffout      ),
@@ -672,6 +691,7 @@ inst_memacc inst_memacc_u(
 .multprod_HI_ffout          (multprod_HI_ffout          ),
 .load_misaligned_exxeption  (load_misaligned_exxeption  ),
 .ex2mem_exp_ffout           (ex2mem_exp_ffout           ),
+.ex2mem_int_ffout           (ex2mem_int_ffout           ),
 .div2mem_wr_wdata_ffout     (div2mem_wr_wdata_ffout     ),
 .div2mem_divvalid_ffout     (div2mem_divvalid_ffout     ),
 
@@ -695,6 +715,7 @@ inst_memacc inst_memacc_u(
 .dsram_ben                  (dsram_ben                  ),
 .dsram_wdata                (dsram_wdata                ),
 .mem2wb_exp                 (mem2wb_exp                 ),
+.mem2wb_int                 (mem2wb_int                 ),
 .store_misaligned_exxeption   (store_misaligned_exxeption   )
 
 );
@@ -751,7 +772,8 @@ mem_wb mem_wb_u(
 .mem2wb_wr_regindex      (mem2wb_wr_regindex      ),
 .mem2wb_wr_wdata         (mem2wb_wr_wdata         ),
 .mem2wb_pc               (ex2mem_pc_ffout         ),
-.mem2wb_exp              (ex2mem_exp_ffout        ),
+.mem2wb_exp              (mem2wb_exp        ),
+.mem2wb_int              (mem2wb_int        ),
 .mem2wb_wr_csrreg        (ex2mem_wr_csrreg_ffout  ),
 .mem2wb_wr_csrindex      (ex2mem_wr_csrindex_ffout),
 .mem2wb_wr_csrwdata      (ex2mem_wr_csrwdata_ffout),
@@ -774,6 +796,7 @@ mem_wb mem_wb_u(
 .mem2wb_wr_wdata_ffout   (mem2wb_wr_wdata_ffout   ),
 .mem2wb_pc_ffout         (mem2wb_pc_ffout         ),
 .mem2wb_exp_ffout        (mem2wb_exp_ffout        ),
+.mem2wb_int_ffout        (mem2wb_int_ffout        ),
 .mem2wb_wr_csrreg_ffout  (mem2wb_wr_csrreg_ffout  ),
 .mem2wb_wr_csrindex_ffout(mem2wb_wr_csrindex_ffout),
 .mem2wb_wr_csrwdata_ffout(mem2wb_wr_csrwdata_ffout),
@@ -810,6 +833,7 @@ inst_wb inst_wb_u(
 .mem2wb_wr_csrindex_ffout(mem2wb_wr_csrindex_ffout),
 .mem2wb_wr_csrwdata_ffout(mem2wb_wr_csrwdata_ffout), 
 .mem2wb_exp_ffout        (mem2wb_exp_ffout        ),
+.mem2wb_int_ffout        (mem2wb_int_ffout        ),
 //.interrupt               (interrupt               ),
 .mem2wb_mstatus_pmie_ffout (mem2wb_mstatus_pmie_ffout ),
 .mem2wb_mstatus_mie_ffout  (mem2wb_mstatus_mie_ffout  ),
@@ -868,6 +892,7 @@ regfile regfile_u(
 assign mem2wb_wr_csrreg = ex2mem_wr_csrreg_ffout;
 wire wb2csrfile_mret = mem2wb_mret_ffout;
 wire wb2csrfile_exp = mem2wb_exp_ffout;
+wire wb2csrfile_int = mem2wb_int_ffout;
 wire [31:0] mem2wb_instr_ffout;
 
 
@@ -906,7 +931,7 @@ csrfile csrfile_u(
 .wb2csrfile_exp          (wb2csrfile_exp          ),
 
 //.wb2csrfile_exp         (mem2wb_exp_ffout       ),
-.wb2csrfile_int         (all_int              ),
+.wb2csrfile_int         (wb2csrfile_int              ),
 //.wb2csrfile_mret        (mem2wb_mret_ffout        ),
 .csr_r_index            (de2ex_csr_index        ),
 .ex2mem_wr_csrindex     (ex2mem_wr_csrindex     ), 
@@ -941,7 +966,8 @@ csrfile csrfile_u(
 .mtval                  (mtval                  ),
 .mip                    (mip                    ),
 .csr_rdat               (csr_rdat               ),
-.g_int                  (g_int                  )
+.g_int                  (g_int                  ),
+.causecode_int          (causecode_int          )
 
 );
 

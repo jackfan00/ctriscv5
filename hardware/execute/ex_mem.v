@@ -18,11 +18,12 @@ ex2mem_load, ex2mem_store,
 ex2mem_rd_is_x1,
 ex2mem_rd_is_xn,
 ex2mem_exp,
+ex2mem_int,
 ex2mem_pc,
 ex2mem_wr_csrreg   ,
 ex2mem_wr_csrindex ,
 ex2mem_wr_csrwdata ,
-mem2wb_exp_ffout,
+//mem2wb_exp_ffout,
 ex2mem_mret,
 ex2mem_e_ecfm,
 ex2mem_e_bk,
@@ -49,6 +50,7 @@ ex2mem_load_ffout, ex2mem_store_ffout,
 ex2mem_rd_is_x1_ffout,
 ex2mem_rd_is_xn_ffout,
 ex2mem_exp_ffout,
+ex2mem_int_ffout,
 ex2mem_pc_ffout ,
 ex2mem_wr_csrreg_ffout   ,
 ex2mem_wr_csrindex_ffout ,
@@ -86,11 +88,12 @@ input [2:0] ex2readram_opmode;
 input ex2mem_load, ex2mem_store;
 input ex2mem_rd_is_x1, ex2mem_rd_is_xn;
 input ex2mem_exp;
+input ex2mem_int;
 input [31:0] ex2mem_pc;
 input ex2mem_wr_csrreg   ;
 input [11:0] ex2mem_wr_csrindex ;
 input [31:0] ex2mem_wr_csrwdata ;
-input mem2wb_exp_ffout;
+//input mem2wb_exp_ffout;
 input ex2mem_mret;
 input ex2mem_e_ecfm;
 input ex2mem_e_bk;
@@ -117,6 +120,7 @@ output [2:0] ex2readram_opmode_ffout;
 output ex2mem_load_ffout, ex2mem_store_ffout;
 output ex2mem_rd_is_x1_ffout, ex2mem_rd_is_xn_ffout;
 output ex2mem_exp_ffout;
+output ex2mem_int_ffout;
 output [31:0] ex2mem_pc_ffout;
 output ex2mem_wr_csrreg_ffout   ;
 output [11:0] ex2mem_wr_csrindex_ffout ;
@@ -147,6 +151,7 @@ reg [2:0] ex2readram_opmode_ffout;
 reg ex2mem_load_ffout, ex2mem_store_ffout;
 reg ex2mem_rd_is_x1_ffout, ex2mem_rd_is_xn_ffout;
 reg ex2mem_exp_ffout;
+reg ex2mem_int_ffout;
 reg ex2mem_wr_csrreg_ffout   ;
 reg [11:0] ex2mem_wr_csrindex_ffout ;
 reg [31:0] ex2mem_wr_csrwdata_ffout ;
@@ -190,6 +195,7 @@ begin
        ex2mem_rd_is_x1_ffout <=0;
        ex2mem_rd_is_xn_ffout <=0;
        ex2mem_exp_ffout <= 0;
+       ex2mem_int_ffout <= 0;
        ex2mem_wr_csrreg_ffout <= 0;
        ex2mem_wr_csrindex_ffout <= 0;
        ex2mem_wr_csrwdata_ffout <= 0;
@@ -224,6 +230,7 @@ begin
        ex2mem_rd_is_x1_ffout <= ex2mem_rd_is_x1;
        ex2mem_rd_is_xn_ffout <= ex2mem_rd_is_xn;
        ex2mem_exp_ffout <= ex2mem_exp;
+       ex2mem_int_ffout <= ex2mem_int;
        ex2mem_wr_csrreg_ffout <= ex2mem_wr_csrreg;
        ex2mem_wr_csrindex_ffout <= ex2mem_wr_csrindex;
        ex2mem_wr_csrwdata_ffout <= ex2mem_wr_csrwdata;

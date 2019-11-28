@@ -13,13 +13,19 @@ rv16_instr_todec,
 lr_isram_cs, lr_isram_cs_ff,
 jalr_dep,
 fence_stall,
+causecode_int,
+g_int,
+//
 
 fe2de_pc_ffout, fe2de_instr_ffout, 
 fet_is_x1_ffout, fet_is_xn_ffout,
 fe2de_predict_bxxtaken_ffout,
 fe2de_rv16_ffout, 
 //fet_stall,
-btb_pc, btb_instr, btb_valid
+btb_pc, btb_instr, btb_valid,
+fe2de_causecode_int_ffout,
+fe2de_g_int_ffout
+
 );
 input clk, cpurst, fet_flush, de_stall; //, exe_store_load_conflict, readram_stall, mem_stall, mult_stall, div_stall;
 input exe_stall, memacc_stall;
@@ -35,6 +41,9 @@ input [15:0] rv16_instr_todec;
 input lr_isram_cs, lr_isram_cs_ff;
 input jalr_dep;
 input fence_stall;
+input [4:0] causecode_int;
+input g_int;
+//
 
 output [31:0] fe2de_pc_ffout, fe2de_instr_ffout;
 output fet_is_x1_ffout, fet_is_xn_ffout;
@@ -43,6 +52,8 @@ output fe2de_rv16_ffout;
 //output fet_stall;
 output [31:0] btb_pc, btb_instr;
 output btb_valid;
+output [4:0] fe2de_causecode_int_ffout;
+output fe2de_g_int_ffout;
 
 //assign fet_stall = de_store_load_conflict | de_stall | exe_store_load_conflict | readram_stall | mem_stall | mult_stall | div_stall;
 ///dff_e_cell #(32) u0 ( .clk(clk), .en(~stall), .d(fetch_pc),         .q(dec_pc) );
@@ -55,6 +66,9 @@ assign stall = de_stall | exe_stall | memacc_stall;
 reg [31:0] fe2de_instr_ffout;
 reg fet_is_x1_ffout, fet_is_xn_ffout;
 reg fe2de_predict_bxxtaken_ffout, fe2de_rv16_ffout;
+reg [4:0] fe2de_causecode_int_ffout;
+reg fe2de_g_int_ffout;
+
 always @(posedge clk)
 begin
    if ( cpurst || 
@@ -70,6 +84,8 @@ begin
        fet_is_xn_ffout <= 0;
        fe2de_predict_bxxtaken_ffout <= 0;
        fe2de_rv16_ffout <= 0;
+       fe2de_causecode_int_ffout <= 0;
+       fe2de_g_int_ffout <= 0;
      end
    else if (~stall)
      begin
@@ -78,6 +94,8 @@ begin
        fet_is_xn_ffout <= fet_is_xn;
        fe2de_predict_bxxtaken_ffout <= predict_bxxtaken;
        fe2de_rv16_ffout <= fe2de_rv16;
+       fe2de_causecode_int_ffout  <= causecode_int;
+       fe2de_g_int_ffout <= g_int;
      end
 end
 

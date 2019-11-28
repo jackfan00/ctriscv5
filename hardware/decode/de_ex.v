@@ -4,7 +4,7 @@ de2ex_fence_stall,
 exe_stall, memacc_stall,
 de_stall, //exe_store_load_conflict, mem_stall, readram_stall, mult_stall, 
 //div_stall, 
-mem2wb_exp_ffout, //interrupt, 
+//mem2wb_exp_ffout, //interrupt, 
 de2ex_pc,
 de2ex_wr_mem,
 de2ex_mem_op,
@@ -26,6 +26,7 @@ de2ex_csrop,
 de2ex_rd_is_x1,
 de2ex_rd_is_xn,
 de2ex_exp,
+de2ex_int,
 de2ex_mret,
 de2ex_csr_index,
 de2ex_rs1addr, de2ex_rs2addr,
@@ -60,6 +61,7 @@ de2ex_csrop_ffout,
 de2ex_rd_is_x1_ffout,
 de2ex_rd_is_xn_ffout,
 de2ex_exp_ffout,
+de2ex_int_ffout,
 de2ex_mret_ffout,
 de2ex_csr_index_ffout,
 de2ex_rs1addr_ffout, de2ex_rs2addr_ffout,
@@ -80,7 +82,7 @@ input clk, cpurst;
 input de2ex_fence_stall;
 input exe_stall, memacc_stall;
 input de_stall; //, exe_store_load_conflict, mem_stall, readram_stall, mult_stall, div_stall, 
-input mem2wb_exp_ffout; //, interrupt;
+//input mem2wb_exp_ffout; //, interrupt;
 input [31:0] de2ex_pc;
 input de2ex_wr_mem ;
 input [2:0] de2ex_mem_op ;
@@ -100,7 +102,7 @@ input de2ex_inst_valid ;
 input [2:0] de2ex_csrop;
 input de2ex_rd_is_x1;
 input de2ex_rd_is_xn;
-input de2ex_exp;
+input de2ex_exp, de2ex_int;
 input de2ex_mret;
 input [11:0] de2ex_csr_index;
 input [4:0] de2ex_rs1addr, de2ex_rs2addr;
@@ -133,7 +135,7 @@ output de2ex_inst_valid_ffout ;
 output [2:0] de2ex_csrop_ffout;
 output de2ex_rd_is_x1_ffout;
 output de2ex_rd_is_xn_ffout;
-output de2ex_exp_ffout;
+output de2ex_exp_ffout, de2ex_int_ffout;
 output de2ex_mret_ffout;
 output [11:0] de2ex_csr_index_ffout;
 output [4:0] de2ex_rs1addr_ffout, de2ex_rs2addr_ffout;
@@ -166,7 +168,7 @@ reg de2ex_inst_valid_ffout ;
 reg [2:0] de2ex_csrop_ffout;
 reg de2ex_rd_is_x1_ffout;
 reg de2ex_rd_is_xn_ffout;
-reg de2ex_exp_ffout;
+reg de2ex_exp_ffout, de2ex_int_ffout;
 reg de2ex_mret_ffout;
 reg [11:0] de2ex_csr_index_ffout;
 reg [4:0] de2ex_rs1addr_ffout, de2ex_rs2addr_ffout;
@@ -232,6 +234,7 @@ begin
           de2ex_rd_is_x1_ffout <= 0;
           de2ex_rd_is_xn_ffout <= 0;
           de2ex_exp_ffout <= 0;
+          de2ex_int_ffout <= 0;
           de2ex_mret_ffout <= 0;
           de2ex_csr_index_ffout <= 0;
           de2ex_rs1addr_ffout <= 0;
@@ -270,6 +273,7 @@ begin
           de2ex_rd_is_x1_ffout <= de2ex_rd_is_x1;
           de2ex_rd_is_xn_ffout <= de2ex_rd_is_xn;
           de2ex_exp_ffout <= de2ex_exp;
+          de2ex_int_ffout <= de2ex_int;
           de2ex_mret_ffout <= de2ex_mret;
           de2ex_csr_index_ffout <= de2ex_csr_index;
           de2ex_rs1addr_ffout <= de2ex_rs1addr;

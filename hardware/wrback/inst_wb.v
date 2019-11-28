@@ -13,6 +13,7 @@ mem2wb_wr_csrreg_ffout  ,
 mem2wb_wr_csrindex_ffout,
 mem2wb_wr_csrwdata_ffout,
 mem2wb_exp_ffout, //interrupt,
+mem2wb_int_ffout,
 mem2wb_mstatus_pmie_ffout,
 mem2wb_mstatus_mie_ffout ,
 mem2wb_mtvec_ffout       ,
@@ -47,6 +48,7 @@ input mem2wb_wr_csrreg_ffout  ;
 input [11:0] mem2wb_wr_csrindex_ffout;
 input [31:0] mem2wb_wr_csrwdata_ffout;
 input mem2wb_exp_ffout;// , interrupt;
+input mem2wb_int_ffout;
 input mem2wb_mstatus_pmie_ffout;
 input mem2wb_mstatus_mie_ffout ;
 input [31:0] mem2wb_mtvec_ffout       ;

@@ -14,6 +14,7 @@ ex2mem_mem_op_ffout,
 ex2mem_mem_en,
 ex2mem_mem_en_ffout,
 ex2mem_load_ffout,
+ex2mem_load,
 ex2mem_store_ffout,
 ex2mem_rd_is_x1_ffout,
 ex2mem_rd_is_xn_ffout,
@@ -25,6 +26,7 @@ multprod_LO_ffout,
 multprod_HI_ffout,
 load_misaligned_exxeption,
 ex2mem_exp_ffout,
+ex2mem_int_ffout,
 div2mem_divvalid_ffout,
 div2mem_wr_wdata_ffout,
 
@@ -48,6 +50,7 @@ dsram_we,
 dsram_ben,
 dsram_wdata,
 mem2wb_exp,
+mem2wb_int,
 store_misaligned_exxeption
 );
 input clk, cpurst;
@@ -59,7 +62,7 @@ input ex2mem_wr_mem_ffout;
 input [31:0] ex2mem_wr_memwdata_ffout;
 input [2:0] ex2mem_mem_op_ffout;
 input ex2mem_mem_en, ex2mem_mem_en_ffout;
-input ex2mem_load_ffout, ex2mem_store_ffout;
+input ex2mem_load_ffout, ex2mem_load, ex2mem_store_ffout;
 input ex2mem_rd_is_x1_ffout;
 input ex2mem_rd_is_xn_ffout;
 input [31:0] readram_addr;
@@ -70,6 +73,7 @@ input [31:0] multprod_LO_ffout;
 input [31:0] multprod_HI_ffout;
 input load_misaligned_exxeption;
 input ex2mem_exp_ffout;
+input ex2mem_int_ffout;
 input div2mem_divvalid_ffout;
 input [31:0] div2mem_wr_wdata_ffout;
 
@@ -93,6 +97,7 @@ output dsram_we;
 output [3:0] dsram_ben;
 output [31:0] dsram_wdata;
 output mem2wb_exp;
+output mem2wb_int;
 output store_misaligned_exxeption;
 
 assign mem2wb_rd_is_x1 = ex2mem_rd_is_x1_ffout;
@@ -302,11 +307,13 @@ always @*
 
 assign    store_stall = store_misaligned_exxeption & mem2wb_mem_en & mem2wb_wr_mem & ex2mem_store_ffout;
 
-assign mem2wb_exp = ex2mem_exp_ffout | store_stall | load_misaligned_exxeption;
+assign mem2wb_exp = ex2mem_exp_ffout;// | store_stall | load_misaligned_exxeption;
+
+assign mem2wb_int = ex2mem_int_ffout;
 
 // data ram signal
 assign dsram_addr = mem2wb_wr_mem ? mem2wb_memaddr : readram_addr;
-assign dsram_cs = mem2wb_mem_en | ex2mem_mem_en;
+assign dsram_cs = (mem2wb_mem_en&ex2mem_store_ffout) | (ex2mem_mem_en&ex2mem_load);
 assign dsram_we = mem2wb_wr_mem;
 assign dsram_wdata = mem2wb_mem_wdata;
 assign dsram_ben = mem2wb_mem_byteen;
