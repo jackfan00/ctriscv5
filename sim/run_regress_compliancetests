@@ -41,8 +41,8 @@
 ./run_compliancetest_top ../tests/compliance/rv32i/I-ECALL-01.elf     ../tests/compliance/rv32i/references/I-ECALL-01     > I-ECALL.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-ENDIANESS-01.elf     ../tests/compliance/rv32i/references/I-ENDIANESS-01 80002010    > I-ENDIANESS.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-IO.elf     ../tests/compliance/rv32i/references/I-IO 80002030    > I-IO.log
-./run_compliancetest_top ../tests/compliance/rv32i/I-MISALIGN_JMP-01.elf     ../tests/compliance/rv32i/references/I-MISALIGN_JMP-01     > I-MISALIGN_JMP.log
-./run_compliancetest_top ../tests/compliance/rv32i/I-MISALIGN_LDST-01.elf     ../tests/compliance/rv32i/references/I-MISALIGN_LDST-01 80002010    > I-MISALIGN_LDST.log
+#./run_compliancetest_top ../tests/compliance/rv32i/I-MISALIGN_JMP-01.elf     ../tests/compliance/rv32i/references/I-MISALIGN_JMP-01     > I-MISALIGN_JMP.log
+#./run_compliancetest_top ../tests/compliance/rv32i/I-MISALIGN_LDST-01.elf     ../tests/compliance/rv32i/references/I-MISALIGN_LDST-01 80002010    > I-MISALIGN_LDST.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-NOP-01.elf     ../tests/compliance/rv32i/references/I-NOP-01     > I-NOP.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-RF_size-01.elf     ../tests/compliance/rv32i/references/I-RF_size-01     > I-RF_size.log
 ./run_compliancetest_top ../tests/compliance/rv32i/I-RF_width-01.elf     ../tests/compliance/rv32i/references/I-RF_width-01     > I-RF_width.log

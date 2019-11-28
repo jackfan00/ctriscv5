@@ -1,5 +1,5 @@
 module genpc(clk, cpurst,  btb_pc, btb_valid,
-de_stall, exe_stall, memacc_stall,
+de_stall, exe_stall, memacc_stall, fence_stall,
 boot_addr,
 r_x1, rs3v,
 dec_is_x1, exe_is_x1, mem_is_x1, wb_is_x1,
@@ -36,7 +36,7 @@ fet_stall
 );
 
 input clk, cpurst;
-input de_stall, exe_stall, memacc_stall;
+input de_stall, exe_stall, memacc_stall, fence_stall;
 input [31:0] btb_pc;
 input btb_valid;
 input [31:0] boot_addr;
@@ -148,7 +148,7 @@ wire [31:0] nxtpc =
 // branch_predict_err is 1st priority
 // because fetched addr is wrong, so need to correct it first.
        branch_predict_err ? de2fe_branch_target :   
-       fet_stall|de_stall|exe_stall|memacc_stall ? pc :
+       fet_stall|de_stall|exe_stall|memacc_stall|fence_stall ? pc :
        //need to modify?????
        wb2csrfile_int_ffout ? {mtvec[31:2],2'b0} + {mcause[4:0],2'b0} :
        isecallbk ? {bypass_mtvec[31:2],2'b0} :

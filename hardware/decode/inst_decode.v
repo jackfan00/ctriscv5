@@ -44,7 +44,8 @@ de_store_load_conflict,
 de2fe_branch,
 de2ex_causecode,
 de2ex_mtval,
-de2ex_mepc
+de2ex_mepc,
+de2ex_fence_stall
 );
 input de2ex_store_ffout, de2ex_mem_en_ffout;
 input [31:0] fe2de_pc_ffout,fe2de_ir_ffout;
@@ -89,6 +90,7 @@ output de2fe_branch;
 output [4:0] de2ex_causecode;
 output [31:0] de2ex_mtval;
 output [31:0] de2ex_mepc;
+output de2ex_fence_stall;
 
 //
 reg de2ex_e_ecfm, de2ex_e_bk;
@@ -143,9 +145,11 @@ reg de2ex_inst_valid ;
 reg [2:0] de2ex_csrop;
 reg de2ex_exp, de2ex_mret;
 reg [31:0] de2ex_mepc;
+reg de2ex_fence_stall;
     //
 always @*
 begin
+    de2ex_fence_stall = 0;
     de2ex_mepc = mepc;
     de2ex_e_ecfm =0;
     de2ex_e_bk =0;
@@ -453,14 +457,17 @@ begin
         end
 
     `OPCODE_MISCMEM:
-        //if (func3==1){
-        //    //FENCE.I
-        //}
-        //else{
-        //    //FENCE
-        //}
-        /**< FENCE is no effect at single core */
-        de2ex_inst_valid =1;
+       begin
+         //if (func3==1){
+         //    //FENCE.I
+         //}
+         //else{
+         //    //FENCE
+         //}
+         /**< FENCE is no effect at single core */
+         de2ex_fence_stall = 1;
+         de2ex_inst_valid =1;
+       end 
 
     //OPCODE_ZERO:
     //    de2ex_rd_oprand1 =0;

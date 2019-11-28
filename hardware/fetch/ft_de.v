@@ -12,6 +12,7 @@ de2fe_branch, de2ex_inst_valid,
 rv16_instr_todec,
 lr_isram_cs, lr_isram_cs_ff,
 jalr_dep,
+fence_stall,
 
 fe2de_pc_ffout, fe2de_instr_ffout, 
 fet_is_x1_ffout, fet_is_xn_ffout,
@@ -33,6 +34,7 @@ input de2fe_branch, de2ex_inst_valid;
 input [15:0] rv16_instr_todec;
 input lr_isram_cs, lr_isram_cs_ff;
 input jalr_dep;
+input fence_stall;
 
 output [31:0] fe2de_pc_ffout, fe2de_instr_ffout;
 output fet_is_x1_ffout, fet_is_xn_ffout;
@@ -56,6 +58,8 @@ reg fe2de_predict_bxxtaken_ffout, fe2de_rv16_ffout;
 always @(posedge clk)
 begin
    if ( cpurst || 
+//fence stall will flush following pipe, but stall pc 
+       (fence_stall==1     & (~stall)) ||
        (fet_flush          & (~stall)) || 
        (branch_predict_err & (~stall)) 
       )// ||
@@ -80,6 +84,8 @@ end
 always @(posedge clk)
 begin
    if ( cpurst || 
+//fence stall will flush following pipe, but stall pc 
+       (fence_stall==1     & (~stall)) ||
        (fet_flush          & (~stall)) || 
        (branch_predict_err & (~stall)) 
       )// ||

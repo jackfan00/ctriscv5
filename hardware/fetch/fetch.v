@@ -1,5 +1,5 @@
 module fetch ( clk, cpurst, 
-de_stall, exe_stall, memacc_stall,
+de_stall, exe_stall, memacc_stall, fence_stall,
 btb_pc, btb_instr, btb_valid,
 boot_addr,
 r_x1, rs3v,
@@ -32,7 +32,7 @@ fet_stall
 
 );
 input clk,cpurst;
-input de_stall, exe_stall, memacc_stall;
+input de_stall, exe_stall, memacc_stall, fence_stall;
 input [31:0] btb_pc, btb_instr;
 input btb_valid;
 input [31:0] boot_addr;
@@ -77,6 +77,7 @@ genpc genpc_u(
 .de_stall(de_stall), 
 .exe_stall(exe_stall), 
 .memacc_stall(memacc_stall),
+.fence_stall(fence_stall),
 .btb_pc(btb_pc),
 .btb_valid(btb_valid),
 .boot_addr(boot_addr),
@@ -159,11 +160,16 @@ wire [63:0] valid_instr_fromsram = lr_isram_cs_ff ? instr_hold : instr_fromsram;
 genrv32 genrv32_u( 
 .clk(clk), 
 .jalr_dep(jalr_dep), 
+.cross_bd_ff(cross_bd_ff),
 .jb_ff(jb_ff), 
 .sram_cs_ff(sram_cs_ff), 
 .pc(fetch_pc), 
 .instr(valid_instr_fromsram), //instr_fromsram), 
 .fet_stall(fet_stall),
+.de_stall(de_stall), 
+.exe_stall(exe_stall), 
+.memacc_stall(memacc_stall), 
+.fence_stall(fence_stall),
 .btb_pc(btb_pc), 
 .btb_instr(btb_instr),
 .btb_valid(btb_valid),

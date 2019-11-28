@@ -1,5 +1,6 @@
 module de_ex(
 clk, cpurst,
+de2ex_fence_stall,
 exe_stall, memacc_stall,
 de_stall, //exe_store_load_conflict, mem_stall, readram_stall, mult_stall, 
 //div_stall, 
@@ -69,12 +70,14 @@ de2ex_mtvec_ffout       ,
 de2ex_mepc_ffout        ,
 de2ex_causecode_ffout  ,
 de2ex_mtval_ffout ,
-de2ex_rv16_ffout
+de2ex_rv16_ffout,
+fence_stall
 
 
 );
 
 input clk, cpurst;
+input de2ex_fence_stall;
 input exe_stall, memacc_stall;
 input de_stall; //, exe_store_load_conflict, mem_stall, readram_stall, mult_stall, div_stall, 
 input mem2wb_exp_ffout; //, interrupt;
@@ -142,6 +145,7 @@ output [31:0] de2ex_mepc_ffout        ;
 output [4:0] de2ex_causecode_ffout   ;
 output [31:0] de2ex_mtval_ffout;
 output de2ex_rv16_ffout;
+output fence_stall;
 
 //reg [31:0] de2ex_pc_ffout;
 reg de2ex_wr_mem_ffout ;
@@ -175,10 +179,34 @@ reg [4:0] de2ex_causecode_ffout   ;
 reg [31:0] de2ex_mtval_ffout;
 reg de2ex_rv16_ffout;
 
+// generate fence stall for 4 clk cycle( worse number, can be smaller )
+reg [2:0] fenceext_cnt;
+reg fence_stall_ext;
+always @(posedge clk)
+begin
+  if (cpurst)
+    fence_stall_ext <= 1'b0;
+  else if (fenceext_cnt==3'd3)
+    fence_stall_ext <= 1'b0;
+  else if (de2ex_fence_stall)
+    fence_stall_ext <= 1'b1;
+end
+always @(posedge clk)
+begin
+  if (cpurst | (!fence_stall_ext))
+    fenceext_cnt <= 0;
+  else if (fence_stall_ext)
+    fenceext_cnt <= fenceext_cnt+1'b1;
+end
+
+//fence stall will flush following pipe, but only stall pc ,not include fe2de pipe
+assign fence_stall = de2ex_fence_stall | fence_stall_ext;
+
 wire stall = exe_stall | memacc_stall;
 always @(posedge clk)
 begin
     if (   cpurst || 
+//          (fence_stall==1 && stall==0 ) ||
           (de_stall==1 && stall==0 )
        )//  /**< insert dummy NOP command to flush pipeline */
      //     (de_stall==1 && exe_store_load_conflict==0 && mem_stall==0 && readram_stall==0 && mult_stall==0 && div_stall==0))// || (mem2wb_exp_ffout || interrupt)) /**< insert dummy NOP command to flush pipeline */

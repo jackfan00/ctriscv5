@@ -99,6 +99,7 @@ wire [4:0]  wb2csrfile_causecode_ffout   ;
 wire [31:0] wb2csrfile_mtval_ffout;
 wire exe_store_load_conflict, mult_stall, div_stall;
 wire load_stall, store_stall;
+wire fence_stall;
 
 assign memacc_stall = load_stall | store_stall;
 assign exe_stall = exe_store_load_conflict | mult_stall | div_stall;
@@ -109,6 +110,7 @@ fetch fetch_u(
 .de_stall(de_stall), 
 .exe_stall(exe_stall), 
 .memacc_stall(memacc_stall),
+.fence_stall(fence_stall),
 .btb_pc                       (btb_pc                       ), 
 .btb_instr                    (btb_instr                    ),
 .btb_valid                    (btb_valid                    ),
@@ -201,6 +203,7 @@ ft_de ft_de_u(
 .lr_isram_cs                  (lr_isram_cs                  ),
 .lr_isram_cs_ff                  (lr_isram_cs_ff                  ),
 .jalr_dep                     (jalr_dep                     ),
+.fence_stall                  (fence_stall               ),
 
 // output port                
 .fe2de_pc_ffout               (fe2de_pc_ffout), 
@@ -282,7 +285,8 @@ inst_decode inst_decode_u(
 .de2fe_branch            (de2fe_branch            ),
 .de2ex_causecode         (de2ex_causecode         ),
 .de2ex_mtval             (de2ex_mtval          ),
-.de2ex_mepc              (de2ex_mepc )
+.de2ex_mepc              (de2ex_mepc ),
+.de2ex_fence_stall       (de2ex_fence_stall)
 
 );
 
@@ -309,6 +313,7 @@ wire [4:0] de2ex_rs1addr_ffout, de2ex_rs2addr_ffout;
 de_ex de_ex_u(
 .clk                     (clk), 
 .cpurst                  (cpurst),
+.de2ex_fence_stall       (de2ex_fence_stall),
 .exe_stall               (exe_stall), 
 .memacc_stall            (memacc_stall),
 .de_stall                (de_stall), 
@@ -387,7 +392,8 @@ de_ex de_ex_u(
 .de2ex_mepc_ffout         (de2ex_mepc_ffout         ),
 .de2ex_causecode_ffout    (de2ex_causecode_ffout    ),
 .de2ex_mtval_ffout        (de2ex_mtval_ffout          ),
-.de2ex_rv16_ffout        (de2ex_rv16_ffout          )
+.de2ex_rv16_ffout        (de2ex_rv16_ffout          ),
+.fence_stall             (fence_stall               )
 
 );
 
