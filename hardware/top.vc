@@ -1,4 +1,5 @@
 ../hardware/testbench/test_top.v
+../hardware/testbench/peri.v
 
 
 ../hardware/define/addrmap_define.v

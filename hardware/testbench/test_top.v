@@ -248,11 +248,43 @@ always #10 clk = ~clk;
 wire ext_int = 1'b0;
 
 
-
+wire [31:0] regrdat, peri_rdat;
+wire peri_ack, regack;
+wire [31:0] peri_addr, peri_wdat;
 top top_u(
 .clk      (clk      ), 
 .cpurst   (cpurst   ), 
 .ext_int  (ext_int  ),
-.boot_addr(32'h8000_0000)
+.boot_addr(32'h8000_0000),
+.peri_rdat(peri_rdat), 
+.peri_ack (peri_ack ),
+//
+.peri_w   (peri_w   ), 
+.peri_r   (peri_r   ), 
+.peri_addr(peri_addr), 
+.peri_wdat(peri_wdat)
+
 );
+
+wire regw = peri_w;
+wire regr = peri_r;
+wire [31:0] regadr = peri_addr;
+wire [31:0] regwdata = peri_wdat;
+assign peri_rdat = regrdat;
+assign peri_ack = regack;
+
+peri peri_u(
+.clk   (clk   ), 
+.rstz  (!cpurst  ),
+.regw  (regw  ), 
+.regr  (regr  ),
+.adr   (regadr   ), 
+.wdata (regwdata ),
+//    (//    )
+.ack   (regack   ),
+.rdat  (regrdat  )
+
+);
+
+
 endmodule

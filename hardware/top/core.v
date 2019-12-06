@@ -1,5 +1,7 @@
 module core (
-clk, cpurst, boot_addr, ext_int, clint_timer_int, clint_soft_int,
+clk, cpurst, boot_addr, 
+periw_stall, perir_stall,
+ext_int, clint_timer_int, clint_soft_int,
 instr_fromsram,
 dsram_rdata,
 lr_isram_cs,
@@ -16,6 +18,7 @@ dsram_wdata
 
 input clk, cpurst;
 input [31:0] boot_addr;
+input periw_stall, perir_stall;
 input ext_int, clint_timer_int, clint_soft_int;
 input [63:0] instr_fromsram;
 input [31:0] dsram_rdata;
@@ -105,8 +108,8 @@ wire [4:0] fe2de_causecode_int_ffout;
 wire fe2de_g_int_ffout;
 
 
-assign memacc_stall = load_stall | store_stall;
-assign exe_stall = exe_store_load_conflict | mult_stall | div_stall;
+assign memacc_stall = load_stall | store_stall | periw_stall;
+assign exe_stall = exe_store_load_conflict | mult_stall | div_stall | perir_stall;
 
 // interrupt update mcause first, then goto int trap
 ///////////reg all_int_ff;
@@ -577,6 +580,7 @@ ex_mem ex_mem_u(
 .cpurst                  (cpurst                  ),
 //.interrupt               (interrupt               ),
 .memacc_stall            (memacc_stall            ),
+.exe_stall               (exe_stall               ),
 .exe_store_load_conflict (exe_store_load_conflict ),
 .mult_stall              (mult_stall              ), 
 .div_stall                   (div_stall),

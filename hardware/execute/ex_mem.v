@@ -1,7 +1,7 @@
 module ex_mem(
 clk, cpurst,
 memacc_stall,
-mult_stall, div_stall, //mem_stall, readram_stall, 
+exe_stall, mult_stall, div_stall, //mem_stall, readram_stall, 
 exe_store_load_conflict, //interrupt,
 ex2mem_wr_reg,
 ex2mem_wr_regindex,
@@ -72,7 +72,7 @@ ex2mem_rv16_ffout
 
 input clk, cpurst;
 input memacc_stall;
-input mult_stall, div_stall; //, mem_stall, readram_stall, 
+input exe_stall, mult_stall, div_stall; //, mem_stall, readram_stall, 
 input exe_store_load_conflict; //, interrupt;
 input ex2mem_wr_reg;
 input [4:0] ex2mem_wr_regindex;
@@ -170,9 +170,10 @@ wire stall = memacc_stall;
 always @(posedge clk)
 begin
    if (   cpurst ||
-         (mult_stall & (!stall)) ||
-         (div_stall  & (!stall)) ||
-         (exe_store_load_conflict & (!stall))
+         (exe_stall & (!stall)) 
+   //      (mult_stall & (!stall)) ||
+   //      (div_stall  & (!stall)) ||
+   //      (exe_store_load_conflict & (!stall))
       )   
         
       //    (mult_stall || div_stall || (exe_store_load_conflict & mem_stall==0) ) )//|| 
