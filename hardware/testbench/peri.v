@@ -1,6 +1,8 @@
 //
 // model periphal r/w
 //
+`define TXUART_ADDR 32'h00013000
+
 module peri(
 clk, rstz,
 regw, regr,
@@ -36,7 +38,7 @@ end
 assign ack = (regw_d[2]&(!regw_d[3])) | (regr_d[2]&(!regr_d[3]));
 
 
-assign  rdat = ack & regr ? 32'h12345678 : 32'hffffffff;
+assign  rdat = ack & regr ? 32'h12345678 : 32'h7fffffff;
 
 reg [31:0] mdat;
 always @(posedge clk or negedge rstz)
@@ -46,5 +48,24 @@ begin
   else if (ack & regw)
     mdat <= wdata;
 end  
+
+//UART display
+integer f_txuart;
+initial begin
+f_txuart = $fopen("txUARTout.txt");
+end
+
+wire txUART = (adr==`TXUART_ADDR);
+reg [7:0] ascii;
+always @(posedge clk)
+begin
+  if (ack & regw & txUART)
+    begin
+    //ascii <= wdata[7:0];
+    // $fwrite(f_txuart, "%c", wdata[7:0]);
+     $write("%c", wdata[7:0]);
+    end 
+end  
+
 
 endmodule

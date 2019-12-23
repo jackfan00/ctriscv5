@@ -1,7 +1,7 @@
 module test_top;
 `define ITCM top_u.isram_u
 `define DTCM top_u.dsram_u
-`define ITCM_SIZE 16384
+`define ITCM_SIZE 24576
 
 `ifdef COMPLIANCE_TEST
 `define PC_WRITE_TOHOST       32'h80000040    //compilance rv32i test
@@ -112,12 +112,13 @@ begin
   end
 end
 wire de2ex_inst_valid = top_u.core_u.de2ex_inst_valid;
+wire de2ex_stall      = top_u.core_u.ft_de_u.stall;
 always @(posedge clk)
 begin 
   if(cpurst) begin
       valid_ir_cycle <= 32'b0;
   end
-  else if (de2ex_inst_valid) 
+  else if (de2ex_inst_valid & !de2ex_stall) 
    begin
       valid_ir_cycle <= valid_ir_cycle + 1'b1;
   end

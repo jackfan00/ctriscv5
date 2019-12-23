@@ -1,0 +1,3 @@
+riscv64-unknown-elf-gcc -march=rv32imc -mabi=ilp32 -nostdlib -nostartfiles -c start.s -o start.o
+riscv64-unknown-elf-gcc -march=rv32imc -mabi=ilp32 -nostdlib -nostartfiles -c  helloword.c -o helloword.obj
+riscv64-unknown-elf-gcc -T example.ld -march=rv32imc -mabi=ilp32 -nostdlib -nostartfiles start.o helloword.obj -o helloword.elf

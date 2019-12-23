@@ -106,6 +106,7 @@ wire fence_stall;
 wire [4:0] causecode_int;
 wire [4:0] fe2de_causecode_int_ffout;
 wire fe2de_g_int_ffout;
+wire de2ex_inst_valid_real;
 
 
 assign memacc_stall = load_stall | store_stall | periw_stall;
@@ -131,6 +132,7 @@ fetch fetch_u(
 .btb_pc                       (btb_pc                       ), 
 .btb_instr                    (btb_instr                    ),
 .btb_valid                    (btb_valid                    ),
+.de2ex_inst_valid_real        (de2ex_inst_valid_real        ),
 .boot_addr           (boot_addr),
 .r_x1                (r_x1),
 .rs3v                (rs3v),
@@ -237,7 +239,8 @@ ft_de ft_de_u(
 .btb_instr                    (btb_instr                    ),
 .btb_valid                    (btb_valid                    ),
 .fe2de_causecode_int_ffout    (fe2de_causecode_int_ffout    ),
-.fe2de_g_int_ffout            (fe2de_g_int_ffout            )
+.fe2de_g_int_ffout            (fe2de_g_int_ffout            ),
+.de2ex_inst_valid_real        (de2ex_inst_valid_real        )
 );
 //
 wire ex2mem_mstatus_mie, mem2wb_mstatus_mie, wb2csrfile_mstatus_mie;

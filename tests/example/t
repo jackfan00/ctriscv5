@@ -1,0 +1,107 @@
+
+helloword.elf：     檔案格式 elf32-littleriscv
+
+
+Disassembly of section .text:
+
+80000000 <_Reset>:
+80000000:	00001117          	auipc	sp,0x1
+80000004:	0b010113          	addi	sp,sp,176 # 800010b0 <_stack_top>
+80000008:	2095                	jal	8000006c <main>
+8000000a:	a001                	j	8000000a <_Reset+0xa>
+
+8000000c <myprintf>:
+8000000c:	7179                	addi	sp,sp,-48
+8000000e:	d622                	sw	s0,44(sp)
+80000010:	1800                	addi	s0,sp,48
+80000012:	fca42e23          	sw	a0,-36(s0)
+80000016:	fe042623          	sw	zero,-20(s0)
+8000001a:	a83d                	j	80000058 <myprintf+0x4c>
+8000001c:	900007b7          	lui	a5,0x90000
+80000020:	0007a783          	lw	a5,0(a5) # 90000000 <UART0DR+0x0>
+80000024:	fdc42703          	lw	a4,-36(s0)
+80000028:	00074703          	lbu	a4,0(a4)
+8000002c:	00e78023          	sb	a4,0(a5)
+80000030:	900007b7          	lui	a5,0x90000
+80000034:	0007a783          	lw	a5,0(a5) # 90000000 <UART0DR+0x0>
+80000038:	00178713          	addi	a4,a5,1
+8000003c:	900007b7          	lui	a5,0x90000
+80000040:	00e7a023          	sw	a4,0(a5) # 90000000 <UART0DR+0x0>
+80000044:	fdc42783          	lw	a5,-36(s0)
+80000048:	0785                	addi	a5,a5,1
+8000004a:	fcf42e23          	sw	a5,-36(s0)
+8000004e:	fec42783          	lw	a5,-20(s0)
+80000052:	0785                	addi	a5,a5,1
+80000054:	fef42623          	sw	a5,-20(s0)
+80000058:	fec42703          	lw	a4,-20(s0)
+8000005c:	47a1                	li	a5,8
+8000005e:	fae7dfe3          	bge	a5,a4,8000001c <myprintf+0x10>
+80000062:	0001                	nop
+80000064:	0001                	nop
+80000066:	5432                	lw	s0,44(sp)
+80000068:	6145                	addi	sp,sp,48
+8000006a:	8082                	ret
+
+8000006c <main>:
+8000006c:	1141                	addi	sp,sp,-16
+8000006e:	c606                	sw	ra,12(sp)
+80000070:	c422                	sw	s0,8(sp)
+80000072:	0800                	addi	s0,sp,16
+80000074:	900007b7          	lui	a5,0x90000
+80000078:	90001737          	lui	a4,0x90001
+8000007c:	00e7a023          	sw	a4,0(a5) # 90000000 <UART0DR+0x0>
+80000080:	800007b7          	lui	a5,0x80000
+80000084:	09878513          	addi	a0,a5,152 # 80000098 <UART0DR+0xf0000098>
+80000088:	3751                	jal	8000000c <myprintf>
+8000008a:	4781                	li	a5,0
+8000008c:	853e                	mv	a0,a5
+8000008e:	40b2                	lw	ra,12(sp)
+80000090:	4422                	lw	s0,8(sp)
+80000092:	0141                	addi	sp,sp,16
+80000094:	8082                	ret
+80000096:	0000                	unimp
+80000098:	3231                	jal	7ffff9a4 <_Reset-0x65c>
+8000009a:	36353433          	0x36353433
+8000009e:	20393837          	lui	a6,0x20393
+800000a2:	6568                	flw	fa0,76(a0)
+800000a4:	6c6c                	flw	fa1,92(s0)
+800000a6:	6f77206f          	j	80072f9c <_stack_top+0x71eec>
+800000aa:	6c72                	flw	fs8,28(sp)
+800000ac:	0a64                	addi	s1,sp,284
+	...
+
+Disassembly of section .data:
+
+90000000 <UART0DR>:
+90000000:	0000                	unimp
+	...
+
+Disassembly of section .riscv.attributes:
+
+00000000 <.riscv.attributes>:
+   0:	2541                	jal	680 <_Reset-0x7ffff980>
+   2:	0000                	unimp
+   4:	7200                	flw	fs0,32(a2)
+   6:	7369                	lui	t1,0xffffa
+   8:	01007663          	bgeu	zero,a6,14 <_Reset-0x7fffffec>
+   c:	0000001b          	0x1b
+  10:	1004                	addi	s1,sp,32
+  12:	7205                	lui	tp,0xfffe1
+  14:	3376                	fld	ft6,376(sp)
+  16:	6932                	flw	fs2,12(sp)
+  18:	7032                	flw	ft0,44(sp)
+  1a:	5f30                	lw	a2,120(a4)
+  1c:	326d                	jal	fffff9c6 <UART0DR+0x6ffff9c6>
+  1e:	3070                	fld	fa2,224(s0)
+  20:	635f 7032 0030      	0x307032635f
+
+Disassembly of section .comment:
+
+00000000 <.comment>:
+   0:	3a434347          	fmsub.d	ft6,ft6,ft4,ft7,rmm
+   4:	2820                	fld	fs0,80(s0)
+   6:	29554e47          	fmsub.s	ft8,fa0,fs5,ft5,rmm
+   a:	3920                	fld	fs0,112(a0)
+   c:	322e                	fld	ft4,232(sp)
+   e:	302e                	fld	ft0,232(sp)
+	...

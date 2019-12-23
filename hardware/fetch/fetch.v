@@ -1,6 +1,7 @@
 module fetch ( clk, cpurst, 
 de_stall, exe_stall, memacc_stall, fence_stall,
 btb_pc, btb_instr, btb_valid,
+de2ex_inst_valid_real,
 boot_addr,
 r_x1, rs3v,
 dec_is_x1, exe_is_x1, mem_is_x1, wb_is_x1,
@@ -37,6 +38,7 @@ input clk,cpurst;
 input de_stall, exe_stall, memacc_stall, fence_stall;
 input [31:0] btb_pc, btb_instr;
 input btb_valid;
+input de2ex_inst_valid_real;
 input [31:0] boot_addr;
 input [31:0] r_x1, rs3v;
 input dec_is_x1, exe_is_x1, mem_is_x1, wb_is_x1;
@@ -84,6 +86,7 @@ genpc genpc_u(
 .fence_stall(fence_stall),
 .btb_pc(btb_pc),
 .btb_valid(btb_valid),
+.de2ex_inst_valid_real(de2ex_inst_valid_real),
 .boot_addr(boot_addr),
 .r_x1(r_x1),
 .rs3v(rs3v),
