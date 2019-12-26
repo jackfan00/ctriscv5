@@ -67,5 +67,6 @@ begin
     end 
 end  
 
+wire coremark_debug = (adr==32'h0001400);
 
 endmodule

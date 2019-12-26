@@ -3,6 +3,7 @@
 //#include <math.h>
 
 module inst_execute(
+fe_de_stall,
 de2ex_wr_mem_ffout,
 de2ex_mem_op_ffout,
 de2ex_wr_memwdata_ffout,
@@ -71,7 +72,7 @@ ex2mem_causecode    ,
 ex2mem_rv16    
 
 );
-
+input fe_de_stall;
 input de2ex_wr_mem_ffout ;
 input [2:0] de2ex_mem_op_ffout ;
 input [31:0] de2ex_wr_memwdata_ffout ;
@@ -216,10 +217,11 @@ always @*
 
 
 //assign    ex2mem_pc = de2ex_pc_ffout;
-assign    ex2mem_wr_reg = de2ex_wr_reg_ffout;
+assign    ex2mem_wr_reg = de2ex_wr_reg_ffout ;  
 assign    ex2mem_wr_regindex = de2ex_wr_regindex_ffout;
 
 assign    ex2mem_wr_wdata = de2ex_rd_csrreg_ffout & de2ex_wr_reg_ffout ? de2ex_rd_oprand2_ffout : 
+                            //de2ex_rd_csrreg_ffout & ex2mem_wr_reg ? de2ex_rd_oprand2_ffout : 
                             de2ex_MD_OP_ffout & ex2mem_mulvalid ? mul2mem_wr_wdata :
                             de2ex_MD_OP_ffout & div2mem_divvalid ? div2mem_wr_wdata :
                             alu_out;  //reg wdata

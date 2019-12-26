@@ -12,6 +12,7 @@
 
 module csrfile(
 clk, cpurst,
+de2ex_inst_valid_real,
 fe2de_rv16, fetch_pc,
 mip_msip, mip_mtip, mip_meip,
 //wb2csrfile_exp         ,
@@ -56,6 +57,7 @@ causecode_int
 );
 
 input clk, cpurst      ;
+input de2ex_inst_valid_real;
 input fe2de_rv16;
 input [31:0] fetch_pc;
 input mip_msip, mip_mtip, mip_meip;
@@ -100,6 +102,9 @@ output [4:0] causecode_int;
 
 reg mie_meie, mie_mtie, mie_msie;
 reg mstatus_mie, mstatus_pmie;
+reg [63:0] mcycleHL;
+reg [63:0] minstretHL;
+
 
 //individual int enable
 wire int_indi = (mip_mtip & mie_mtie) | (mip_msip & mie_msie) | (mip_meip & mie_meie);
@@ -352,17 +357,43 @@ begin
           csr_rdat = mtval[31:0];
         12'h344:
           csr_rdat = mip[31:0];
-    /**
+    
         12'hb00:
-          csr_rdat = mcycle[31:0];
+          csr_rdat = mcycleHL[31:0];  //mcycle
         12'hb80:
-          csr_rdat = mcycleh[31:0];
+          csr_rdat = mcycleHL[63:32];  //mcycleh
         12'hb02:
-          csr_rdat = minstret[31:0];
+          csr_rdat = minstretHL[31:0];   //minstret
         12'hb82:
-          csr_rdat = minstreth[31:0];      
-    */
+          csr_rdat = minstretHL[63:32];   //minstreth
+    
       endcase
     end
 end
+//
+//
+always @(posedge clk)
+begin
+  if (cpurst)
+    begin
+      mcycleHL <= 32'b0;
+    end
+  else 
+    begin
+      mcycleHL <= mcycleHL+1'b1;
+    end
+end
+
+always @(posedge clk)
+begin
+  if (cpurst)
+    begin
+      minstretHL <= 32'b0;
+    end
+  else if (de2ex_inst_valid_real)
+    begin
+      minstretHL <= minstretHL+1'b1;
+    end
+end
+
 endmodule

@@ -4,6 +4,8 @@ module mini_decode(rv32_instr, r_x1, rs3v,
 dec_is_x1, exe_is_x1, mem_is_x1, wb_is_x1,
 dec_is_xn, exe_is_xn, mem_is_xn, wb_is_xn,
 dec_regfile_wen, exe_regfile_wen, mem_regfile_wen, wb_regfile_wen,
+de2ex_load_ffout,
+//
 isjal, isjalr, isbxx, predict_bxxtaken,
 jaloffset, jalroffset, bxxoffset, 
 fet_is_x1, fet_is_xn,
@@ -17,6 +19,8 @@ input [31:0] rv32_instr, r_x1, rs3v;
 input dec_is_x1, exe_is_x1, mem_is_x1, wb_is_x1;
 input dec_is_xn, exe_is_xn, mem_is_xn, wb_is_xn;
 input dec_regfile_wen, exe_regfile_wen, mem_regfile_wen, wb_regfile_wen;
+input de2ex_load_ffout;
+//
 output isjal;
 output isjalr;
 output isbxx;
@@ -56,14 +60,14 @@ wire decode_w_x1 = (dec_is_x1) & dec_regfile_wen;
 wire exe_w_x1 =    (exe_is_x1) & exe_regfile_wen;
 wire mem_w_x1 =    (mem_is_x1) & mem_regfile_wen;
 wire wb_w_x1 =     (wb_is_x1) & wb_regfile_wen;
-wire jalr_x1_dep = (decode_w_x1 ) & (isjalr & fet_is_x1); //jalr r1 dependence
+wire jalr_x1_dep = (decode_w_x1 & isjalr & fet_is_x1) | (exe_w_x1 & isjalr & fet_is_x1 & de2ex_load_ffout); //jalr r1 dependence
 //wire jalr_x1_dep = (decode_w_x1 | exe_w_x1 | mem_w_x1) & (isjalr & fet_is_x1); //jalr r1 dependence
 //xn
 wire decode_w_xn = (dec_is_xn) & dec_regfile_wen;
 wire exe_w_xn =    (exe_is_xn) & exe_regfile_wen;
 wire mem_w_xn =    (mem_is_xn) & mem_regfile_wen;
 wire wb_w_xn =     (wb_is_xn) & wb_regfile_wen;
-wire jalr_xn_dep = (decode_w_xn ) & (isjalr & fet_is_xn) ; //jalr rn dependence
+wire jalr_xn_dep = (decode_w_xn & isjalr & fet_is_xn) | (exe_w_xn & isjalr & fet_is_xn & de2ex_load_ffout); //jalr rn dependence
 //wire jalr_xn_dep = (decode_w_xn | exe_w_xn | mem_w_xn) & (isjalr & fet_is_xn) ; //jalr rn dependence
 
 assign jalr_dep = jalr_x1_dep | jalr_xn_dep;

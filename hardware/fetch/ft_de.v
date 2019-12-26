@@ -25,7 +25,8 @@ fe2de_rv16_ffout,
 btb_pc, btb_instr, btb_valid,
 fe2de_causecode_int_ffout,
 fe2de_g_int_ffout,
-de2ex_inst_valid_real
+de2ex_inst_valid_real,
+fe_de_stall
 
 );
 input clk, cpurst, fet_flush, de_stall; //, exe_store_load_conflict, readram_stall, mem_stall, mult_stall, div_stall;
@@ -56,6 +57,7 @@ output btb_valid;
 output [4:0] fe2de_causecode_int_ffout;
 output fe2de_g_int_ffout;
 output de2ex_inst_valid_real;
+output fe_de_stall;
 
 //assign fet_stall = de_store_load_conflict | de_stall | exe_store_load_conflict | readram_stall | mem_stall | mult_stall | div_stall;
 ///dff_e_cell #(32) u0 ( .clk(clk), .en(~stall), .d(fetch_pc),         .q(dec_pc) );
@@ -64,6 +66,7 @@ output de2ex_inst_valid_real;
 ///dff_e_cell #(1) u3  ( .clk(clk), .en(~stall), .d(fe2de_rv16), .q(fe2de_rv16_ffout) );
 
 assign stall = de_stall | exe_stall | memacc_stall;
+assign fe_de_stall = stall;
 
 assign de2ex_inst_valid_real = de2ex_inst_valid & !stall;
 //
@@ -137,7 +140,8 @@ end
 reg [15:0] fe2de_rv16_instr_ffout;
 always @(posedge clk)
 begin
-  fe2de_rv16_instr_ffout <=  rv16_instr_todec;
+  if (~stall)
+    fe2de_rv16_instr_ffout <=  rv16_instr_todec;
 end
 
 // prevent btb hit reset pc value

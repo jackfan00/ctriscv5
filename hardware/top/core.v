@@ -107,6 +107,7 @@ wire [4:0] causecode_int;
 wire [4:0] fe2de_causecode_int_ffout;
 wire fe2de_g_int_ffout;
 wire de2ex_inst_valid_real;
+wire de2ex_load_ffout;
 
 
 assign memacc_stall = load_stall | store_stall | periw_stall;
@@ -125,6 +126,7 @@ assign exe_stall = exe_store_load_conflict | mult_stall | div_stall | perir_stal
 fetch fetch_u( 
 .clk                 (clk),
 .cpurst              (cpurst), 
+.de2ex_load_ffout    (de2ex_load_ffout),
 .de_stall(de_stall), 
 .exe_stall(exe_stall), 
 .memacc_stall(memacc_stall),
@@ -240,7 +242,8 @@ ft_de ft_de_u(
 .btb_valid                    (btb_valid                    ),
 .fe2de_causecode_int_ffout    (fe2de_causecode_int_ffout    ),
 .fe2de_g_int_ffout            (fe2de_g_int_ffout            ),
-.de2ex_inst_valid_real        (de2ex_inst_valid_real        )
+.de2ex_inst_valid_real        (de2ex_inst_valid_real        ),
+.fe_de_stall                  (fe_de_stall                  )
 );
 //
 wire ex2mem_mstatus_mie, mem2wb_mstatus_mie, wb2csrfile_mstatus_mie;
@@ -454,6 +457,7 @@ wire div2mem_divvalid;
 wire [31:0] div2mem_wr_wdata;
 
 inst_execute inst_execute_u(
+.fe_de_stall              (fe_de_stall        ),
 .de2ex_wr_mem_ffout       (de2ex_wr_mem_ffout),
 .de2ex_mem_op_ffout       (de2ex_mem_op_ffout),
 .de2ex_wr_memwdata_ffout  (de2ex_wr_memwdata_ffout),
@@ -906,6 +910,7 @@ wire [31:0] mem2wb_instr_ffout;
 csrfile csrfile_u(
 .clk                    (clk                    ), 
 .cpurst                 (cpurst                 ),
+.de2ex_inst_valid_real  (de2ex_inst_valid_real  ),
 .fe2de_rv16             (fe2de_rv16             ), 
 .fetch_pc               (fetch_pc               ),
 .mip_msip               (clint_soft_int         ), 

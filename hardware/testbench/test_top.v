@@ -1,7 +1,7 @@
 module test_top;
 `define ITCM top_u.isram_u
 `define DTCM top_u.dsram_u
-`define ITCM_SIZE 24576
+`define ITCM_SIZE 65536
 
 `ifdef COMPLIANCE_TEST
 `define PC_WRITE_TOHOST       32'h80000040    //compilance rv32i test
@@ -13,6 +13,9 @@ module test_top;
 `define PC_WRITE_TOHOST       32'h80000086  //e200 test
 `endif
 
+wire [31:0] fe2de_pc_ffout = top_u.core_u.fe2de_pc_ffout;
+reg main_return_event;
+reg [7:0] halt_count;
 
 reg[8*300:1] testcase, referenceout;
 reg [31:0] signature_startaddr, signature;
@@ -51,12 +54,12 @@ initial begin
       `ITCM.dsram_u1.mem2[i/8][7:0  ] = itcm_mem[i+6];
       `ITCM.dsram_u1.mem3[i/8][7:0  ] = itcm_mem[i+7];
   end
-  for (i=0;i<`ITCM_SIZE;i=i+4) begin
-      `DTCM.mem0[i/4][7:0  ] = itcm_mem[i+0];
-      `DTCM.mem1[i/4][7:0  ] = itcm_mem[i+1];
-      `DTCM.mem2[i/4][7:0  ] = itcm_mem[i+2];
-      `DTCM.mem3[i/4][7:0  ] = itcm_mem[i+3];
-  end
+///  for (i=0;i<`ITCM_SIZE;i=i+4) begin
+///      `DTCM.mem0[i/4][7:0  ] = itcm_mem[i+0];
+///      `DTCM.mem1[i/4][7:0  ] = itcm_mem[i+1];
+///      `DTCM.mem2[i/4][7:0  ] = itcm_mem[i+2];
+///      `DTCM.mem3[i/4][7:0  ] = itcm_mem[i+3];
+///  end
   $display("ITCM 0x00: %h", `ITCM.dsram_u0.mem0[0][7:0  ]);
   $display("ITCM 0x01: %h", `ITCM.dsram_u0.mem1[0][7:0  ]);
   $display("ITCM 0x02: %h", `ITCM.dsram_u0.mem2[0][7:0  ]);
@@ -75,8 +78,8 @@ end
 //
 reg clk, cpurst;
 initial begin
-  $fsdbDumpfile("riscv_wind.fsdb");
-  $fsdbDumpvars;
+//  $fsdbDumpfile("riscv_wind.fsdb");
+//  $fsdbDumpvars;
   //
 /////  $readmemh("romcode.hex", top_u.isram_u.mem);
 /////  top_u.dsram_u.mem0[0] = 8'h01;
@@ -94,11 +97,44 @@ initial begin
   clk=1'b0;
 #100;
   cpurst=1'b0;
+  
+`ifndef SOFTWARE_TEST  
 #1000000;
   $display("TEST_FAIL::TIMEOUT");
   $finish;
+`else
+  #10000;
+  @(main_return_event);  
+  $finish;
+`endif  
 end
 //
+reg [31:0] fe2de_pc_ffout_d1;
+always @(posedge clk)
+begin
+   fe2de_pc_ffout_d1 <= fe2de_pc_ffout;
+end
+always @(posedge clk)
+begin 
+  if(cpurst) begin
+      halt_count <= 8'b0;
+  end
+  else if (fe2de_pc_ffout != fe2de_pc_ffout_d1)
+  begin
+      halt_count <= 8'b0;
+  end
+  else if (fe2de_pc_ffout == fe2de_pc_ffout_d1)
+  begin
+      halt_count <= halt_count + 1'b1;
+  end
+end
+always @(posedge clk)
+begin 
+  if(cpurst) 
+    main_return_event <= 1'b0;
+  else if (halt_count==8'd100)
+    main_return_event <= 1'b1;
+end
 //
 reg [31:0] valid_ir_cycle;
 reg [31:0] cycle_count;
@@ -125,7 +161,6 @@ begin
 end
 
 
-wire [31:0] fe2de_pc_ffout = top_u.core_u.fe2de_pc_ffout;
 reg [31:0] pc_write_to_host_cnt;
 always @(posedge clk)
   begin

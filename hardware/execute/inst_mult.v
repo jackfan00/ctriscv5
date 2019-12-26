@@ -108,7 +108,7 @@ begin
               ex2div_dividend = de2ex_rd_oprand1_ffout ;
               ex2div_divider =  de2ex_rd_oprand2_ffout ;
               ex2div_signed = 1'b1;
-              ex2div_diven_p = 1'b1;
+              ex2div_diven_p = de2ex_MD_OP_ffout; //1'b1;
             end
         `ALU_DIVU,
         `ALU_REMU:
@@ -116,7 +116,7 @@ begin
               ex2div_dividend = de2ex_rd_oprand1_ffout ;
               ex2div_divider =  de2ex_rd_oprand2_ffout ;
               ex2div_signed = 1'b0;
-              ex2div_diven_p = 1'b1;
+              ex2div_diven_p = de2ex_MD_OP_ffout; //1'b1;
             end
         endcase
 end  

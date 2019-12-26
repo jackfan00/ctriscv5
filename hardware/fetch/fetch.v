@@ -1,4 +1,5 @@
 module fetch ( clk, cpurst, 
+de2ex_load_ffout,
 de_stall, exe_stall, memacc_stall, fence_stall,
 btb_pc, btb_instr, btb_valid,
 de2ex_inst_valid_real,
@@ -35,6 +36,7 @@ fet_stall
 
 );
 input clk,cpurst;
+input de2ex_load_ffout;
 input de_stall, exe_stall, memacc_stall, fence_stall;
 input [31:0] btb_pc, btb_instr;
 input btb_valid;
@@ -80,6 +82,7 @@ assign fe2de_rv16 = isrv16;
 genpc genpc_u(
 .clk(clk), 
 .cpurst(cpurst), 
+.de2ex_load_ffout(de2ex_load_ffout),
 .de_stall(de_stall), 
 .exe_stall(exe_stall), 
 .memacc_stall(memacc_stall),

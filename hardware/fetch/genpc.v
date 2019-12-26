@@ -1,4 +1,6 @@
-module genpc(clk, cpurst,  btb_pc, btb_valid,
+module genpc(clk, cpurst,  
+de2ex_load_ffout,
+btb_pc, btb_valid,
 de2ex_inst_valid_real,
 de_stall, exe_stall, memacc_stall, fence_stall,
 boot_addr,
@@ -39,6 +41,7 @@ fet_stall
 );
 
 input clk, cpurst;
+input de2ex_load_ffout;
 input de_stall, exe_stall, memacc_stall, fence_stall;
 input [31:0] btb_pc;
 input btb_valid;
@@ -97,6 +100,7 @@ mini_decode mini_decode_u (
    .exe_regfile_wen(exe_regfile_wen), 
    .mem_regfile_wen(mem_regfile_wen), 
    .wb_regfile_wen(wb_regfile_wen),
+   .de2ex_load_ffout(de2ex_load_ffout),
  // output port
    .isjal(isjal),  
    .isjalr(isjalr),  
