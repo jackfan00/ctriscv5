@@ -1,0 +1,26 @@
+2K performance run parameters for coremark.
+CoreMark Size    : 666
+Total ticks      : 3211625
+Total time (secs): 98.007812
+Iterations/Sec   : 0.102033
+Iterations       : 10
+Compiler version : GCC8.3.0
+Compiler flags   : -O2 -fno-common -funroll-loops -finline-functions -falign-functions=4 -falign-jumps=4 -falign-loops=4
+Memory location  : STACK
+seedcrc          : 0xe9f5
+[0]crclist       : 0xe714
+[0]crcmatrix     : 0x1fd7
+[0]crcstate      : 0x8e3a
+[0]crcfinal      : 0xfcaf
+Correct operation validated. See readme.txt for run and reporting rules.
+CoreMark 1.0 : 0.102033 / GCC8.3.0 -O2 -fno-common -funroll-loops -finline-functions -falign-functions=4 -falign-jumps=4 -falign-loops=4 / STACK
+
+
+Print Personal Added Addtional Info to Easy Visual Analysis
+
+ (*) Assume the core running at 1 MHz
+     So the CoreMark/MHz can be caculated by: 
+     (Iterations*1000000/total_ticks) = 3.113688 CoreMark/MHz
+
+
+Program has exited with code:0x00000000

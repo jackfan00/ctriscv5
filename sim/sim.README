@@ -1,0 +1,15 @@
+1. regress test
+  run_regress_e200tests
+  run_regress_complianceZicsrtests
+  run_regress_compliancetests
+  run_regress_complianceimtests
+  run_regress_complianceimctests
+  
+  grep TEST_ *.log
+
+2. run single test pattern
+  see regress test script file
+
+3. run software program
+  EX: it will load hello_world.verilog into memory
+  run_softwaretest_top ../tests/software/hello_world/hello_world
